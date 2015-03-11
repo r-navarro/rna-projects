@@ -2,10 +2,16 @@ angular.module('demo-hockey')
 	.factory('VehicleService', ['$resource', 'DaoService',
     function($resource, DaoService) {
 				
-		list = function() {
-			return DaoService.getData("/vehicle/list", 'GET').then(function(response){
-				return response.data;
-			});
+		list = function(page) {
+			if(page){
+				return DaoService.getData("/vehicle/list/"+page, 'GET').then(function(response){
+					return response.data.content;
+				});
+			}else{
+				return DaoService.getData("/vehicle/list", 'GET').then(function(response){
+					return response.data;
+				});
+			}
 		}
 		
 		save = function(vehicle) {

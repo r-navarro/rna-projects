@@ -7,6 +7,9 @@ angular.module('demo-hockey', [ 'ngRoute', 'ngAnimate','ngResource' ]).config(
 			}).when('/create', {
 				templateUrl : 'partials/vehicle/create.html',
 				controller : 'VehicleController'
+			}).when('/list', {
+				templateUrl : 'partials/vehicle/list.html',
+				controller : 'VehicleController'
 			}).otherwise({
 				redirectTo : '/home'
 			});

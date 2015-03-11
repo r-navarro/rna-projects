@@ -20,9 +20,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<start-class>demo.UiApplication</start-class>
+		<start-class>com.carmanagement.UiApplication</start-class>
 		<java.version>1.7</java.version>
-		<groovy.version>2.4.0</groovy.version>
+		<groovy.version>2.3.7</groovy.version>
+		<tomcat.version>7.0.59</tomcat.version>
 	</properties>
 
 	<dependencies>
@@ -34,6 +35,11 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
 
 		<dependency>
@@ -81,35 +87,24 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.gmaven</groupId>
-				<artifactId>gmaven-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generateStubs</goal>
-							<goal>compile</goal>
-							<goal>generateTestStubs</goal>
-							<goal>testCompile</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<fileset>
-									<directory>${pom.basedir}/src/main/groovy</directory>
-									<includes>
-										<include>**/*.groovy</include>
-									</includes>
-								</fileset>
-								<fileset>
-									<directory>${pom.basedir}/src/test/groovy</directory>
-									<includes>
-										<include>**/*.groovy</include>
-									</includes>
-								</fileset>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerId>groovy-eclipse-compiler</compilerId>
+					<!-- set verbose to be true if you want lots of uninteresting messages -->
+					<!-- <verbose>true</verbose> -->
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-eclipse-compiler</artifactId>
+						<version>2.9.1-01</version>
+					</dependency>
+					<dependency>
+						<groupId>org.codehaus.groovy</groupId>
+						<artifactId>groovy-eclipse-batch</artifactId>
+						<version>2.3.7-01</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

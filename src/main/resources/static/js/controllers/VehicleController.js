@@ -4,7 +4,7 @@ angular.module('demo-hockey').controller('VehicleController',
 			$scope.vehicles;
 			
 			function updateList(){
-				VehicleService.list().then(function(list){
+				VehicleService.list(1).then(function(list){
 					$scope.vehicles = list;
 				});
 			}
