@@ -1,25 +1,20 @@
-<div class="col-md-8 col-md-offset-2">
+<div class="col-md-8 col-md-offset-2" ng-init="updateList(1)">
 
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Register number</th>
-				<th>kilometers</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr ng-repeat="vehicle in vehicles">
-				<td>{{vehicle.registerNumber}}</td>
-				<td>{{vehicle.kilometers}}</td>
-			</tr>
-		</tbody>
-	</table>
-		<nav>
-		<ul class="pagination">
-			<li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-			<li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-			<li class="inactive"><a href="#">2 <span class="sr-only">(current)</span></a></li>
-			<li class="enabled"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-		</ul>
-	</nav>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Register number</th>
+            <th>kilometers</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="vehicle in vehicles">
+            <td>{{vehicle.registerNumber}}</td>
+            <td>{{vehicle.kilometers}}</td>
+        </tr>
+        </tbody>
+    </table>
+    test : {{ totalPages}}
+    <div pagination="{{ totalPages }}" current="1"></div>
+    <div pagination="5" current="1"></div>
 </div>

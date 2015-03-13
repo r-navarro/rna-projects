@@ -5,7 +5,7 @@ angular.module('demo-hockey')
 		list = function(page) {
 			if(page){
 				return DaoService.getData("/vehicle/list/"+page, 'GET').then(function(response){
-					return response.data.content;
+					return response.data;
 				});
 			}else{
 				return DaoService.getData("/vehicle/list", 'GET').then(function(response){
