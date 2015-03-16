@@ -1,5 +1,5 @@
 angular.module('demo-hockey').controller('VehicleController',
-		function($scope, VehicleService, DaoService) {
+		function($scope, VehicleService, $routeParams) {
 
 			$scope.vehicles;
 			$scope.totalPages = 0;
@@ -7,8 +7,6 @@ angular.module('demo-hockey').controller('VehicleController',
 			$scope.totalElements = 0;
 			$scope.itemsPerPage = 0;
 
-			$scope.vehicle = {};
-			
 			$scope.updateList = function(page){
 				VehicleService.list(page).then(function(list){
 					$scope.vehicles = list.content;
@@ -26,11 +24,6 @@ angular.module('demo-hockey').controller('VehicleController',
 				VehicleService.save(vehicle);
 				
 			}
-			
-			$scope.get = function(id){
-			}
-			
 
 		}
-
 );

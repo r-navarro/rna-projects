@@ -1,0 +1,20 @@
+<div class="col-md-8 col-md-offset-2" ng-init="get()">
+
+    <h2>{{ vehicle.registerNumber}}</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="fullTank in fullTanks">
+                <td>{{fullTank}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <pre>{{ vehicle | json }}</pre>
+
+</div>

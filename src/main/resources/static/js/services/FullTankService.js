@@ -1,5 +1,5 @@
 angular.module('demo-hockey')
-	.factory('VehicleService', ['$resource', 'DaoService',
+	.factory('FullTankService', ['$resource', 'DaoService',
     function($resource, DaoService) {
 				
 		list = function(page) {
@@ -32,15 +32,5 @@ angular.module('demo-hockey')
 			get  : get
 		}
 		
-	// urlService = '/vehicle';
-	// return $resource(urlService, {vehicleId : '@id'},
-	// {
-	// 'update' : {method : 'PUT'},
-	// 'list' : {url:urlService + '/list', method : 'GET', isArray:true},
-	// 'create' : {url:urlService + '/save', method:'POST'},
-	// 'delete' : {url:urlService + '/delete', method:'DELETE'},
-	// 'get' : {url:urlService + '/get/:vehicleId', method:'GET'}
-	// }
-	//			);
-		}
-	]);
+	}
+]);

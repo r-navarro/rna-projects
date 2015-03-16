@@ -9,7 +9,7 @@
         </thead>
         <tbody>
         <tr ng-repeat="vehicle in vehicles">
-            <td>{{vehicle.registerNumber}}</td>
+            <td><a href="#/show/{{vehicle.id}}">{{vehicle.registerNumber}}</a></td>
             <td>{{vehicle.kilometers}}</td>
         </tr>
         </tbody>
