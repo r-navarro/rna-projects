@@ -19,7 +19,6 @@ angular.module('demo-hockey').controller('VehicleController',
 			}
 
 			$scope.pageChanged = function() {
-                console.log('Page changed to: ' + $scope.currentPage);
                 $scope.updateList($scope.currentPage);
              };
 
