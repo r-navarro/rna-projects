@@ -2,26 +2,26 @@ angular.module('demo-hockey')
 	.factory('FullTankService', ['$resource', 'DaoService',
     function($resource, DaoService) {
 				
-		list = function(page) {
+		list = function(vehicleId, page) {
 			if(page){
-				return DaoService.getData("/vehicle/list/"+page, 'GET').then(function(response){
+				return DaoService.getData("/fullTank/list/"+vehicleId+ "/" +page, 'GET').then(function(response){
 					return response.data;
 				});
 			}else{
-				return DaoService.getData("/vehicle/list", 'GET').then(function(response){
+				return DaoService.getData("/fullTank/list/"+vehicleId, 'GET').then(function(response){
 					return response.data;
 				});
 			}
 		}
 		
-		save = function(vehicle) {
-			return DaoService.getData("/vehicle/save", 'POST', vehicle).then(function(response){
+		save = function(fullTank) {
+			return DaoService.getData("/fullTank/save", 'POST', fullTank).then(function(response){
 				return response.data;
 			});
 		}
 
-		get = function(idVehicle){
-		    return DaoService.getData("/vehicle/get/"+idVehicle, 'GET').then(function(response){
+		get = function(idFullTank){
+		    return DaoService.getData("/fullTank/get/"+idFullTank, 'GET').then(function(response){
 		        return response.data;
 		    });
 		}

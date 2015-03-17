@@ -2,7 +2,7 @@
 
     <h2>{{ vehicle.registerNumber}}</h2>
 
-    <table>
+    <table ng-init="updateFullTanks(1)">
         <thead>
             <tr>
                 <th>action</th>
@@ -14,7 +14,9 @@
             </tr>
         </tbody>
     </table>
-
-    <pre>{{ vehicle | json }}</pre>
+    <pagination total-items="fullTankTotalElements" ng-model="fullTankCurrentPage" ng-change="fullTankPageChanged()" items-per-page="fullTankItemsPerPage"></pagination>
+    <nav>
+        <a class="btn btn-default" href="#/ft/create" role="button">Create</a>
+    </nav>
 
 </div>

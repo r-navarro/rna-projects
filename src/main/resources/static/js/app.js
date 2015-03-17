@@ -13,7 +13,10 @@ angular.module('demo-hockey', [ 'ngRoute', 'ngAnimate','ngResource', 'ui.bootstr
 			}).when('/show/:vehicleId', {
                 templateUrl : 'partials/vehicle/show.html',
                 controller : 'VehicleBoardController'
-            }).otherwise({
+            }).when('/ft/create', {
+				templateUrl : 'partials/fullTank/create.html',
+				controller : 'FullTankController'
+		  	}).otherwise({
 				redirectTo : '/home'
 			});
 			
