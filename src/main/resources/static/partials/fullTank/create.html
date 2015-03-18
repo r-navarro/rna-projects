@@ -1,3 +1,10 @@
 <article class="col-md-8 col-md-offset-2">
     <ng-include src="'partials/fullTank/_form.html'"></ng-include>
+    <div class="form-group">
+        <div class="col-sm-5">
+            <button class="btn btn-default" ng-click="create(fullTank)">Create</button>
+        </div>
+    </div>
+    <pre>{{ fullTank | json }}</pre>
+    {{vehicleId}}
 </article>
