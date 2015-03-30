@@ -4,6 +4,9 @@ import com.carmanagement.config.PersistenceTestConfig
 import com.carmanagement.entities.FullTank
 import com.carmanagement.entities.Vehicle
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
@@ -31,17 +34,18 @@ class FullTankRepositoryTest extends Specification{
         fullTankRepository.save(new FullTank(vehicle: vehicle, cost: 2))
         fullTankRepository.save(new FullTank(vehicle: vehicle, cost: 3))
 
-        def fullTanks = fullTankRepository.findByVehicle(vehicle)
+        PageRequest request = new PageRequest(0, 3, Sort.Direction.DESC, "date")
+
+        Page fullTanks = fullTankRepository.findByVehicleId(vehicle.id, request)
 
         then:
-        fullTanks.size() == 3
-        fullTanks.collect{it.cost}.sum() == 6
+        fullTanks.getSize() == 3
 
     }
 
     def "find full tank by vehicle limit case test"(){
         when :
-        def fullTanks = fullTankRepository.findByVehicle(null)
+        def fullTanks = fullTankRepository.findByVehicleId(null, null)
 
         then:
         fullTanks.size() == 0

@@ -1,11 +1,6 @@
 package com.carmanagement.entities
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*
 
 @Entity
 class Action {
@@ -24,6 +19,7 @@ class Action {
 	Float cost
 	
 	@ManyToOne
+    @JoinColumn(nullable = false)
 	Vehicle vehicle
 
 }
