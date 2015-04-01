@@ -1,5 +1,5 @@
 'use strict';
-angular.module('demo-hockey', [ 'ngRoute', 'ngAnimate','ngResource', 'ui.bootstrap' ]).config(
+angular.module('demo-hockey', [ 'ngRoute', 'ngAnimate','ngResource', 'ui.bootstrap', 'ngCookies' ]).config(
 		[ '$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
 			$routeProvider.when('/home', {
 				templateUrl : 'partials/home.html',
@@ -16,8 +16,26 @@ angular.module('demo-hockey', [ 'ngRoute', 'ngAnimate','ngResource', 'ui.bootstr
             }).when('/:vehicleId/ft/create', {
 				templateUrl : 'partials/fullTank/create.html',
 				controller : 'FullTankController'
-		  	}).otherwise({
-				redirectTo : '/home'
+		  	}).when('/login', {
+				templateUrl : 'partials/login.html',
+				controller : 'LoginController'
+			}).otherwise({
+				redirectTo : '/login'
 			});
 			
-		} ]);
+		} ])
+		.run(['$rootScope', '$location', '$cookieStore', '$http',
+            function ($rootScope, $location, $cookieStore, $http) {
+                // keep user logged in after page refresh
+                $rootScope.globals = $cookieStore.get('globals') || {};
+                if ($rootScope.globals.currentUser) {
+                    $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
+                }
+
+                $rootScope.$on('$locationChangeStart', function (event, next, current) {
+                    // redirect to login page if not logged in
+                    if ($location.path() !== '/login' && !$rootScope.globals.currentUser) {
+                        $location.path('/login');
+                    }
+                });
+            }]);;
