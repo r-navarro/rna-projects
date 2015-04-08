@@ -24,6 +24,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) {
+        http.authorizeRequests().antMatchers("/index.html", "/home.html", "/login.html", "/").permitAll()
         http.authorizeRequests().anyRequest().fullyAuthenticated()
         http.httpBasic()
         http.csrf().disable()

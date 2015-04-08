@@ -12,19 +12,21 @@
 <script src="lib/angular-animate/angular-animate.js"></script>
 <script src="lib/angular-route/angular-route.js"></script>
 <script src="lib/angular-resource/angular-resource.js"></script>
+    <script src="lib/angular-cookies/angular-cookies.js"></script>
 <script src="lib/angular-bootstrap/ui-bootstrap.js"></script>
 
 </head>
 <body>
 
 	<header class="row">
-		<div class="col-md-8 col-md-offset-2">
+        <div class="col-md-8 col-md-offset-2" ng-controller="LoginController">
 <!-- 		<a href="#/home"><img src="img/logo.png" /></a> -->
-		<a href="#/home">Header</a>
-		<nav class="navbar navbar-default navbar-static-top test">
-			<a href="#/create">create</a>
-			<a href="#/list">list</a>
-		</nav>
+            <a href="#/home">Header</a>
+            <button class="btn btn-default" ng-click="logout()">Log out</button>
+            <nav class="navbar navbar-default navbar-static-top test">
+                <a href="#/create">create</a>
+                <a href="#/list">list</a>
+            </nav>
 		</div>
 	</header>
 	<section ng-view class="row">
@@ -38,7 +40,11 @@
 <script src="js/controllers/VehicleBoardController.js"></script>
 <script src="js/controllers/FullTankController.js"></script>
 <script src="js/controllers/HomeController.js"></script>
+<script src="js/controllers/LoginController.js"></script>
+
 <script src="js/services/DaoService.js"></script>
 <script src="js/services/VehicleService.js"></script>
 <script src="js/services/FullTankService.js"></script>
+<script src="js/services/AuthenticationService.js"></script>
+<script src="js/services/Base64.js"></script>
 </html>

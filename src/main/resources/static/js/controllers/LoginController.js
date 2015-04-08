@@ -2,19 +2,24 @@ angular.module('demo-hockey').controller('LoginController',
 		function($scope, $rootScope, $location, AuthenticationService) {
 
 			// reset login status
-            AuthenticationService.ClearCredentials();
+            AuthenticationService.clearCredentials();
 
             $scope.login = function () {
                 $scope.dataLoading = true;
-                AuthenticationService.Login($scope.username, $scope.password, function(response) {
-                    if(response.success) {
-                        AuthenticationService.SetCredentials($scope.username, $scope.password);
-                        $location.path('/');
+                AuthenticationService.login($scope.username, $scope.password, function(response) {
+                    if(response.status == 200) {
+                        AuthenticationService.setCredentials($scope.username, $scope.password);
+                        $location.path('/list');
                     } else {
-                        $scope.error = response.message;
+                        $scope.error = "Error : " + response;
                         $scope.dataLoading = false;
                     }
                 });
+            };
+
+            $scope.logout = function(){
+                AuthenticationService.clearCredentials();
+                $location.path('/');
             };
 		}
 );
