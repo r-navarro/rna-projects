@@ -8,9 +8,10 @@ angular.module('demo-hockey')
                 username:username,
                 password:password
             }
-         	DaoService.getData("/login", 'POST', user).then(function(response){
-                callback(response);
-            });
+         	DaoService.getData("/login", 'POST', user).then(
+         		function(response){callback(response);},
+         		function(response){callback(response);}
+         	);
          };
 
          service.setCredentials = function (username, password) {

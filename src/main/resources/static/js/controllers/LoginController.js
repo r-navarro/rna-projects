@@ -6,12 +6,13 @@ angular.module('demo-hockey').controller('LoginController',
 
             $scope.login = function () {
                 $scope.dataLoading = true;
+                AuthenticationService.setCredentials($scope.username, $scope.password);
                 AuthenticationService.login($scope.username, $scope.password, function(response) {
                     if(response.status == 200) {
-                        AuthenticationService.setCredentials($scope.username, $scope.password);
                         $location.path('/list');
                     } else {
-                        $scope.error = "Error : " + response;
+                        AuthenticationService.clearCredentials();
+                        $scope.error = "Error : " + response.data.message;
                         $scope.dataLoading = false;
                     }
                 });
