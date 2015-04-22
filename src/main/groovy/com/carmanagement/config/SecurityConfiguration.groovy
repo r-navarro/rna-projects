@@ -17,6 +17,8 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     UserService userService
 
+    private String[] allowResources = ["/index.html", "/partials/login.html", "/login", "/", "/css/**", "/js/**", "/lib/**"]
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService)
@@ -24,7 +26,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) {
-        http.authorizeRequests().antMatchers("/index.html", "/home.html", "/login.html", "/").permitAll()
+        http.authorizeRequests().antMatchers(allowResources).permitAll()
         http.authorizeRequests().anyRequest().fullyAuthenticated()
         http.httpBasic()
         http.csrf().disable()

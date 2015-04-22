@@ -2,15 +2,21 @@
 
     <h2>{{ vehicle.registerNumber}}</h2>
 
-    <table ng-init="updateFullTanks(1)">
+    <table ng-init="updateFullTanks(1)" class="table table-striped">
         <thead>
             <tr>
-                <th>action</th>
+                <th>Date</th>
+                <th>Mileage</th>
+                <th>Cost</th>
+                <th>Quantity</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="fullTank in fullTanks">
-                <td>{{fullTank}}</td>
+                <td>{{fullTank.date | date:'dd/MM/yyyy'}}</td>
+                <td>{{fullTank.mileage}}</td>
+                <td>{{fullTank.cost}}</td>
+                <td>{{fullTank.quantity}}</td>
             </tr>
         </tbody>
     </table>
