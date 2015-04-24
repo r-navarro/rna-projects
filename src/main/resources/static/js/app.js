@@ -38,4 +38,4 @@ angular.module('demo-hockey', [ 'ngRoute', 'ngAnimate','ngResource', 'ui.bootstr
                         $location.path('/login');
                     }
                 });
-            }]);;
+            }]);

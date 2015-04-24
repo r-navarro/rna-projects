@@ -27,7 +27,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) {
         http.authorizeRequests().antMatchers(allowResources).permitAll()
-        http.authorizeRequests().antMatchers("/stats/**").anonymous()
+        http.authorizeRequests().antMatchers("/stats/**").permitAll()
         http.authorizeRequests().anyRequest().fullyAuthenticated()
         http.httpBasic()
         http.csrf().disable()

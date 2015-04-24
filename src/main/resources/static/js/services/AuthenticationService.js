@@ -15,16 +15,16 @@ angular.module('demo-hockey')
          };
 
          service.setCredentials = function (username, password) {
-			 var authdata = Base64.encode(username + ':' + password);
+			 var authData = Base64.encode(username + ':' + password);
 
 			 $rootScope.globals = {
 				 currentUser: {
 					 username: username,
-					 authdata: authdata
+					 authData: authData
 				 }
 			 };
 
-			 $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata;
+			 $http.defaults.headers.common['Authorization'] = 'Basic ' + authData;
 			 $cookieStore.put('globals', $rootScope.globals);
 		 };
 
