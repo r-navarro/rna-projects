@@ -48,6 +48,6 @@ class FullTankRepositoryTest extends Specification{
         def fullTanks = fullTankRepository.findByVehicleId(null, null)
 
         then:
-        fullTanks.size() == 0
+        fullTanks.getSize() == 0
     }
 }
