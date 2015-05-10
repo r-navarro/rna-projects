@@ -14,6 +14,11 @@ class UserRepositoryTest extends Specification {
     @Autowired
     UserRepository userRepository
 
+    def cleanup() {
+        userRepository.deleteAll()
+    }
+
+
     def "test userRepository is not null"() {
         expect:
         userRepository

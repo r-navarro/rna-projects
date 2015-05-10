@@ -1,6 +1,9 @@
 package com.carmanagement.controller
 
 import com.carmanagement.entities.Vehicle
+import com.carmanagement.exceptions.UserNotFoundException
+import com.carmanagement.exceptions.VehicleNotFoundException
+import com.carmanagement.repositories.UserRepository
 import com.carmanagement.repositories.VehicleRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -19,7 +22,10 @@ class VehicleController {
 	@Autowired
 	private VehicleRepository vehicleRepository
 
-	@RequestMapping(value = "/save", method=RequestMethod.POST)
+    @Autowired
+    private UserRepository userRepository
+
+    @RequestMapping(value = "/save", method=RequestMethod.POST)
 	def String create(@RequestBody Vehicle vehicle){
 
 		Vehicle savedVehicle = vehicleRepository.save(vehicle)
@@ -32,26 +38,38 @@ class VehicleController {
 
 		def vehicle = vehicleRepository.findOne(id)
 
-		Vehicle savedVehicle = vehicleRepository.delete(vehicle)
+        if (vehicle) {
+            vehicleRepository.delete(vehicle)
 
-		return "Deleted : ${id}"
+            return "Deleted : ${id}"
+        }
+        throw new VehicleNotFoundException(i)
 	}
 
 	@RequestMapping(value = "/list", method=RequestMethod.GET)
-	def List<Vehicle> findAll(){
+    @Secured("ROLE_ADMIN")
+	def Iterable<Vehicle> findAll(){
 
 		return vehicleRepository.findAll()
 	}
 
 	@RequestMapping(value = "/get/{id}", method=RequestMethod.GET)
 	def Vehicle get(@PathVariable Long id){
+        def vehicle = vehicleRepository.findOne(id)
 
-		return vehicleRepository.findOne(id)
+        if (vehicle) {
+            return vehicle
+        }
+        throw new VehicleNotFoundException(id)
 	}
 
-	@RequestMapping(value = "/list/{page}", method=RequestMethod.GET)
-	def Page<Vehicle> getVehicle(@PathVariable Integer page) {
+    @RequestMapping(value = "/list/{userId}/{page}", method = RequestMethod.GET)
+    def Page<Vehicle> getVehicle(@PathVariable Long userId, @PathVariable Integer page) {
+        if (!userRepository.findOne(userId)) {
+            throw new UserNotFoundException(userId)
+        }
 		PageRequest request = new PageRequest(page - 1, PAGE_SIZE, Sort.Direction.DESC, "registerNumber")
-		return vehicleRepository.findAll(request)
+        def result = vehicleRepository.findAllByUserId(userId, request)
+        return result
 	}
 }

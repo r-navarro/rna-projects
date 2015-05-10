@@ -11,7 +11,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-
 @ContextConfiguration(classes=PersistenceTestConfig.class)
 @ActiveProfiles("test")
 class FullTankRepositoryTest extends Specification{
@@ -21,6 +20,12 @@ class FullTankRepositoryTest extends Specification{
 
     @Autowired
     VehicleRepository vehicleRepository
+
+    def cleanup() {
+        fullTankRepository.deleteAll()
+        vehicleRepository.deleteAll()
+    }
+
 
     def "full tank repository is not null"(){
         expect:
