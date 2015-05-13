@@ -1,8 +1,8 @@
 package com.carmanagement.controller
 
 import com.carmanagement.entities.Vehicle
-import com.carmanagement.exceptions.UserNotFoundException
-import com.carmanagement.exceptions.VehicleNotFoundException
+import com.carmanagement.exceptions.ErrorCode
+import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.UserRepository
 import com.carmanagement.repositories.VehicleRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,11 +26,11 @@ class VehicleController {
     private UserRepository userRepository
 
     @RequestMapping(value = "/save", method=RequestMethod.POST)
-	def String create(@RequestBody Vehicle vehicle){
+    def Vehicle save(@RequestBody Vehicle vehicle) {
 
 		Vehicle savedVehicle = vehicleRepository.save(vehicle)
 
-		return "hello : ${savedVehicle?.id}"
+        return savedVehicle
 	}
 
 	@RequestMapping(value = "/delete", method=RequestMethod.DELETE)
@@ -43,7 +43,7 @@ class VehicleController {
 
             return "Deleted : ${id}"
         }
-        throw new VehicleNotFoundException(i)
+        throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: id)
 	}
 
 	@RequestMapping(value = "/list", method=RequestMethod.GET)
@@ -60,13 +60,13 @@ class VehicleController {
         if (vehicle) {
             return vehicle
         }
-        throw new VehicleNotFoundException(id)
+        throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: id)
 	}
 
     @RequestMapping(value = "/list/{userId}/{page}", method = RequestMethod.GET)
     def Page<Vehicle> getVehicle(@PathVariable Long userId, @PathVariable Integer page) {
         if (!userRepository.findOne(userId)) {
-            throw new UserNotFoundException(userId)
+            throw new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: userId)
         }
 		PageRequest request = new PageRequest(page - 1, PAGE_SIZE, Sort.Direction.DESC, "registerNumber")
         def result = vehicleRepository.findAllByUserId(userId, request)
