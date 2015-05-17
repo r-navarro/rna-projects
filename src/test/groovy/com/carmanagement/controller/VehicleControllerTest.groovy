@@ -39,7 +39,7 @@ class VehicleControllerTest extends Specification {
         mockMvc = MockMvcBuilders.standaloneSetup(vehicleController).setHandlerExceptionResolvers(createExceptionResolver()).build()
     }
 
-    private ExceptionHandlerExceptionResolver createExceptionResolver() {
+    private static ExceptionHandlerExceptionResolver createExceptionResolver() {
         ExceptionHandlerExceptionResolver exceptionResolver = new ExceptionHandlerExceptionResolver() {
             protected ServletInvocableHandlerMethod getExceptionHandlerMethod(HandlerMethod handlerMethod, Exception exception) {
                 Method method = new ExceptionHandlerMethodResolver(GlobalExceptionHandler).resolveMethod(exception)
@@ -130,7 +130,6 @@ class VehicleControllerTest extends Specification {
     def "Test delete"() {
         setup:
         vehicleController.vehicleRepository.findOne(_) >> new Vehicle(id: 1)
-        def json = new JsonBuilder(new Vehicle(registerNumber: 1245)).toPrettyString()
 
         when:
         def response = mockMvc.perform(MRB.delete("/vehicle/delete").contentType(MediaType.APPLICATION_JSON).content("1"))
@@ -149,5 +148,17 @@ class VehicleControllerTest extends Specification {
 
         then:
         response.andExpect(MRM.status().isNotFound())
+    }
+
+    def "Test find all"() {
+        setup:
+        vehicleController.vehicleRepository.findAll() >> [new Vehicle(id: 1, registerNumber: "register1"), new Vehicle(id: 2, registerNumber: "register2")]
+
+        when:
+        def response = mockMvc.perform(MRB.get("/vehicle/list"))
+
+        then:
+        response.andExpect(MRM.status().isOk())
+        response.andExpect(MRM.jsonPath("\$").isArray())
     }
 }
