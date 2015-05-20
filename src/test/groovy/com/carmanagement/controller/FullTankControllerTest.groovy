@@ -8,6 +8,7 @@ import com.carmanagement.repositories.VehicleRepository
 import groovy.json.JsonBuilder
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -52,6 +53,7 @@ class FullTankControllerTest extends Specification {
             }
         }
         exceptionResolver.afterPropertiesSet()
+        exceptionResolver.getMessageConverters().add(new MappingJackson2HttpMessageConverter())
         return exceptionResolver
     }
 
@@ -80,6 +82,7 @@ class FullTankControllerTest extends Specification {
 
         then:
         response.andExpect(MRM.status().isNotFound())
+        response.andExpect(MRM.jsonPath("request").value("${baseUrl}/get/1".toString()))
     }
 
     def "Test get action with unknown fullTank"() {

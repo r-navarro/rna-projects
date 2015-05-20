@@ -8,6 +8,7 @@ import com.carmanagement.repositories.VehicleRepository
 import groovy.json.JsonBuilder
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -47,6 +48,7 @@ class VehicleControllerTest extends Specification {
             }
         }
         exceptionResolver.afterPropertiesSet()
+        exceptionResolver.getMessageConverters().add(new MappingJackson2HttpMessageConverter())
         return exceptionResolver
     }
 
