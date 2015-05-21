@@ -1,6 +1,5 @@
 package com.carmanagement.controller
 
-import com.carmanagement.config.PersistenceTestConfig
 import com.carmanagement.entities.User
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.repositories.UserRepository
@@ -8,28 +7,10 @@ import com.carmanagement.repositories.VehicleRepository
 import groovy.json.JsonBuilder
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders as MRB
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers as MRM
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.method.HandlerMethod
-import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver
-import org.springframework.web.servlet.config.annotation.EnableWebMvc
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver
-import org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod
-import spock.lang.Specification
 
-import java.lang.reflect.Method
-
-@ContextConfiguration(classes = PersistenceTestConfig.class)
-@EnableWebMvc
-@ActiveProfiles("test")
-class VehicleControllerTest extends Specification {
-
-    MockMvc mockMvc
+class VehicleControllerTest extends AbstractControllerTest {
 
     VehicleController vehicleController
 
@@ -37,21 +18,8 @@ class VehicleControllerTest extends Specification {
         vehicleController = new VehicleController()
         vehicleController.vehicleRepository = Mock(VehicleRepository)
         vehicleController.userRepository = Mock(UserRepository)
-        mockMvc = MockMvcBuilders.standaloneSetup(vehicleController).setHandlerExceptionResolvers(createExceptionResolver()).build()
+        setupMockMvc(vehicleController)
     }
-
-    private static ExceptionHandlerExceptionResolver createExceptionResolver() {
-        ExceptionHandlerExceptionResolver exceptionResolver = new ExceptionHandlerExceptionResolver() {
-            protected ServletInvocableHandlerMethod getExceptionHandlerMethod(HandlerMethod handlerMethod, Exception exception) {
-                Method method = new ExceptionHandlerMethodResolver(GlobalExceptionHandler).resolveMethod(exception)
-                return new ServletInvocableHandlerMethod(new GlobalExceptionHandler(), method)
-            }
-        }
-        exceptionResolver.afterPropertiesSet()
-        exceptionResolver.getMessageConverters().add(new MappingJackson2HttpMessageConverter())
-        return exceptionResolver
-    }
-
 
     def "Test get action"() {
         setup:

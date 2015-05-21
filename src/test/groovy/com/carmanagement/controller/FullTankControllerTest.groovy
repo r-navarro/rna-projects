@@ -1,6 +1,5 @@
 package com.carmanagement.controller
 
-import com.carmanagement.config.PersistenceTestConfig
 import com.carmanagement.entities.FullTank
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.repositories.FullTankRepository
@@ -9,27 +8,16 @@ import groovy.json.JsonBuilder
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders as MRB
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers as MRM
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver
-import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver
 import org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod
-import spock.lang.Specification
 
 import java.lang.reflect.Method
 
-@ContextConfiguration(classes = PersistenceTestConfig.class)
-@EnableWebMvc
-@ActiveProfiles("test")
-class FullTankControllerTest extends Specification {
-
-    MockMvc mockMvc
+class FullTankControllerTest extends AbstractControllerTest {
 
     FullTankController fullTankController
 
@@ -42,7 +30,7 @@ class FullTankControllerTest extends Specification {
         fullTankController = new FullTankController()
         fullTankController.fullTankRepository = Mock(FullTankRepository)
         fullTankController.vehicleRepository = Mock(VehicleRepository)
-        mockMvc = MockMvcBuilders.standaloneSetup(fullTankController).setHandlerExceptionResolvers(createExceptionResolver()).build()
+        setupMockMvc(fullTankController)
     }
 
     private static ExceptionHandlerExceptionResolver createExceptionResolver() {
