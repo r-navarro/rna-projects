@@ -7,15 +7,8 @@ import com.carmanagement.repositories.VehicleRepository
 import groovy.json.JsonBuilder
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders as MRB
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers as MRM
-import org.springframework.web.method.HandlerMethod
-import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver
-import org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod
-
-import java.lang.reflect.Method
 
 class FullTankControllerTest extends AbstractControllerTest {
 
@@ -31,18 +24,6 @@ class FullTankControllerTest extends AbstractControllerTest {
         fullTankController.fullTankRepository = Mock(FullTankRepository)
         fullTankController.vehicleRepository = Mock(VehicleRepository)
         setupMockMvc(fullTankController)
-    }
-
-    private static ExceptionHandlerExceptionResolver createExceptionResolver() {
-        ExceptionHandlerExceptionResolver exceptionResolver = new ExceptionHandlerExceptionResolver() {
-            protected ServletInvocableHandlerMethod getExceptionHandlerMethod(HandlerMethod handlerMethod, Exception exception) {
-                Method method = new ExceptionHandlerMethodResolver(GlobalExceptionHandler).resolveMethod(exception)
-                return new ServletInvocableHandlerMethod(new GlobalExceptionHandler(), method)
-            }
-        }
-        exceptionResolver.afterPropertiesSet()
-        exceptionResolver.getMessageConverters().add(new MappingJackson2HttpMessageConverter())
-        return exceptionResolver
     }
 
 
