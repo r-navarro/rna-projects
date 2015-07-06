@@ -3,6 +3,7 @@ package com.carmanagement.repositories
 import com.carmanagement.config.PersistenceTestConfig
 import com.carmanagement.entities.User
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
@@ -26,12 +27,21 @@ class UserRepositoryTest extends Specification {
 
     def "test find by username"() {
         when:
-        userRepository.save(new User(username: "toto"))
-        def user = userRepository.findByUsername("toto")
-        def userNull = userRepository.findByUsername("tata")
+        userRepository.save(new User(name: "toto"))
+        def user = userRepository.findByName("toto")
+        def userNull = userRepository.findByName("tata")
 
         then:
         user
         !userNull
+    }
+
+    def "test user name is unique"() {
+        when:
+        userRepository.save(new User(name: "toto"))
+        userRepository.save(new User(name: "toto"))
+
+        then:
+        thrown(DataIntegrityViolationException)
     }
 }

@@ -18,8 +18,8 @@ class UserController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public User login(@RequestBody User user) {
-        log.info("looking for ${user.username}")
-        User databaseUser = userRepository.findByUsername(user.username)
+        log.info("looking for ${user.name}")
+        User databaseUser = userRepository.findByName(user.name)
         if (databaseUser && databaseUser.password == user.password) {
             return databaseUser
         }

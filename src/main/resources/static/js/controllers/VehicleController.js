@@ -1,5 +1,5 @@
 angular.module('demo-hockey').controller('VehicleController',
-		function($scope, VehicleService, $routeParams) {
+		function($scope, VehicleService, $routeParams, $location) {
 
 			$scope.vehicles;
 			$scope.totalPages = 0;
@@ -22,7 +22,7 @@ angular.module('demo-hockey').controller('VehicleController',
 
 			$scope.create = function(vehicle){
 				VehicleService.save(vehicle);
-				
+				$location.path('/list');
 			}
 
 		}

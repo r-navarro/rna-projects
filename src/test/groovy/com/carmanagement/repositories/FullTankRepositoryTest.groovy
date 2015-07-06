@@ -2,6 +2,7 @@ package com.carmanagement.repositories
 
 import com.carmanagement.config.PersistenceTestConfig
 import com.carmanagement.entities.FullTank
+import com.carmanagement.entities.User
 import com.carmanagement.entities.Vehicle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -21,9 +22,14 @@ class FullTankRepositoryTest extends Specification{
     @Autowired
     VehicleRepository vehicleRepository
 
+    @Autowired
+    UserRepository userRepository
+
+
     def cleanup() {
         fullTankRepository.deleteAll()
         vehicleRepository.deleteAll()
+        userRepository.deleteAll()
     }
 
 
@@ -34,7 +40,8 @@ class FullTankRepositoryTest extends Specification{
 
     def "find full tank by vehicle test"(){
         when :
-        def vehicle = vehicleRepository.save(new Vehicle(registerNumber: 1))
+        def user = userRepository.save(new User(name: "test"))
+        def vehicle = vehicleRepository.save(new Vehicle(registerNumber: 1, user: user))
         fullTankRepository.save(new FullTank(vehicle: vehicle, cost: 1))
         fullTankRepository.save(new FullTank(vehicle: vehicle, cost: 2))
         fullTankRepository.save(new FullTank(vehicle: vehicle, cost: 3))

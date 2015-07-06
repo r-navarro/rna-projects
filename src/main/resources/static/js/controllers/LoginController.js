@@ -2,7 +2,7 @@ angular.module('demo-hockey').controller('LoginController',
 		function($scope, $rootScope, $location, AuthenticationService) {
 
 			// reset login status
-            AuthenticationService.clearCredentials();
+            //AuthenticationService.clearCredentials();
 
             $scope.login = function () {
                 $scope.dataLoading = true;

@@ -18,12 +18,12 @@ class ApplicationConfig implements InitializingBean {
 
     @Override
     void afterPropertiesSet() throws Exception {
-        if (!userRepository.findByUsername("admin")) {
-            userRepository.save(new User(username: "admin", password: "admin"))
+        if (!userRepository.findByName("admin")) {
+            userRepository.save(new User(name: "admin", password: "admin"))
         }
 
-        if (!userRepository.findByUsername("toto")) {
-            userRepository.save(new User(username: "toto", password: "toto"))
+        if (!userRepository.findByName("toto")) {
+            userRepository.save(new User(name: "toto", password: "toto"))
         }
     }
 }

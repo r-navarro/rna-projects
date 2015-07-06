@@ -10,4 +10,6 @@ interface VehicleRepository extends PagingAndSortingRepository<Vehicle, Long> {
 	Vehicle findByRegisterNumber(String registerNumber)
 
     Page<Vehicle> findAllByUserId(Long userId, Pageable pageable)
+
+    Page<Vehicle> findAllByUserName(String username, Pageable pageable)
 }

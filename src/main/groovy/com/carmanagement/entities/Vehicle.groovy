@@ -1,11 +1,6 @@
 package com.carmanagement.entities
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*
 
 @Entity
 class Vehicle {
@@ -30,6 +25,7 @@ class Vehicle {
     List<Action> actions
 	
 	@ManyToOne
+	@JoinColumn(nullable = false)
     User user
 
 

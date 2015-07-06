@@ -1,7 +1,12 @@
 package com.carmanagement.controller
 
 import com.carmanagement.config.PersistenceTestConfig
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.security.authentication.TestingAuthenticationToken
+import org.springframework.security.core.authority.AuthorityUtils
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.User
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -21,7 +26,12 @@ abstract class AbstractControllerTest extends Specification {
     MockMvc mockMvc
 
     def setupMockMvc(def controller) {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).setHandlerExceptionResolvers(createExceptionResolver()).build()
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).setHandlerExceptionResolvers(createExceptionResolver())
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver()).build()
+        User user = new User("user", "", AuthorityUtils.createAuthorityList("ROLE_USER"));
+        TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(user, null);
+        SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
+
     }
 
     private static ExceptionHandlerExceptionResolver createExceptionResolver() {

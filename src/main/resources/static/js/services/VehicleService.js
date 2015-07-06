@@ -4,24 +4,24 @@ angular.module('demo-hockey')
 				
 		list = function(page) {
 			if(page){
-				return DaoService.getData("/vehicle/list/"+page, 'GET').then(function(response){
+				return DaoService.getData("/vehicles/?page="+(page-1), 'GET').then(function(response){
 					return response.data;
 				});
 			}else{
-				return DaoService.getData("/vehicle/list", 'GET').then(function(response){
+				return DaoService.getData("/vehicles/list", 'GET').then(function(response){
 					return response.data;
 				});
 			}
 		}
 		
 		save = function(vehicle) {
-			return DaoService.getData("/vehicle/save", 'POST', vehicle).then(function(response){
+			return DaoService.getData("/vehicles", 'POST', vehicle).then(function(response){
 				return response.data;
 			});
 		}
 
 		get = function(idVehicle){
-		    return DaoService.getData("/vehicle/get/"+idVehicle, 'GET').then(function(response){
+		    return DaoService.getData("/vehicles/"+idVehicle, 'GET').then(function(response){
 		        return response.data;
 		    });
 		}

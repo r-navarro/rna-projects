@@ -22,6 +22,7 @@ class VehicleRepositoryTest extends Specification {
 
     def cleanup() {
         vehicleRepository.deleteAll()
+        userRepository.deleteAll()
     }
 
     def "test repository is not null"(){
@@ -31,7 +32,7 @@ class VehicleRepositoryTest extends Specification {
 
 	def "test repository find by register number"(){
 		when:
-		vehicleRepository.save(new Vehicle(registerNumber:"r1"))
+        vehicleRepository.save(new Vehicle(registerNumber: "r1", user: userRepository.save(new User(name: "toto"))))
 
 		def vehicle = vehicleRepository.findByRegisterNumber("r1")
 		def vehicleNull = vehicleRepository.findByRegisterNumber("r2")
@@ -44,12 +45,13 @@ class VehicleRepositoryTest extends Specification {
 
     def "test find all by user"() {
         setup:
-        def user = userRepository.save(new User(username: "test"))
+        def user = userRepository.save(new User(name: "test"))
+        def user2 = userRepository.save(new User(name: "toto"))
         (0..10).each {
             if (it % 2 == 0) {
                 vehicleRepository.save(new Vehicle(user: user, registerNumber: it))
             } else {
-                vehicleRepository.save(new Vehicle(registerNumber: it))
+                vehicleRepository.save(new Vehicle(registerNumber: it, user: user2))
             }
         }
         PageRequest pageable = new PageRequest(0, 10, Sort.Direction.DESC, "registerNumber")
@@ -69,9 +71,33 @@ class VehicleRepositoryTest extends Specification {
 
         when:
         def result = vehicleRepository.findAllByUserId(1, pageable)
+        def resultByName = vehicleRepository.findAllByUserName("name", pageable)
 
         then:
-        result.totalElements == 0
+        !result.totalElements
+        !resultByName.totalElements
+
+    }
+
+    def "test find all by user name"() {
+        setup:
+        def user = userRepository.save(new User(name: "test"))
+        def user2 = userRepository.save(new User(name: "toto"))
+        (0..10).each {
+            if (it % 2 == 0) {
+                vehicleRepository.save(new Vehicle(user: user, registerNumber: it))
+            } else {
+                vehicleRepository.save(new Vehicle(registerNumber: it, user: user2))
+            }
+        }
+        PageRequest pageable = new PageRequest(0, 10, Sort.Direction.DESC, "registerNumber")
+
+        when:
+        def result = vehicleRepository.findAllByUserName(user.name, pageable)
+
+        then:
+        result.totalElements == 6
+        result.content.collect { it.registerNumber }.sort().join(",") == "0,10,2,4,6,8"
 
     }
 }

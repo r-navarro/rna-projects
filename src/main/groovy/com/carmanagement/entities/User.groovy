@@ -1,10 +1,6 @@
 package com.carmanagement.entities
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*
 
 @Entity
 class User {
@@ -12,9 +8,9 @@ class User {
 	@Id
 	@GeneratedValue
 	Long id
-	
-	@Column
-    String username
+
+	@Column(unique = true)
+	String name
 	
 	@Column
     String password
