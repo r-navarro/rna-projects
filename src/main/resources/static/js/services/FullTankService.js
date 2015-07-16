@@ -4,24 +4,24 @@ angular.module('demo-hockey')
 				
 		list = function(vehicleId, page) {
 			if(page){
-				return DaoService.getData("/fullTank/list/"+vehicleId+ "/" +page, 'GET').then(function(response){
+				return DaoService.getData("/vehicles/"+vehicleId+"/fullTanks/?page="+(page-1), 'GET').then(function(response){
 					return response.data;
 				});
 			}else{
-				return DaoService.getData("/fullTank/list/"+vehicleId, 'GET').then(function(response){
+				return DaoService.getData("/vehicles/"+vehicleId+"/fullTanks/", 'GET').then(function(response){
 					return response.data;
 				});
 			}
 		}
 		
-		save = function(fullTank) {
-			return DaoService.getData("/fullTank/save", 'POST', fullTank).then(function(response){
+		save = function(vehicleId, fullTank) {
+			return DaoService.getData("/vehicles/"+vehicleId+"/fullTanks", 'POST', fullTank).then(function(response){
 				return response.data;
 			});
 		}
 
-		get = function(idFullTank){
-		    return DaoService.getData("/fullTank/get/"+idFullTank, 'GET').then(function(response){
+		get = function(vehicleId, idFullTank){
+		    return DaoService.getData("vehicles/"+vehicleId+"/fullTanks/"+idFullTank, 'GET').then(function(response){
 		        return response.data;
 		    });
 		}

@@ -14,7 +14,7 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     FullTankController fullTankController
 
-    String baseUrl = "/vehicle/1/fullTank"
+    String baseUrl = "/vehicles/1/fullTanks"
 
     Vehicle vehicle = new Vehicle(id: 1)
 
@@ -34,7 +34,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         fullTankController.fullTankRepository.findOne(1) >> fullTank
 
         when:
-        def response = mockMvc.perform(MRB.get("${baseUrl}/get/1"))
+        def response = mockMvc.perform(MRB.get("$baseUrl/1"))
 
         then:
         response.andExpect(MRM.status().isOk())
@@ -47,11 +47,11 @@ class FullTankControllerTest extends AbstractControllerTest {
         fullTankController.vehicleRepository.findOne(1) >> null
 
         when:
-        def response = mockMvc.perform(MRB.get("${baseUrl}/get/1"))
+        def response = mockMvc.perform(MRB.get("$baseUrl/1"))
 
         then:
         response.andExpect(MRM.status().isNotFound())
-        response.andExpect(MRM.jsonPath("request").value("${baseUrl}/get/1".toString()))
+        response.andExpect(MRM.jsonPath("request").value("$baseUrl/1".toString()))
     }
 
     def "Test get action with unknown fullTank"() {
@@ -60,7 +60,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         fullTankController.fullTankRepository.findOne(1) >> null
 
         when:
-        def response = mockMvc.perform(MRB.get("${baseUrl}/get/1"))
+        def response = mockMvc.perform(MRB.get("$baseUrl/1"))
 
         then:
         response.andExpect(MRM.status().isNotFound())
@@ -76,7 +76,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         fullTankController.fullTankRepository.findByVehicleId(1, _) >> new PageImpl(fullTanks)
 
         when:
-        def response = mockMvc.perform(MRB.get("${baseUrl}/list/1"))
+        def response = mockMvc.perform(MRB.get("$baseUrl/?page=0"))
 
         then:
         response.andExpect(MRM.status().isOk())
@@ -88,7 +88,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         fullTankController.vehicleRepository.findOne(_) >> null
 
         when:
-        def response = mockMvc.perform(MRB.get("${baseUrl}/list/1"))
+        def response = mockMvc.perform(MRB.get("$baseUrl/?page=0"))
 
         then:
         response.andExpect(MRM.status().isNotFound())
@@ -101,7 +101,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         def json = new JsonBuilder(new FullTank(id: 1245)).toPrettyString()
 
         when:
-        def response = mockMvc.perform(MRB.post("${baseUrl}/save").contentType(MediaType.APPLICATION_JSON).content(json))
+        def response = mockMvc.perform(MRB.post("$baseUrl").contentType(MediaType.APPLICATION_JSON).content(json))
 
         then:
         response.andExpect(MRM.status().isOk())
@@ -113,7 +113,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         fullTankController.vehicleRepository.findOne(1) >> null
 
         when:
-        def response = mockMvc.perform(MRB.post("${baseUrl}/save").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        def response = mockMvc.perform(MRB.post("$baseUrl").contentType(MediaType.APPLICATION_JSON).content("{}"))
 
         then:
         response.andExpect(MRM.status().isNotFound())
@@ -124,7 +124,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         fullTankController.vehicleRepository.findOne(1) >> vehicle
 
         when:
-        def response = mockMvc.perform(MRB.post("${baseUrl}/save").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        def response = mockMvc.perform(MRB.post("$baseUrl").contentType(MediaType.APPLICATION_JSON).content("{}"))
 
         then:
         response.andExpect(MRM.status().isOk())

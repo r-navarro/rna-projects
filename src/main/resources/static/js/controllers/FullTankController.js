@@ -1,20 +1,16 @@
 angular.module('demo-hockey').controller('FullTankController',
-		function($scope, FullTankService, VehicleService, $routeParams) {
+		function($scope, FullTankService, VehicleService, $routeParams, $location) {
 
-			$scope.fullTank = {
-			    vehicle:$routeParams.vehicleId
-			};
+			$scope.fullTank = {};
 
 			$scope.vehicleId = $routeParams.vehicleId;
 
             $scope.create = function(fullTank){
-                FullTankService.save(fullTank);
+                FullTankService.save($scope.vehicleId, fullTank);
+                $location.path('/show/'+$scope.vehicleId);
             };
 
             $scope.init = function(){
-                VehicleService.get($scope.vehicleId).then(function(vehicle){
-                    $scope.fullTank.vehicle = vehicle;
-                });
                 $scope.fullTank.date = new Date();
             };
 
