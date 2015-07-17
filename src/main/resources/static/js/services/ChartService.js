@@ -94,11 +94,11 @@ angular.module('demo-hockey')
 				        .style("stroke", "white")
 				        .style("stroke-width", "3.5px")
 				        .style("opacity", 0.8)
-				        .attr("dx", 8)
+				        .attr("dx", -50)
 				        .attr("dy", "-.3em");
 				    focus.append("text")
 				        .attr("class", "y2")
-				        .attr("dx", 8)
+				        .attr("dx", -50)
 				        .attr("dy", "-.3em");
 
 				    // place the date at the intersection
@@ -107,11 +107,11 @@ angular.module('demo-hockey')
 				        .style("stroke", "white")
 				        .style("stroke-width", "3.5px")
 				        .style("opacity", 0.8)
-				        .attr("dx", 8)
+				        .attr("dx", -50)
 				        .attr("dy", "1em");
 				    focus.append("text")
 				        .attr("class", "y4")
-				        .attr("dx", 8)
+				        .attr("dx", -50)
 				        .attr("dy", "1em");
 
 				// append the rectangle to capture mouse
@@ -129,8 +129,13 @@ angular.module('demo-hockey')
 
 				    function mousemove() {
 						var x0 = x.invert(d3.mouse(this)[0]),
-						    i = bisectDate(data, x0, 1),
-						    d0 = data[i - 1],
+						    i = bisectDate(data, x0, 1);
+
+						if (i >= data.length -1) {
+							i = data.length -1;
+						}
+
+						var d0 = data[i - 1],
 						    d1 = data[i],
 						    d = x0 - d0.date > d1.date - x0 ? d1 : d0;
 
