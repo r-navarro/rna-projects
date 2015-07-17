@@ -5,6 +5,7 @@ import com.carmanagement.entities.Vehicle
 import com.carmanagement.repositories.FullTankRepository
 import com.carmanagement.repositories.VehicleRepository
 import groovy.json.JsonBuilder
+import groovy.time.TimeCategory
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders as MRB
@@ -131,39 +132,24 @@ class FullTankControllerTest extends AbstractControllerTest {
         response.andExpect(MRM.content().string(""))
     }
 
-//    def "Test delete"() {
-//        setup:
-//        fullTankController.vehicleRepository.findOne(_) >> new Vehicle(id: 1)
-//        def json = new JsonBuilder(new Vehicle(registerNumber: 1245)).toPrettyString()
-//
-//        when:
-//        def response = mockMvc.perform(MRB.delete("/vehicle/delete").contentType(MediaType.APPLICATION_JSON).content("1"))
-//
-//        then:
-//        response.andExpect(MRM.status().isOk())
-//        response.andExpect(MRM.content().string("Deleted : 1"))
-//    }
-//
-//    def "Test delete with vehicle not found"() {
-//        setup:
-//        fullTankController.vehicleRepository.findOne(_) >> null
-//
-//        when:
-//        def response = mockMvc.perform(MRB.delete("/vehicle/delete").contentType(MediaType.APPLICATION_JSON).content("1"))
-//
-//        then:
-//        response.andExpect(MRM.status().isNotFound())
-//    }
-//
-//    def "Test find all"() {
-//        setup:
-//        fullTankController.vehicleRepository.findAll() >> [new Vehicle(id:1, registerNumber: "register1"), new Vehicle(id:2, registerNumber: "register2")]
-//
-//        when:
-//        def response = mockMvc.perform(MRB.get("/vehicle/list"))
-//
-//        then:
-//        response.andExpect(MRM.status().isOk())
-//        response.andExpect(MRM.jsonPath("\$").isArray())
-//    }
+    def "Test cost stats"(){
+        setup:
+        fullTankController.vehicleRepository.findOne(1) >> vehicle
+        def date1 = new Date()
+        def date2 = new Date()
+        use(TimeCategory) {
+            date2 = date1 + 1.month
+        }
+        fullTankController.fullTankRepository.findAllByVehicleId(1) >> [new FullTank(cost: 1, date: date1), new FullTank(cost: 2, date: date2)]
+
+        when:
+        def response = mockMvc.perform(MRB.get("$baseUrl/costStats"))
+
+        then:
+        response.andExpect(MRM.status().isOk())
+        response.andExpect(MRM.jsonPath('$[0].cost').value("1.0"))
+        response.andExpect(MRM.jsonPath('$[0].date').value(date1.format('dd/MM/yyyy')))
+        response.andExpect(MRM.jsonPath('$[1].cost').value("2.0"))
+        response.andExpect(MRM.jsonPath('$[1].date').value(date2.format('dd/MM/yyyy')))
+    }
 }

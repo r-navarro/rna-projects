@@ -1,5 +1,6 @@
 package com.carmanagement.controller
 
+import com.carmanagement.dto.CostStats
 import com.carmanagement.entities.FullTank
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
@@ -60,5 +61,21 @@ class FullTankController {
         }
         fullTank.vehicle = vehicle
         return fullTankRepository.save(fullTank)
+    }
+
+    @RequestMapping(value = "{vehicleId}/fullTanks/costStats", method = RequestMethod.GET)
+    def List getCostStats(@PathVariable("vehicleId") Long vehicleId) {
+        if (!vehicleRepository.findOne(vehicleId)) {
+            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
+        }
+
+        def fullTanks =  fullTankRepository.findAllByVehicleId(vehicleId)
+        def stats = []
+        fullTanks = fullTanks.collect {[it.cost, it.date]}
+        fullTanks.each {
+            stats << new CostStats(cost: it[0], date: it[1].format('dd/MM/yyyy'))
+        }
+
+        return stats
     }
 }

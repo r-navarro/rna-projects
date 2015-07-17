@@ -62,4 +62,19 @@ class FullTankRepositoryTest extends Specification{
         then:
         fullTanks.getSize() == 0
     }
+
+    def "find all by vehicle test"(){
+        setup:
+        def user = userRepository.save(new User(name: "test"))
+        def vehicle = vehicleRepository.save(new Vehicle(registerNumber: 1, user: user))
+        5.times {
+            fullTankRepository.save(new FullTank(vehicle: vehicle, cost: it))
+        }
+
+        when:
+        def fullTanks = fullTankRepository.findAllByVehicleId(vehicle.id)
+
+        then:
+        fullTanks.size() == 5
+    }
 }

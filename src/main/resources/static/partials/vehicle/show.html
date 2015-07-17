@@ -21,8 +21,9 @@
         </tbody>
     </table>
     <pagination total-items="fullTankTotalElements" ng-model="fullTankCurrentPage" ng-change="fullTankPageChanged()" items-per-page="fullTankItemsPerPage"></pagination>
+
     <nav>
         <a class="btn btn-default" href="#/{{vehicleId}}/ft/create" role="button">Create</a>
     </nav>
-
+    <svg id="chart" width="1000" height="500"></svg>
 </article>

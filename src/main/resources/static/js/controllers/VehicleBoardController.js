@@ -1,5 +1,5 @@
 angular.module('demo-hockey').controller('VehicleBoardController',
-		function($scope, VehicleService, FullTankService, $routeParams) {
+		function($scope, VehicleService, FullTankService, $routeParams, ChartService) {
 
 			$scope.fullTankTotalPages = 0;
 			$scope.fullTankCurrentPage = 1;
@@ -27,6 +27,10 @@ angular.module('demo-hockey').controller('VehicleBoardController',
                 VehicleService.get($scope.vehicleId).then(function(vehicle){
                     $scope.vehicle = vehicle;
                 });
+
+				FullTankService.costStats($scope.vehicleId).then(function(data){
+					ChartService.drawLineChart(data, "#chart");
+				});
 			}
 			
 

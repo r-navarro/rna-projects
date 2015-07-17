@@ -7,6 +7,7 @@ angular.module('demo-hockey').controller('VehicleController',
 			$scope.totalElements = 0;
 			$scope.itemsPerPage = 0;
 
+
 			$scope.updateList = function(page){
 				VehicleService.list(page).then(function(list){
 					$scope.vehicles = list.content;

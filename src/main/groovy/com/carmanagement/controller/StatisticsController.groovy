@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController
 class StatisticsController {
 
 	@RequestMapping("/ko")
-	@Secured("ROLE_ANONYMOUS")
 	def String logKo(@RequestBody String report) {
 		log.info "log ko ${report}"
 
