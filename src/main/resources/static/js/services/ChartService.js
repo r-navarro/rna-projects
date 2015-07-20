@@ -5,7 +5,7 @@ angular.module('demo-hockey')
 
 				// Set the dimensions of the canvas / graph
 				var margin = {top: 30, right: 20, bottom: 30, left: 50},
-				    width = 600 - margin.left - margin.right,
+				    width = 425 - margin.left - margin.right,
 				    height = 270 - margin.top - margin.bottom;
 
 				// Parse the date / time
@@ -94,11 +94,11 @@ angular.module('demo-hockey')
 				        .style("stroke", "white")
 				        .style("stroke-width", "3.5px")
 				        .style("opacity", 0.8)
-				        .attr("dx", 8)
+				        .attr("dx", -25)
 				        .attr("dy", "-.3em");
 				    focus.append("text")
 				        .attr("class", "y2")
-				        .attr("dx", 8)
+				        .attr("dx", -25)
 				        .attr("dy", "-.3em");
 
 				    // place the date at the intersection
@@ -107,11 +107,11 @@ angular.module('demo-hockey')
 				        .style("stroke", "white")
 				        .style("stroke-width", "3.5px")
 				        .style("opacity", 0.8)
-				        .attr("dx", 8)
+				        .attr("dx", -50)
 				        .attr("dy", "1em");
 				    focus.append("text")
 				        .attr("class", "y4")
-				        .attr("dx", 8)
+				        .attr("dx", -50)
 				        .attr("dy", "1em");
 
 				// append the rectangle to capture mouse
