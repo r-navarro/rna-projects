@@ -129,8 +129,13 @@ angular.module('demo-hockey')
 
 				    function mousemove() {
 						var x0 = x.invert(d3.mouse(this)[0]),
-						    i = bisectDate(data, x0, 1),
-						    d0 = data[i - 1],
+						    i = bisectDate(data, x0, 1);
+
+						if (i >= data.length -1) {
+							i = data.length -1;
+						}
+
+						var d0 = data[i - 1],
 						    d1 = data[i],
 						    d = x0 - d0.date > d1.date - x0 ? d1 : d0;
 

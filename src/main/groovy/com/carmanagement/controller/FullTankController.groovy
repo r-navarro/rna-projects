@@ -71,7 +71,7 @@ class FullTankController {
 
         def fullTanks =  fullTankRepository.findAllByVehicleId(vehicleId)
         def stats = []
-        fullTanks = fullTanks.collect {[it.cost, it.date]}
+        fullTanks = fullTanks.sort{it.date}.collect {[it.cost, it.date]}
         fullTanks.each {
             stats << new CostStats(cost: it[0], date: it[1].format('dd/MM/yyyy'))
         }

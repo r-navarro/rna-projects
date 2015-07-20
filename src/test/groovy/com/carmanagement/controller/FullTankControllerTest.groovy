@@ -140,7 +140,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         use(TimeCategory) {
             date2 = date1 + 1.month
         }
-        fullTankController.fullTankRepository.findAllByVehicleId(1) >> [new FullTank(cost: 1, date: date1), new FullTank(cost: 2, date: date2)]
+        fullTankController.fullTankRepository.findAllByVehicleId(1) >> [new FullTank(cost: 2, date: date2), new FullTank(cost: 1, date: date1)]
 
         when:
         def response = mockMvc.perform(MRB.get("$baseUrl/costStats"))
