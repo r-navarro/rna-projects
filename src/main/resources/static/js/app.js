@@ -1,5 +1,5 @@
 'use strict';
-angular.module('demo-hockey', [ 'ngRoute', 'ngAnimate','ngResource', 'ui.bootstrap', 'ngCookies' ]).config(
+angular.module('demo-hockey', [ 'ngRoute', 'ngAnimate','ngResource', 'ui.bootstrap', 'ngCookies', 'nvd3ChartDirectives' ]).config(
 		[ '$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
 			$routeProvider.when('/home', {
 				templateUrl : 'partials/home.html',

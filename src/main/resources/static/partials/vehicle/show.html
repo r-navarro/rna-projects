@@ -25,5 +25,30 @@
     <nav>
         <a class="btn btn-default" href="#/{{vehicleId}}/ft/create" role="button">Create</a>
     </nav>
-    <svg id="chart" width="425" height="270"></svg>
+    <div class="row">
+        <div class="col-md-6">
+            <nvd3-line-chart
+                data="costData"
+                width="425"
+                height="270"
+                xAxisTickFormat="xAxisTickFormat_Date_Format()"
+                showXAxis="true"
+                showYAxis="true"
+                useInteractiveGuideLine="true"
+                tooltips="true">
+            <svg></svg>
+        </div>
+        <div class="col-md-6">
+            <nvd3-line-chart
+                data="distanceData"
+                width="425"
+                height="270"
+                xAxisTickFormat="xAxisTickFormat_Date_Format()"
+                showXAxis="true"
+                showYAxis="true"
+                useInteractiveGuideLine="true"
+                tooltips="true">
+            <svg></svg>
+        </div>
+    </div>
 </article>

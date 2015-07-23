@@ -32,11 +32,18 @@ angular.module('demo-hockey')
 		    });
 		}
 
+		distanceStats = function(vehicleId){
+		    return DaoService.getData("vehicles/"+vehicleId+"/fullTanks/distanceStats", 'GET').then(function(response){
+		        return response.data;
+		    });
+		}
+
 		return {
 			list : list,
 			save : save,
 			get  : get,
-			costStats : costStats
+			costStats : costStats,
+			distanceStats : distanceStats
 		}
 		
 	}

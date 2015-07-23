@@ -73,7 +73,23 @@ class FullTankController {
         def stats = []
         fullTanks = fullTanks.sort{it.date}.collect {[it.cost, it.date]}
         fullTanks.each {
-            stats << new CostStats(cost: it[0], date: it[1].format('dd/MM/yyyy'))
+            stats << [it[1].format('dd/MM/yyyy'), it[0]]
+        }
+
+        return stats
+    }
+
+    @RequestMapping(value = "{vehicleId}/fullTanks/distanceStats", method = RequestMethod.GET)
+    def List getDistanceStats(@PathVariable("vehicleId") Long vehicleId) {
+        if (!vehicleRepository.findOne(vehicleId)) {
+            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
+        }
+
+        def fullTanks =  fullTankRepository.findAllByVehicleId(vehicleId)
+        def stats = []
+        fullTanks = fullTanks.sort{it.date}.collect {[it.mileage, it.date]}
+        fullTanks.each {
+            stats << [it[1].format('dd/MM/yyyy'), it[0]]
         }
 
         return stats

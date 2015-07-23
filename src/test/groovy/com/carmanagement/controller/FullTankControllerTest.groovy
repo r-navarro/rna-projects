@@ -147,9 +147,30 @@ class FullTankControllerTest extends AbstractControllerTest {
 
         then:
         response.andExpect(MRM.status().isOk())
-        response.andExpect(MRM.jsonPath('$[0].cost').value("1.0"))
-        response.andExpect(MRM.jsonPath('$[0].date').value(date1.format('dd/MM/yyyy')))
-        response.andExpect(MRM.jsonPath('$[1].cost').value("2.0"))
-        response.andExpect(MRM.jsonPath('$[1].date').value(date2.format('dd/MM/yyyy')))
+        response.andExpect(MRM.jsonPath('$[0].[0]').value(date1.format('dd/MM/yyyy')))
+        response.andExpect(MRM.jsonPath('$[0].[1]').value(1.0d))
+        response.andExpect(MRM.jsonPath('$[1].[0]').value(date2.format('dd/MM/yyyy')))
+        response.andExpect(MRM.jsonPath('$[1].[1]').value(2.0d))
+    }
+
+    def "Test distance stats"(){
+        setup:
+        fullTankController.vehicleRepository.findOne(1) >> vehicle
+        def date1 = new Date()
+        def date2 = new Date()
+        use(TimeCategory) {
+            date2 = date1 + 1.month
+        }
+        fullTankController.fullTankRepository.findAllByVehicleId(1) >> [new FullTank(mileage: 125.62, date: date2), new FullTank(mileage: 564.23, date: date1)]
+
+        when:
+        def response = mockMvc.perform(MRB.get("$baseUrl/distanceStats"))
+
+        then:
+        response.andExpect(MRM.status().isOk())
+        response.andExpect(MRM.jsonPath('$[0].[0]').value(date1.format('dd/MM/yyyy')))
+        response.andExpect(MRM.jsonPath('$[0].[1]').value(564.23d))
+        response.andExpect(MRM.jsonPath('$[1].[0]').value(date2.format('dd/MM/yyyy')))
+        response.andExpect(MRM.jsonPath('$[1].[1]').value(125.62d))
     }
 }
