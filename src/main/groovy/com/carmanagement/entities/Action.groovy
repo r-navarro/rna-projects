@@ -22,4 +22,7 @@ class Action {
     @JoinColumn(nullable = false)
 	Vehicle vehicle
 
+	boolean asBoolean(){
+		return date && cost && mileage && vehicle
+	}
 }

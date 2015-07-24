@@ -13,7 +13,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="fullTank in fullTanks">
-                <td>{{fullTank.date | date:'dd/MM/yyyy'}}</td>
+                <td><a href="#/{{vehicleId}}/ft/update/{{fullTank.id}}">{{fullTank.date | date:'dd/MM/yyyy'}}</a></td>
                 <td>{{fullTank.mileage}}</td>
                 <td>{{fullTank.cost}}</td>
                 <td>{{fullTank.quantity}}</td>

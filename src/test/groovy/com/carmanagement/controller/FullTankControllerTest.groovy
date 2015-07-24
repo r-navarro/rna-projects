@@ -2,6 +2,8 @@ package com.carmanagement.controller
 
 import com.carmanagement.entities.FullTank
 import com.carmanagement.entities.Vehicle
+import com.carmanagement.exceptions.ErrorCode
+import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.FullTankRepository
 import com.carmanagement.repositories.VehicleRepository
 import groovy.json.JsonBuilder
@@ -19,6 +21,8 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     Vehicle vehicle = new Vehicle(id: 1)
 
+    FullTank fullTank = new FullTank(id: 1, vehicle: vehicle, cost: 1, mileage: 1, date: new Date(), quantity: 1)
+
 
     def setup() {
         fullTankController = new FullTankController()
@@ -31,7 +35,6 @@ class FullTankControllerTest extends AbstractControllerTest {
     def "Test get action"() {
         setup:
         fullTankController.vehicleRepository.findOne(1) >> vehicle
-        FullTank fullTank = new FullTank(id: 1, vehicle: vehicle)
         fullTankController.fullTankRepository.findOne(1) >> fullTank
 
         when:
@@ -72,7 +75,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         fullTankController.vehicleRepository.findOne(1) >> vehicle
         def fullTanks = []
         (0..5).each {
-            fullTanks << new FullTank(id: it, vehicle: vehicle)
+            fullTanks << new FullTank(id: it, vehicle: vehicle, cost: 1, mileage: 1, date: new Date(), quantity: 1)
         }
         fullTankController.fullTankRepository.findByVehicleId(1, _) >> new PageImpl(fullTanks)
 
@@ -98,15 +101,15 @@ class FullTankControllerTest extends AbstractControllerTest {
     def "Test save"() {
         setup:
         fullTankController.vehicleRepository.findOne(1) >> vehicle
-        fullTankController.fullTankRepository.save(_) >> new FullTank(id: 123, vehicle: vehicle)
-        def json = new JsonBuilder(new FullTank(id: 1245)).toPrettyString()
+        fullTankController.fullTankRepository.save(_) >> fullTank
+        def json = new JsonBuilder(new FullTank(vehicle: vehicle, cost: 1, mileage: 1, date: new Date(), quantity: 1)).toPrettyString()
 
         when:
         def response = mockMvc.perform(MRB.post("$baseUrl").contentType(MediaType.APPLICATION_JSON).content(json))
 
         then:
-        response.andExpect(MRM.status().isOk())
-        response.andExpect(MRM.jsonPath("id").value(123))
+        response.andExpect(MRM.status().isCreated())
+        response.andExpect(MRM.jsonPath("id").value(1))
     }
 
     def "Test save with vehicle not found"() {
@@ -128,8 +131,45 @@ class FullTankControllerTest extends AbstractControllerTest {
         def response = mockMvc.perform(MRB.post("$baseUrl").contentType(MediaType.APPLICATION_JSON).content("{}"))
 
         then:
-        response.andExpect(MRM.status().isOk())
-        response.andExpect(MRM.content().string(""))
+        response.andExpect(MRM.status().isNotFound())
+        response.andExpect(MRM.jsonPath("errorMessage").value(new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT).getMessage()))
+    }
+
+    def "Test update"() {
+        setup:
+        fullTankController.vehicleRepository.findOne(1) >> vehicle
+        fullTankController.fullTankRepository.save(_) >> fullTank
+        def json = new JsonBuilder(fullTank).toPrettyString()
+
+        when:
+        def response = mockMvc.perform(MRB.put("$baseUrl/$fullTank.id").contentType(MediaType.APPLICATION_JSON).content(json))
+
+        then:
+        response.andExpect(MRM.status().isCreated())
+        response.andExpect(MRM.jsonPath("id").value(1))
+    }
+
+    def "Test update with vehicle not found"() {
+        setup:
+        fullTankController.vehicleRepository.findOne(1) >> null
+
+        when:
+        def response = mockMvc.perform(MRB.put("$baseUrl/$fullTank.id").contentType(MediaType.APPLICATION_JSON).content("{}"))
+
+        then:
+        response.andExpect(MRM.status().isNotFound())
+    }
+
+    def "Test update with no full tank"() {
+        setup:
+        fullTankController.vehicleRepository.findOne(1) >> vehicle
+
+        when:
+        def response = mockMvc.perform(MRB.put("$baseUrl/$fullTank.id").contentType(MediaType.APPLICATION_JSON).content("{}"))
+
+        then:
+        response.andExpect(MRM.status().isNotFound())
+        response.andExpect(MRM.jsonPath("errorMessage").value(new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT).getMessage()))
     }
 
     def "Test cost stats"(){

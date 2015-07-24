@@ -10,4 +10,8 @@ class FullTank extends Action{
 
 	@Column
     Float quantity
+
+    boolean asBoolean(){
+        return super.asBoolean() && quantity
+    }
 }

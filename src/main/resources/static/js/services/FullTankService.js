@@ -4,7 +4,7 @@ angular.module('demo-hockey')
 				
 		list = function(vehicleId, page) {
 			if(page){
-				return DaoService.getData("/vehicles/"+vehicleId+"/fullTanks/?page="+(page-1), 'GET').then(function(response){
+				return DaoService.getData("/vehicles/"+vehicleId+"/fullTanks/?page="+(page-1)+"&sort=date&name.dir=desc", 'GET').then(function(response){
 					return response.data;
 				});
 			}else{
@@ -16,6 +16,12 @@ angular.module('demo-hockey')
 		
 		save = function(vehicleId, fullTank) {
 			return DaoService.getData("/vehicles/"+vehicleId+"/fullTanks", 'POST', fullTank).then(function(response){
+				return response.data;
+			});
+		}
+
+		update = function(vehicleId, fullTank) {
+			return DaoService.getData("/vehicles/"+vehicleId+"/fullTanks/"+fullTank.id, 'PUT', fullTank).then(function(response){
 				return response.data;
 			});
 		}
@@ -41,6 +47,7 @@ angular.module('demo-hockey')
 		return {
 			list : list,
 			save : save,
+			update : update,
 			get  : get,
 			costStats : costStats,
 			distanceStats : distanceStats

@@ -16,6 +16,9 @@ angular.module('demo-hockey', [ 'ngRoute', 'ngAnimate','ngResource', 'ui.bootstr
             }).when('/:vehicleId/ft/create', {
 				templateUrl : 'partials/fullTank/create.html',
 				controller : 'FullTankController'
+		  	}).when('/:vehicleId/ft/update/:ftId', {
+				templateUrl : 'partials/fullTank/update.html',
+				controller : 'FullTankController'
 		  	}).when('/login', {
 				templateUrl : 'partials/login.html',
 				controller : 'LoginController'

@@ -13,10 +13,12 @@ class TechnicalException extends RuntimeException {
                 return "User not found with id : ${errorParameter}"
             case ErrorCode.FULL_TANK_NOT_FOUND:
                 return "Full tank not found with id : ${errorParameter}"
+            case ErrorCode.FULL_TANK_WRONG_FORMAT:
+                return "Full tank is incorrectly formatted"
         }
     }
 }
 
 public enum ErrorCode {
-    VEHICLE_NOT_FOUND, USER_NOT_FOUND, FULL_TANK_NOT_FOUND
+    VEHICLE_NOT_FOUND, USER_NOT_FOUND, FULL_TANK_NOT_FOUND, FULL_TANK_WRONG_FORMAT
 }

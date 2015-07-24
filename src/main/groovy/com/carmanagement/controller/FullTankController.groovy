@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
@@ -54,13 +56,29 @@ class FullTankController {
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks", method = RequestMethod.POST)
-    def FullTank create(@PathVariable("vehicleId") Long vehicleId, @RequestBody FullTank fullTank) {
+    def ResponseEntity<FullTank> create(@PathVariable("vehicleId") Long vehicleId, @RequestBody FullTank fullTank) {
         def vehicle = vehicleRepository.findOne(vehicleId)
         if (!vehicle) {
             throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
         }
+        if(!fullTank){
+            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT)
+        }
         fullTank.vehicle = vehicle
-        return fullTankRepository.save(fullTank)
+        return new ResponseEntity<FullTank>(fullTankRepository.save(fullTank), HttpStatus.CREATED)
+    }
+
+    @RequestMapping(value = "{vehicleId}/fullTanks/{fullTankId}", method = RequestMethod.PUT)
+    def ResponseEntity<FullTank> update(@PathVariable("vehicleId") Long vehicleId, @PathVariable("fullTankId") Long fullTankId, @RequestBody FullTank fullTank) {
+        def vehicle = vehicleRepository.findOne(vehicleId)
+        if (!vehicle) {
+            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
+        }
+        if(!fullTank){
+            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT)
+        }
+        fullTank.vehicle = vehicle
+        return new ResponseEntity<FullTank>(fullTankRepository.save(fullTank), HttpStatus.CREATED)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/costStats", method = RequestMethod.GET)
