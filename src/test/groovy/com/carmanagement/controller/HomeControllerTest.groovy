@@ -23,7 +23,7 @@ class HomeControllerTest extends Specification {
         when:
         def response = mockMvc.perform(MRB.get("/home"))
 
-        then :
+        then:
         response.andExpect(MRM.status().isOk())
         response.andExpect(MRM.content().string("index"))
     }

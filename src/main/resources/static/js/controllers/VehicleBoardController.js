@@ -1,5 +1,5 @@
 angular.module('demo-hockey').controller('VehicleBoardController',
-	function($scope, VehicleService, FullTankService, $routeParams, ChartService) {
+	function($scope, VehicleService, FullTankService, $routeParams, ChartService, $location) {
 
 		$scope.fullTankTotalPages = 0;
 		$scope.fullTankCurrentPage = 1;
@@ -19,6 +19,13 @@ angular.module('demo-hockey').controller('VehicleBoardController',
 				$scope.fullTankTotalElements = list.totalElements;
 				$scope.fullTankItemsPerPage = list.size;
 			});
+		};
+
+		$scope.deleteFullTank = function(fullTank){
+		    FullTankService.remove($scope.vehicleId, fullTank);
+		    $location.path('/show/'+$scope.vehicleId);
+		    $scope.get();
+		    $scope.updateFullTanks(1);
 		};
 
 		$scope.fullTankPageChanged = function() {

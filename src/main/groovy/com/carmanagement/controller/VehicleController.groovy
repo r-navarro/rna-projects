@@ -22,8 +22,8 @@ class VehicleController {
 
     static final int PAGE_SIZE = 2
 
-	@Autowired
-	private VehicleRepository vehicleRepository
+    @Autowired
+    private VehicleRepository vehicleRepository
 
     @Autowired
     private UserService userService
@@ -33,42 +33,42 @@ class VehicleController {
         def auth = SecurityContextHolder.getContext().authentication
         def user = userService.findByName(auth.name)
         vehicle.user = user
-		Vehicle savedVehicle = vehicleRepository.save(vehicle)
+        Vehicle savedVehicle = vehicleRepository.save(vehicle)
         return savedVehicle
-	}
+    }
 
     @RequestMapping(method = RequestMethod.DELETE)
-	def String delete(@RequestBody Long id){
-		def vehicle = vehicleRepository.findOne(id)
+    def String delete(@RequestBody Long id) {
+        def vehicle = vehicleRepository.findOne(id)
         if (vehicle) {
             vehicleRepository.delete(vehicle)
             return "Deleted : ${id}"
         }
         throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: id)
-	}
+    }
 
-	@RequestMapping(value = "/list", method=RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     @Secured("ROLE_ADMIN")
-	def Iterable<Vehicle> findAll(){
-		return vehicleRepository.findAll()
-	}
+    def Iterable<Vehicle> findAll() {
+        return vehicleRepository.findAll()
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	def Vehicle get(@PathVariable Long id){
+    def Vehicle get(@PathVariable Long id) {
         def vehicle = vehicleRepository.findOne(id)
 
         if (vehicle) {
             def auth = SecurityContextHolder.getContext().authentication
             if (userService.checkUserVehicle(auth.name, vehicle))
-            return vehicle
+                return vehicle
         }
         throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: id)
-	}
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     def Page<Vehicle> getVehicle(@PageableDefault(size = VehicleController.PAGE_SIZE, page = 0) Pageable pageable) {
         def auth = SecurityContextHolder.getContext().authentication
         def result = vehicleRepository.findAllByUserName(auth.name, pageable)
         return result
-	}
+    }
 }

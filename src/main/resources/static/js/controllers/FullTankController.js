@@ -16,7 +16,7 @@ angular.module('demo-hockey').controller('FullTankController',
                 FullTankService.update($scope.vehicleId, fullTank);
                 $location.path('/show/'+$scope.vehicleId);
             };
-
+           
             $scope.init = function(){
                 if($scope.ftId){
                     FullTankService.get($scope.vehicleId, $scope.ftId).then(function(ft){

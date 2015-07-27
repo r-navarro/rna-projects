@@ -172,7 +172,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         response.andExpect(MRM.jsonPath("errorMessage").value(new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT).getMessage()))
     }
 
-    def "Test cost stats"(){
+    def "Test cost stats"() {
         setup:
         fullTankController.vehicleRepository.findOne(1) >> vehicle
         def date1 = new Date()
@@ -193,7 +193,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         response.andExpect(MRM.jsonPath('$[1].[1]').value(2.0d))
     }
 
-    def "Test distance stats"(){
+    def "Test distance stats"() {
         setup:
         fullTankController.vehicleRepository.findOne(1) >> vehicle
         def date1 = new Date()
@@ -212,5 +212,38 @@ class FullTankControllerTest extends AbstractControllerTest {
         response.andExpect(MRM.jsonPath('$[0].[1]').value(564.23d))
         response.andExpect(MRM.jsonPath('$[1].[0]').value(date2.format('dd/MM/yyyy')))
         response.andExpect(MRM.jsonPath('$[1].[1]').value(125.62d))
+    }
+
+    def "Test delete"() {
+        setup:
+        fullTankController.fullTankRepository.findOne(fullTank.id) >> fullTank
+
+        when:
+        def response = mockMvc.perform(MRB.delete("$baseUrl/$fullTank.id"))
+
+        then:
+        response.andExpect(MRM.status().isNoContent())
+    }
+
+    def "Test delete with no fullTank"() {
+
+        when:
+        def response = mockMvc.perform(MRB.delete("$baseUrl/$fullTank.id"))
+
+        then:
+        response.andExpect(MRM.status().isNotFound())
+        response.andExpect(MRM.jsonPath("errorMessage").value(new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTank.id).getMessage()))
+    }
+
+    def "Test delete with bad vehicle"() {
+        setup:
+        fullTankController.fullTankRepository.findOne(fullTank.id) >> fullTank
+
+        when:
+        def response = mockMvc.perform(MRB.delete("/vehicles/2/fullTanks/$fullTank.id"))
+
+        then:
+        response.andExpect(MRM.status().isNotFound())
+        response.andExpect(MRM.jsonPath("errorMessage").value(new TechnicalException(errorCode: ErrorCode.FULL_TANK_VEHICLE_NOT_MATCH, errorParameter: 2).getMessage()))
     }
 }

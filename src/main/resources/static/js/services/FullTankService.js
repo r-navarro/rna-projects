@@ -20,6 +20,12 @@ angular.module('demo-hockey')
 			});
 		}
 
+		remove = function(vehicleId, fullTank) {
+			return DaoService.getData("/vehicles/"+vehicleId+"/fullTanks/"+fullTank.id, 'DELETE').then(function(response){
+				return response.data;
+			});
+		}
+
 		update = function(vehicleId, fullTank) {
 			return DaoService.getData("/vehicles/"+vehicleId+"/fullTanks/"+fullTank.id, 'PUT', fullTank).then(function(response){
 				return response.data;
@@ -48,6 +54,7 @@ angular.module('demo-hockey')
 			list : list,
 			save : save,
 			update : update,
+			remove : remove,
 			get  : get,
 			costStats : costStats,
 			distanceStats : distanceStats

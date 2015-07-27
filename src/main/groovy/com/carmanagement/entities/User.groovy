@@ -5,29 +5,29 @@ import javax.persistence.*
 @Entity
 class User {
 
-	@Id
-	@GeneratedValue
-	Long id
+    @Id
+    @GeneratedValue
+    Long id
 
-	@Column(unique = true)
-	String name
-	
-	@Column
+    @Column(unique = true)
+    String name
+
+    @Column
     String password
-	
-	@Column
+
+    @Column
     boolean enabled = true
-	
-	@Column
+
+    @Column
     boolean accountExpired
-	
-	@Column
+
+    @Column
     boolean accountLocked
-	
-	@Column
+
+    @Column
     boolean passwordExpired
-	
-	@OneToMany
-    List<Vehicle>  vehicles
+
+    @OneToMany
+    List<Vehicle> vehicles
 
 }

@@ -12,9 +12,9 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-@ContextConfiguration(classes=PersistenceTestConfig.class)
+@ContextConfiguration(classes = PersistenceTestConfig.class)
 @ActiveProfiles("test")
-class FullTankRepositoryTest extends Specification{
+class FullTankRepositoryTest extends Specification {
 
     @Autowired
     FullTankRepository fullTankRepository
@@ -33,13 +33,13 @@ class FullTankRepositoryTest extends Specification{
     }
 
 
-    def "full tank repository is not null"(){
+    def "full tank repository is not null"() {
         expect:
         fullTankRepository
     }
 
-    def "find full tank by vehicle test"(){
-        when :
+    def "find full tank by vehicle test"() {
+        when:
         def user = userRepository.save(new User(name: "test"))
         def vehicle = vehicleRepository.save(new Vehicle(registerNumber: 1, user: user))
         fullTankRepository.save(new FullTank(vehicle: vehicle, cost: 1))
@@ -55,15 +55,15 @@ class FullTankRepositoryTest extends Specification{
 
     }
 
-    def "find full tank by vehicle limit case test"(){
-        when :
+    def "find full tank by vehicle limit case test"() {
+        when:
         def fullTanks = fullTankRepository.findByVehicleId(null, null)
 
         then:
         fullTanks.getSize() == 0
     }
 
-    def "find all by vehicle test"(){
+    def "find all by vehicle test"() {
         setup:
         def user = userRepository.save(new User(name: "test"))
         def vehicle = vehicleRepository.save(new Vehicle(registerNumber: 1, user: user))

@@ -1,42 +1,42 @@
 <!doctype html>
 <html lang="en" ng-app="demo-hockey">
 <head>
-<meta charset="utf-8">
-<title>Demo hockey</title>
-<link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css">
-<link rel="stylesheet" href="css/app.css">
-<link rel="stylesheet" href="css/charts.css">
-<link rel="stylesheet" href="css/nv.d3.css">
+    <meta charset="utf-8">
+    <title>Demo hockey</title>
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/charts.css">
+    <link rel="stylesheet" href="css/nv.d3.css">
 
-<script src="lib/jquery/jquery.js"></script>
-<script src="lib/angular/angular.js"></script>
-<script src="lib/angular-animate/angular-animate.js"></script>
-<script src="lib/angular-route/angular-route.js"></script>
-<script src="lib/angular-resource/angular-resource.js"></script>
-<script src="lib/angular-cookies/angular-cookies.js"></script>
-<script src="lib/angular-bootstrap/ui-bootstrap.js"></script>
-<script src="lib/d3/d3.min.js"></script>
-<script src="lib/angularjs-nvd3-directives/angularjs-nvd3-directives.js"></script>
-<script src="lib/nv.d3/nv.d3.js"></script>
+    <script src="lib/jquery/jquery.js"></script>
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular-animate/angular-animate.js"></script>
+    <script src="lib/angular-route/angular-route.js"></script>
+    <script src="lib/angular-resource/angular-resource.js"></script>
+    <script src="lib/angular-cookies/angular-cookies.js"></script>
+    <script src="lib/angular-bootstrap/ui-bootstrap.js"></script>
+    <script src="lib/d3/d3.min.js"></script>
+    <script src="lib/angularjs-nvd3-directives/angularjs-nvd3-directives.js"></script>
+    <script src="lib/nv.d3/nv.d3.js"></script>
 
 </head>
 <body>
 
-	<header class="row">
-        <div class="col-md-8 col-md-offset-2" ng-controller="LoginController">
-<!-- 		<a href="#/home"><img src="img/logo.png" /></a> -->
-            <a href="#/home">Header</a>
-            <button class="btn btn-default" ng-click="logout()">Log out</button>
-            <nav class="navbar navbar-default navbar-static-top test">
-                <a href="#/create">create</a>
-                <a href="#/list">list</a>
-            </nav>
-		</div>
-	</header>
-	<section ng-view class="row">
-	</section>
+<header class="row">
+    <div class="col-md-8 col-md-offset-2" ng-controller="LoginController">
+        <!-- 		<a href="#/home"><img src="img/logo.png" /></a> -->
+        <a href="#/home">Header</a>
+        <button class="btn btn-default" ng-click="logout()">Log out</button>
+        <nav class="navbar navbar-default navbar-static-top test">
+            <a href="#/create">create</a>
+            <a href="#/list">list</a>
+        </nav>
+    </div>
+</header>
+<section ng-view class="row">
+</section>
 
-	<footer> footer </footer>
+<footer> footer</footer>
 
 </body>
 <script src="js/app.js"></script>

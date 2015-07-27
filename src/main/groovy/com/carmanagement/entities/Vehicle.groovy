@@ -5,31 +5,31 @@ import javax.persistence.*
 @Entity
 class Vehicle {
 
-	@Id
-	@GeneratedValue
-	Long id
-	
-	@Column
+    @Id
+    @GeneratedValue
+    Long id
+
+    @Column
     String registerNumber
-	
-	@Column
+
+    @Column
     Float price
-	
-	@Column
+
+    @Column
     String type
-	
-	@Column
+
+    @Column
     Integer kilometers
-	
-	@OneToMany
+
+    @OneToMany
     List<Action> actions
-	
-	@ManyToOne
-	@JoinColumn(nullable = false)
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
     User user
 
 
     def String toString() {
-	return registerNumber
+        return registerNumber
     }
 }

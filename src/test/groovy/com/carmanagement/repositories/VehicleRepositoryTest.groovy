@@ -10,12 +10,12 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-@ContextConfiguration(classes=PersistenceTestConfig.class)
+@ContextConfiguration(classes = PersistenceTestConfig.class)
 @ActiveProfiles("test")
 class VehicleRepositoryTest extends Specification {
 
-	@Autowired
-	VehicleRepository vehicleRepository
+    @Autowired
+    VehicleRepository vehicleRepository
 
     @Autowired
     UserRepository userRepository
@@ -25,23 +25,23 @@ class VehicleRepositoryTest extends Specification {
         userRepository.deleteAll()
     }
 
-    def "test repository is not null"(){
-		expect:
-		vehicleRepository
-	}
+    def "test repository is not null"() {
+        expect:
+        vehicleRepository
+    }
 
-	def "test repository find by register number"(){
-		when:
+    def "test repository find by register number"() {
+        when:
         vehicleRepository.save(new Vehicle(registerNumber: "r1", user: userRepository.save(new User(name: "toto"))))
 
-		def vehicle = vehicleRepository.findByRegisterNumber("r1")
-		def vehicleNull = vehicleRepository.findByRegisterNumber("r2")
+        def vehicle = vehicleRepository.findByRegisterNumber("r1")
+        def vehicleNull = vehicleRepository.findByRegisterNumber("r2")
 
-		then:
-		vehicle
-		vehicle.registerNumber == "r1"
-		!vehicleNull
-	}
+        then:
+        vehicle
+        vehicle.registerNumber == "r1"
+        !vehicleNull
+    }
 
     def "test find all by user"() {
         setup:

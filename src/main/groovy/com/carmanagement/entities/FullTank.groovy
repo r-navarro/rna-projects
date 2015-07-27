@@ -1,17 +1,15 @@
 package com.carmanagement.entities
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.Column
+import javax.persistence.Entity
 
 @Entity
-class FullTank extends Action{
+class FullTank extends Action {
 
-	@Column
+    @Column
     Float quantity
 
-    boolean asBoolean(){
+    boolean asBoolean() {
         return super.asBoolean() && quantity
     }
 }
