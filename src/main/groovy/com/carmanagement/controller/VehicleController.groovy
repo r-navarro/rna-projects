@@ -1,10 +1,12 @@
 package com.carmanagement.controller
 
+import com.carmanagement.dto.VehicleDTO
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.VehicleRepository
 import com.carmanagement.services.interfaces.UserService
+import com.carmanagement.services.interfaces.VehiclesService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -26,15 +28,16 @@ class VehicleController {
     private VehicleRepository vehicleRepository
 
     @Autowired
+    private VehiclesService vehiclesService
+
+    @Autowired
     private UserService userService
 
     @RequestMapping(method = RequestMethod.POST)
-    def Vehicle save(@RequestBody Vehicle vehicle) {
+    def VehicleDTO save(@RequestBody VehicleDTO vehicle) {
         def auth = SecurityContextHolder.getContext().authentication
         def user = userService.findByName(auth.name)
-        vehicle.user = user
-        Vehicle savedVehicle = vehicleRepository.save(vehicle)
-        return savedVehicle
+        return vehiclesService.save(vehicle, user.id)
     }
 
     @RequestMapping(method = RequestMethod.DELETE)

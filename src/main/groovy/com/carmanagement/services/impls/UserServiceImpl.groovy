@@ -1,5 +1,6 @@
 package com.carmanagement.services.impls
 
+import com.carmanagement.dto.UserDTO
 import com.carmanagement.entities.User
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.exceptions.ErrorCode
@@ -55,7 +56,7 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    User findByName(String userName) {
-        return userRepository.findByName(userName)
+    UserDTO findByName(String userName) {
+        return new UserDTO(userRepository.findByName(userName))
     }
 }

@@ -1,9 +1,12 @@
 package com.carmanagement.controller
 
+import com.carmanagement.dto.UserDTO
+import com.carmanagement.dto.VehicleDTO
 import com.carmanagement.entities.User
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.repositories.VehicleRepository
 import com.carmanagement.services.interfaces.UserService
+import com.carmanagement.services.interfaces.VehiclesService
 import groovy.json.JsonBuilder
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
@@ -14,16 +17,24 @@ class VehicleControllerTest extends AbstractControllerTest {
 
     VehicleController vehicleController
 
+    def vehicle = new Vehicle(id: 1)
+
+    def vehicleDTO = new VehicleDTO(id: 1)
+
+    def user = new User(id: 1, name: "fakeUser")
+
+    def userDTO = new UserDTO(id: 1, name: "fakeUser")
+
     def setup() {
         vehicleController = new VehicleController()
         vehicleController.vehicleRepository = Mock(VehicleRepository)
+        vehicleController.vehiclesService = Mock(VehiclesService)
         vehicleController.userService = Mock(UserService)
         setupMockMvc(vehicleController)
     }
 
     def "Test get action"() {
         setup:
-        Vehicle vehicle = new Vehicle(id: 1)
         vehicleController.vehicleRepository.findOne(1) >> vehicle
         vehicleController.userService.checkUserVehicle(_, _) >> true
 
@@ -50,10 +61,9 @@ class VehicleControllerTest extends AbstractControllerTest {
 
     def "Test list by user"() {
         setup:
-        User fakeUser = new User(id: 1, name: "fakeUser")
         def vehicles = []
         (0..5).each {
-            vehicles << new Vehicle(id: it, registerNumber: it, user: fakeUser)
+            vehicles << new Vehicle(id: it, registerNumber: it, user: user)
         }
         vehicleController.vehicleRepository.findAllByUserName(_, _) >> new PageImpl(vehicles)
 
@@ -67,8 +77,9 @@ class VehicleControllerTest extends AbstractControllerTest {
 
     def "Test save"() {
         setup:
-        vehicleController.vehicleRepository.save(_) >> new Vehicle(id: 1)
-        def json = new JsonBuilder(new Vehicle(registerNumber: 1245)).toPrettyString()
+        vehicleController.vehiclesService.save(_, _) >> vehicleDTO
+        vehicleController.userService.findByName(_) >> userDTO
+        def json = new JsonBuilder(new VehicleDTO(registerNumber: 1245)).toPrettyString()
 
         when:
         def response = mockMvc.perform(MRB.post("/vehicles").contentType(MediaType.APPLICATION_JSON).content(json))
@@ -79,6 +90,9 @@ class VehicleControllerTest extends AbstractControllerTest {
     }
 
     def "Test save with no vehicle"() {
+        setup:
+        vehicleController.userService.findByName(_) >> userDTO
+
         when:
         def response = mockMvc.perform(MRB.post("/vehicles").contentType(MediaType.APPLICATION_JSON).content("{}"))
 
@@ -89,7 +103,7 @@ class VehicleControllerTest extends AbstractControllerTest {
 
     def "Test delete"() {
         setup:
-        vehicleController.vehicleRepository.findOne(_) >> new Vehicle(id: 1)
+        vehicleController.vehicleRepository.findOne(_) >> vehicle
 
         when:
         def response = mockMvc.perform(MRB.delete("/vehicles").contentType(MediaType.APPLICATION_JSON).content("1"))
