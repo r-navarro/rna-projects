@@ -33,7 +33,7 @@ class UserServiceImpl implements UserService {
     }
 
     private Collection<? extends GrantedAuthority> getGrantedAuthorities(String username) {
-        Collection<? extends GrantedAuthority> authorities = [];
+        Collection<? extends GrantedAuthority> authorities = []
 
         if (username == "admin") {
             authorities << new SimpleGrantedAuthority("ROLE_ADMIN")
