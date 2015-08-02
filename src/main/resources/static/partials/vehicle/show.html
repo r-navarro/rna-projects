@@ -1,6 +1,10 @@
 <article class="col-md-8 col-md-offset-2" ng-init="get()">
 
-    <h2>{{ vehicle.registerNumber}}</h2>
+    <h2>Register number : {{ vehicle.registerNumber}}</h2>
+
+    <h3>Type : {{ vehicle.type}}</h3>
+
+    <h3>Distance : {{ vehicle.kilometers}}</h3>
 
     <table ng-init="updateFullTanks(1)" class="table table-striped">
         <thead>

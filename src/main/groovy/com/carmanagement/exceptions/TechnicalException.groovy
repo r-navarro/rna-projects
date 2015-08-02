@@ -8,7 +8,9 @@ class TechnicalException extends RuntimeException {
     public String getMessage() {
         switch (errorCode) {
             case ErrorCode.VEHICLE_NOT_FOUND:
-                return "Vehicle not found with id : {errorParameter"
+                return "Vehicle not found with id : $errorParameter"
+            case ErrorCode.VEHICLE_WRONG_FORMAT:
+                return "Vehicle is incorrectly formatted"
             case ErrorCode.USER_NOT_FOUND:
                 return "User not found with id : $errorParameter"
             case ErrorCode.FULL_TANK_NOT_FOUND:
@@ -22,5 +24,5 @@ class TechnicalException extends RuntimeException {
 }
 
 public enum ErrorCode {
-    VEHICLE_NOT_FOUND, USER_NOT_FOUND, FULL_TANK_NOT_FOUND, FULL_TANK_WRONG_FORMAT, FULL_TANK_VEHICLE_NOT_MATCH
+    VEHICLE_NOT_FOUND, VEHICLE_WRONG_FORMAT, USER_NOT_FOUND, FULL_TANK_NOT_FOUND, FULL_TANK_WRONG_FORMAT, FULL_TANK_VEHICLE_NOT_MATCH
 }
