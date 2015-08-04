@@ -1,6 +1,7 @@
 package com.carmanagement.services.impls
 
 import com.carmanagement.dto.VehicleDTO
+import com.carmanagement.entities.User
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.UserRepository
@@ -26,10 +27,8 @@ class VehiclesServiceImpl implements VehiclesService {
     UserService userService
 
     @Override
-    VehicleDTO save(VehicleDTO vehicleDTO, Long userId) {
+    VehicleDTO save(VehicleDTO vehicleDTO, User user) {
         def vehicle = vehicleDTO.toVehicle()
-
-        def user = userRepository.findOne(userId)
         vehicle.user = user
         vehicle = vehicleRepository.save(vehicle)
 
@@ -67,8 +66,9 @@ class VehiclesServiceImpl implements VehiclesService {
         def vehicle = vehicleRepository.findOne(id)
         if (vehicle) {
             vehicleRepository.delete(vehicle)
+        }else {
+            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: id)
         }
-        throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: id)
     }
 
     @Override

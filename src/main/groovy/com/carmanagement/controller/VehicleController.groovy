@@ -35,7 +35,7 @@ class VehicleController {
         if (vehicle) {
             def auth = SecurityContextHolder.getContext().authentication
             def user = userService.findByName(auth.name)
-            return new ResponseEntity(vehiclesService.save(vehicle, user.id), HttpStatus.CREATED)
+            return new ResponseEntity(vehiclesService.save(vehicle, user), HttpStatus.CREATED)
         }
         throw new TechnicalException(errorCode: ErrorCode.VEHICLE_WRONG_FORMAT)
     }

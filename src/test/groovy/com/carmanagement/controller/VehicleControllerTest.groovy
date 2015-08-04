@@ -75,8 +75,8 @@ class VehicleControllerTest extends AbstractControllerTest {
 
     def "Test save"() {
         setup:
+        vehicleController.userService.findByName(_) >> user
         vehicleController.vehiclesService.save(_, _) >> vehicleDTO
-        vehicleController.userService.findByName(_) >> userDTO
         def json = new JsonBuilder(vehicleDTO).toPrettyString()
 
         when:
