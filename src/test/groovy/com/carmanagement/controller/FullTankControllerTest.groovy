@@ -1,11 +1,13 @@
 package com.carmanagement.controller
 
+import com.carmanagement.dto.FullTankDTO
 import com.carmanagement.entities.FullTank
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.FullTankRepository
 import com.carmanagement.repositories.VehicleRepository
+import com.carmanagement.services.interfaces.FullTanksService
 import groovy.json.JsonBuilder
 import groovy.time.TimeCategory
 import org.springframework.data.domain.PageImpl
@@ -21,21 +23,23 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     Vehicle vehicle = new Vehicle(id: 1)
 
-    FullTank fullTank = new FullTank(id: 1, vehicle: vehicle, cost: 1, mileage: 1, date: new Date(), quantity: 1)
+    FullTank fullTank = new FullTank(id: 1, vehicle: vehicle, cost: 1, distance: 1, date: new Date(), quantity: 1)
+
+    FullTankDTO fullTankDTO = new FullTankDTO(id: 1, cost: 1, distance: 1, date: new Date(), quantity: 1)
 
 
     def setup() {
         fullTankController = new FullTankController()
         fullTankController.fullTankRepository = Mock(FullTankRepository)
         fullTankController.vehicleRepository = Mock(VehicleRepository)
+        fullTankController.fullTanksService = Stub(FullTanksService)
         setupMockMvc(fullTankController)
     }
 
 
     def "Test get action"() {
         setup:
-        fullTankController.vehicleRepository.findOne(1) >> vehicle
-        fullTankController.fullTankRepository.findOne(1) >> fullTank
+        fullTankController.fullTanksService.get(1, 1) >> fullTankDTO
 
         when:
         def response = mockMvc.perform(MRB.get("$baseUrl/1"))
@@ -48,7 +52,7 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test get action with unknown vehicle"() {
         setup:
-        fullTankController.vehicleRepository.findOne(1) >> null
+        fullTankController.fullTanksService.get(1, 1) >> {throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: 1)}
 
         when:
         def response = mockMvc.perform(MRB.get("$baseUrl/1"))
@@ -60,8 +64,7 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test get action with unknown fullTank"() {
         setup:
-        fullTankController.vehicleRepository.findOne(1) >> vehicle
-        fullTankController.fullTankRepository.findOne(1) >> null
+        fullTankController.fullTanksService.get(1, 1) >> null
 
         when:
         def response = mockMvc.perform(MRB.get("$baseUrl/1"))
@@ -74,22 +77,22 @@ class FullTankControllerTest extends AbstractControllerTest {
         setup:
         fullTankController.vehicleRepository.findOne(1) >> vehicle
         def fullTanks = []
-        (0..5).each {
-            fullTanks << new FullTank(id: it, vehicle: vehicle, cost: 1, mileage: 1, date: new Date(), quantity: 1)
+        5.times {
+            fullTanks << new FullTankDTO(id: it, cost: 1, distance: 1, date: new Date(), quantity: 1)
         }
-        fullTankController.fullTankRepository.findByVehicleId(1, _) >> new PageImpl(fullTanks)
+        fullTankController.fullTanksService.getFullTanks(_, _) >> new PageImpl(fullTanks)
 
         when:
         def response = mockMvc.perform(MRB.get("$baseUrl/?page=0"))
 
         then:
         response.andExpect(MRM.status().isOk())
-        response.andExpect(MRM.jsonPath("totalElements").value(6))
+        response.andExpect(MRM.jsonPath("totalElements").value(5))
     }
 
     def "Test list by vehicle unknown"() {
         setup:
-        fullTankController.vehicleRepository.findOne(_) >> null
+        fullTankController.fullTanksService.getFullTanks(_, _) >> {throw new TechnicalException()}
 
         when:
         def response = mockMvc.perform(MRB.get("$baseUrl/?page=0"))
@@ -100,9 +103,8 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test save"() {
         setup:
-        fullTankController.vehicleRepository.findOne(1) >> vehicle
-        fullTankController.fullTankRepository.save(_) >> fullTank
-        def json = new JsonBuilder(new FullTank(vehicle: vehicle, cost: 1, mileage: 1, date: new Date(), quantity: 1)).toPrettyString()
+        fullTankController.fullTanksService.save(_, _) >> fullTankDTO
+        def json = new JsonBuilder(fullTankDTO).toPrettyString()
 
         when:
         def response = mockMvc.perform(MRB.post("$baseUrl").contentType(MediaType.APPLICATION_JSON).content(json))
@@ -114,18 +116,19 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test save with vehicle not found"() {
         setup:
-        fullTankController.vehicleRepository.findOne(1) >> null
+        fullTankController.fullTanksService.save(_, _) >> {throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: 1)}
 
         when:
         def response = mockMvc.perform(MRB.post("$baseUrl").contentType(MediaType.APPLICATION_JSON).content("{}"))
 
         then:
         response.andExpect(MRM.status().isNotFound())
+        response.andExpect(MRM.jsonPath("errorMessage").value(new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: 1).message))
     }
 
     def "Test save with no full tank"() {
         setup:
-        fullTankController.vehicleRepository.findOne(1) >> vehicle
+        fullTankController.fullTanksService.save(_, _) >> {throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT)}
 
         when:
         def response = mockMvc.perform(MRB.post("$baseUrl").contentType(MediaType.APPLICATION_JSON).content("{}"))
@@ -201,7 +204,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         use(TimeCategory) {
             date2 = date1 + 1.month
         }
-        fullTankController.fullTankRepository.findAllByVehicleId(1) >> [new FullTank(mileage: 125.62, date: date2), new FullTank(mileage: 564.23, date: date1)]
+        fullTankController.fullTankRepository.findAllByVehicleId(1) >> [new FullTank(distance: 125.62, date: date2), new FullTank(distance: 564.23, date: date1)]
 
         when:
         def response = mockMvc.perform(MRB.get("$baseUrl/distanceStats"))

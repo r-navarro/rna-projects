@@ -1,10 +1,12 @@
 package com.carmanagement.controller
 
+import com.carmanagement.dto.FullTankDTO
 import com.carmanagement.entities.FullTank
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.FullTankRepository
 import com.carmanagement.repositories.VehicleRepository
+import com.carmanagement.services.interfaces.FullTanksService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -29,42 +31,32 @@ class FullTankController {
     @Autowired
     VehicleRepository vehicleRepository
 
+    @Autowired
+    FullTanksService fullTanksService
+
     @RequestMapping(value = "{vehicleId}/fullTanks/{fullTankId}", method = RequestMethod.GET)
-    def FullTank get(@PathVariable("vehicleId") Long vehicleId, @PathVariable("fullTankId") Long fullTankId) {
-        def fullTank = fullTankRepository.findOne(fullTankId)
+    def FullTankDTO get(@PathVariable("vehicleId") Long vehicleId, @PathVariable("fullTankId") Long fullTankId) {
+        def fullTank = fullTanksService.get(vehicleId, fullTankId)
 
-        if (fullTank) {
-            if (fullTank.vehicle.id != vehicleId) {
-                throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
-            }
-            return fullTank
+        if (!fullTank) {
+            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTankId)
         }
-
-        throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTankId)
+        return fullTank
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks", method = RequestMethod.GET)
-    def Page<FullTank> findFullTankByVehiclePaginate(
+    def Page<FullTankDTO> findFullTankByVehiclePaginate(
             @PathVariable("vehicleId") Long vehicleId,
             @PageableDefault(size = FullTankController.PAGE_SIZE, page = 0) Pageable pageable) {
-        if (!vehicleRepository.findOne(vehicleId)) {
-            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
-        }
 
-        return fullTankRepository.findByVehicleId(vehicleId, pageable)
+        return fullTanksService.getFullTanks(pageable, vehicleId)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks", method = RequestMethod.POST)
-    def ResponseEntity<FullTank> create(@PathVariable("vehicleId") Long vehicleId, @RequestBody FullTank fullTank) {
-        def vehicle = vehicleRepository.findOne(vehicleId)
-        if (!vehicle) {
-            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
-        }
-        fullTank.vehicle = vehicle
-        if (!fullTank) {
-            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT)
-        }
-        return new ResponseEntity<FullTank>(fullTankRepository.save(fullTank), HttpStatus.CREATED)
+    def ResponseEntity<FullTankDTO> create(
+            @PathVariable("vehicleId") Long vehicleId, @RequestBody FullTankDTO fullTank) {
+        def fullTankDTO = fullTanksService.save(fullTank, vehicleId)
+        return new ResponseEntity<FullTankDTO>(fullTankDTO, HttpStatus.CREATED)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/{fullTankId}", method = RequestMethod.PUT)
@@ -120,7 +112,7 @@ class FullTankController {
 
         def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
         def stats = []
-        fullTanks = fullTanks.sort { it.date }.collect { [it.mileage, it.date] }
+        fullTanks = fullTanks.sort { it.date }.collect { [it.distance, it.date] }
         fullTanks.each {
             stats << [it[1].format('dd/MM/yyyy'), it[0]]
         }

@@ -13,7 +13,7 @@ class Action {
     Date date
 
     @Column
-    Float mileage
+    Float distance
 
     @Column
     Float cost
@@ -23,6 +23,6 @@ class Action {
     Vehicle vehicle
 
     boolean asBoolean() {
-        return date && cost && mileage && vehicle
+        return date && cost && distance && vehicle
     }
 }
