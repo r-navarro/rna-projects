@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
 
+@Service
 class FullTanksServiceImpl implements FullTanksService {
 
     @Autowired
@@ -75,19 +77,18 @@ class FullTanksServiceImpl implements FullTanksService {
         return fullTankRepository.save(fullTank)
     }
 
-    private FullTank updateFullTank(FullTank fullTank) {
+    private FullTank updateFullTank(FullTank fullTank) throws TechnicalException {
         def oldFullTank = fullTankRepository.findOne(fullTank.id)
-        def vehicle = oldFullTank.vehicle
+        if (oldFullTank) {
+            def vehicle = oldFullTank.vehicle
+            vehicle.kilometers -= oldFullTank.distance
+            vehicle.kilometers += fullTank.distance
+            vehicle.actions.remove(oldFullTank)
+            vehicle.actions << fullTank
+            fullTank.vehicle = vehicle
 
-        vehicle.kilometers -= oldFullTank.distance
-
-        vehicle.kilometers += fullTank.distance
-
-        vehicle.actions.remove(oldFullTank)
-        vehicle.actions << fullTank
-
-        fullTank.vehicle = vehicle
-
-        return fullTankRepository.save(fullTank)
+            return fullTankRepository.save(fullTank)
+        }
+        throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTank.id)
     }
 }

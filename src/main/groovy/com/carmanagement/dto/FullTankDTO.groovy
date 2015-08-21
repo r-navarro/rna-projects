@@ -32,6 +32,7 @@ class FullTankDTO {
         fullTank.distance = this.distance
         fullTank.cost = this.cost
         fullTank.quantity = this.quantity
+        return fullTank
     }
 
     boolean asBoolean(){

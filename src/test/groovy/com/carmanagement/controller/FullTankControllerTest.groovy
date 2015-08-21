@@ -21,11 +21,11 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     String baseUrl = "/vehicles/1/fullTanks"
 
-    Vehicle vehicle = new Vehicle(id: 1)
+    Vehicle vehicle = new Vehicle(id: 1L)
 
-    FullTank fullTank = new FullTank(id: 1, vehicle: vehicle, cost: 1, distance: 1, date: new Date(), quantity: 1)
+    FullTank fullTank = new FullTank(id: 1L, vehicle: vehicle, cost: 1, distance: 1, date: new Date(), quantity: 1)
 
-    FullTankDTO fullTankDTO = new FullTankDTO(id: 1, cost: 1, distance: 1, date: new Date(), quantity: 1)
+    FullTankDTO fullTankDTO = new FullTankDTO(id: 1L, cost: 1, distance: 1, date: new Date(), quantity: 1)
 
 
     def setup() {
@@ -140,9 +140,8 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test update"() {
         setup:
-        fullTankController.vehicleRepository.findOne(1) >> vehicle
-        fullTankController.fullTankRepository.save(_) >> fullTank
-        def json = new JsonBuilder(fullTank).toPrettyString()
+        fullTankController.fullTanksService.save(_, _) >> fullTankDTO
+        def json = new JsonBuilder(fullTankDTO).toPrettyString()
 
         when:
         def response = mockMvc.perform(MRB.put("$baseUrl/$fullTank.id").contentType(MediaType.APPLICATION_JSON).content(json))
@@ -154,18 +153,23 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test update with vehicle not found"() {
         setup:
-        fullTankController.vehicleRepository.findOne(1) >> null
+        fullTankController.fullTanksService.save(_, _) >> {
+            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicle.id)
+        }
 
         when:
         def response = mockMvc.perform(MRB.put("$baseUrl/$fullTank.id").contentType(MediaType.APPLICATION_JSON).content("{}"))
 
         then:
         response.andExpect(MRM.status().isNotFound())
+        response.andExpect(MRM.jsonPath("errorMessage").value(new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicle.id).message))
     }
 
-    def "Test update with no full tank"() {
+    def "Test update with wrong full tank"() {
         setup:
-        fullTankController.vehicleRepository.findOne(1) >> vehicle
+        fullTankController.fullTanksService.save(_, _) >> {
+            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT)
+        }
 
         when:
         def response = mockMvc.perform(MRB.put("$baseUrl/$fullTank.id").contentType(MediaType.APPLICATION_JSON).content("{}"))

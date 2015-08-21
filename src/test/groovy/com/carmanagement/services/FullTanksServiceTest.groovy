@@ -18,7 +18,7 @@ class FullTanksServiceTest extends Specification {
 
     FullTankDTO fullTankDTO = new FullTankDTO(id: 1, distance: 1, quantity: 1, cost: 1, date: new Date())
 
-    Vehicle vehicle = new Vehicle(id: 1)
+    Vehicle vehicle = new Vehicle(id: 1, registerNumber: "test", kilometers: 1000, actions: [])
 
     FullTank fullTank = new FullTank(id: 1, distance: 1, quantity: 1, cost: 1, date: new Date(), vehicle: vehicle)
 
@@ -94,5 +94,68 @@ class FullTanksServiceTest extends Specification {
         then:
         def ex = thrown TechnicalException
         ex.message == new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: 1).message
+    }
+
+    def "test save nominal case"() {
+        setup:
+        fullTanksService.vehicleRepository.findOne(_) >> vehicle
+        fullTanksService.fullTankRepository.save(_) >> fullTank
+        def fullTankDtoTest = new FullTankDTO(fullTank)
+        fullTankDtoTest.id = null
+
+        when:
+        def result = fullTanksService.save(fullTankDtoTest, vehicle.id)
+
+        then:
+        result
+
+    }
+
+    def "test save update nominal case"() {
+        setup:
+        fullTanksService.vehicleRepository.findOne(_) >> vehicle
+        fullTanksService.fullTankRepository.findOne(_) >> fullTank
+        fullTanksService.fullTankRepository.save(_) >> fullTank
+
+        when:
+        def result = fullTanksService.save(fullTankDTO, vehicle.id)
+
+        then:
+        result
+
+    }
+
+    def "test save vehicle not found test"() {
+        setup:
+        fullTanksService.vehicleRepository.findOne(_) >> null
+
+        when:
+        fullTanksService.save(fullTankDTO, vehicle.id)
+
+        then:
+        def ex = thrown TechnicalException
+        ex.getMessage() == new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: 1).message
+    }
+
+    def "test save with bad fullTank"() {
+        when:
+        fullTanksService.save(new FullTankDTO(), vehicle.id)
+
+        then:
+        def ex = thrown TechnicalException
+        ex.getMessage() == new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT).message
+    }
+
+    def "test save update with unknown fullTank"() {
+        setup:
+        fullTanksService.vehicleRepository.findOne(_) >> vehicle
+        fullTanksService.fullTankRepository.findOne(_) >> null
+
+        when:
+        fullTanksService.save(fullTankDTO, vehicle.id)
+
+        then:
+        def ex = thrown TechnicalException
+        ex.getMessage() == new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTankDTO.id).message
     }
 }

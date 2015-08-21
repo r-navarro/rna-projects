@@ -1,7 +1,6 @@
 package com.carmanagement.controller
 
 import com.carmanagement.dto.FullTankDTO
-import com.carmanagement.entities.FullTank
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.FullTankRepository
@@ -60,18 +59,12 @@ class FullTankController {
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/{fullTankId}", method = RequestMethod.PUT)
-    def ResponseEntity<FullTank> update(
+    def ResponseEntity<FullTankDTO> update(
             @PathVariable("vehicleId") Long vehicleId,
-            @PathVariable("fullTankId") Long fullTankId, @RequestBody FullTank fullTank) {
-        def vehicle = vehicleRepository.findOne(vehicleId)
-        if (!vehicle) {
-            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
-        }
-        if (!fullTank) {
-            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT)
-        }
-        fullTank.vehicle = vehicle
-        return new ResponseEntity<FullTank>(fullTankRepository.save(fullTank), HttpStatus.CREATED)
+            @PathVariable("fullTankId") Long fullTankId, @RequestBody FullTankDTO fullTank) {
+        fullTank.id = fullTankId
+        def fullTankDTO = fullTanksService.save(fullTank, vehicleId)
+        return new ResponseEntity<FullTankDTO>(fullTankDTO, HttpStatus.CREATED)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/{id}", method = RequestMethod.DELETE)
