@@ -26,10 +26,17 @@ angular.module('demo-hockey')
 		    });
 		}
 
+		remove = function(idVehicle){
+		    return DaoService.getData("/vehicles/"+idVehicle, 'DELETE').then(function(response){
+		        return response.data;
+		    });
+		}
+
 		return {
 			list : list,
 			save : save,
-			get  : get
+			get  : get,
+			remove : remove
 		}
 		
 	// urlService = '/vehicle';

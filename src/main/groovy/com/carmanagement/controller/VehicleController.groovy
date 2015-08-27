@@ -40,9 +40,9 @@ class VehicleController {
         throw new TechnicalException(errorCode: ErrorCode.VEHICLE_WRONG_FORMAT)
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(value = '/{id}', method = RequestMethod.DELETE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    def void delete(@RequestBody Long id) {
+    def void delete(@PathVariable Long id) {
         vehiclesService.delete(id)
     }
 

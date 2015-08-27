@@ -70,15 +70,7 @@ class FullTankController {
     @RequestMapping(value = "{vehicleId}/fullTanks/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     def void delete(@PathVariable("vehicleId") Long vehicleId, @PathVariable("id") Long fullTankId) {
-        def fullTank = fullTankRepository.findOne(fullTankId)
-        if (!fullTank) {
-            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTankId)
-        }
-        if (fullTank.vehicle.id != vehicleId) {
-            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_VEHICLE_NOT_MATCH, errorParameter: vehicleId)
-        }
-
-        fullTankRepository.delete(fullTankId)
+        fullTanksService.delete(vehicleId, fullTankId)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/costStats", method = RequestMethod.GET)

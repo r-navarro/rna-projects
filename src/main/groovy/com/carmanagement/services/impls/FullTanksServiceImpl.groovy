@@ -91,4 +91,17 @@ class FullTanksServiceImpl implements FullTanksService {
         }
         throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTank.id)
     }
+
+    @Override
+    void delete(Long vehicleId, Long fullTankId) throws TechnicalException {
+        def fullTank = fullTankRepository.findOne(fullTankId)
+        if (!fullTank) {
+            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTankId)
+        }
+        if (fullTank.vehicle.id != vehicleId) {
+            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_VEHICLE_NOT_MATCH, errorParameter: vehicleId)
+        }
+        fullTank.vehicle.kilometers -= fullTank.distance
+        fullTankRepository.delete(fullTank)
+    }
 }

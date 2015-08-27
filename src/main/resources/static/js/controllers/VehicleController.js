@@ -24,6 +24,12 @@ angular.module('demo-hockey').controller('VehicleController',
 			$scope.create = function(vehicle){
 				VehicleService.save(vehicle);
 				$location.path('/list');
+				$scope.updateList(1);
+			}
+
+			$scope.deleteVehicle = function(id){
+				VehicleService.remove(id);
+				$scope.updateList(1);
 			}
 
 		}

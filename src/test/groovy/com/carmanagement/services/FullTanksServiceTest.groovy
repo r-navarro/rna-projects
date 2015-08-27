@@ -158,4 +158,40 @@ class FullTanksServiceTest extends Specification {
         def ex = thrown TechnicalException
         ex.getMessage() == new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTankDTO.id).message
     }
+
+    def "test delete"() {
+        setup:
+        fullTanksService.fullTankRepository = Mock(FullTankRepository)
+        fullTanksService.fullTankRepository.findOne(_) >> fullTank
+
+        when:
+        fullTanksService.delete(vehicle.id, fullTank.id)
+
+        then:
+        1 * fullTanksService.fullTankRepository.delete(fullTank)
+    }
+
+    def "test delete fullTank not found"() {
+        setup:
+        fullTanksService.fullTankRepository.findOne(_) >> null
+
+        when:
+        fullTanksService.delete(vehicle.id, fullTank.id)
+
+        then:
+        def ex = thrown TechnicalException
+        ex.getMessage() == new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTankDTO.id).message
+    }
+
+    def "test delete fullTank not matching with the vehicle"() {
+        setup:
+        fullTanksService.fullTankRepository.findOne(_) >> fullTank
+
+        when:
+        fullTanksService.delete(2, fullTank.id)
+
+        then:
+        def ex = thrown TechnicalException
+        ex.getMessage() == new TechnicalException(errorCode: ErrorCode.FULL_TANK_VEHICLE_NOT_MATCH, errorParameter: 2).message
+    }
 }

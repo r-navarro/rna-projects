@@ -5,12 +5,18 @@
         <tr>
             <th>Register number</th>
             <th>kilometers</th>
+            <th>Delete</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="vehicle in vehicles">
             <td><a href="#/show/{{vehicle.id}}">{{vehicle.registerNumber}}</a></td>
             <td>{{vehicle.kilometers}}</td>
+            <td>
+                <button type="button" class="btn btn-danger btn-xs" ng-click="deleteVehicle(vehicle.id)">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+                </button>
+            </td>
         </tr>
         </tbody>
     </table>

@@ -98,7 +98,7 @@ class VehicleControllerTest extends AbstractControllerTest {
 
     def "Test delete"() {
         when:
-        def response = mockMvc.perform(MRB.delete("/vehicles").contentType(MediaType.APPLICATION_JSON).content("1"))
+        def response = mockMvc.perform(MRB.delete("/vehicles/1"))
 
         then:
         response.andExpect(MRM.status().isNoContent())
@@ -111,7 +111,7 @@ class VehicleControllerTest extends AbstractControllerTest {
         }
 
         when:
-        def response = mockMvc.perform(MRB.delete("/vehicles").contentType(MediaType.APPLICATION_JSON).content("1"))
+        def response = mockMvc.perform(MRB.delete("/vehicles/1"))
 
         then:
         response.andExpect(MRM.status().isNotFound())

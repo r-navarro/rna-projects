@@ -222,9 +222,6 @@ class FullTankControllerTest extends AbstractControllerTest {
     }
 
     def "Test delete"() {
-        setup:
-        fullTankController.fullTankRepository.findOne(fullTank.id) >> fullTank
-
         when:
         def response = mockMvc.perform(MRB.delete("$baseUrl/$fullTank.id"))
 
@@ -233,6 +230,10 @@ class FullTankControllerTest extends AbstractControllerTest {
     }
 
     def "Test delete with no fullTank"() {
+        setup:
+        fullTankController.fullTanksService.delete(_, _) >> {
+            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTank.id)
+        }
 
         when:
         def response = mockMvc.perform(MRB.delete("$baseUrl/$fullTank.id"))
@@ -244,7 +245,9 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test delete with bad vehicle"() {
         setup:
-        fullTankController.fullTankRepository.findOne(fullTank.id) >> fullTank
+        fullTankController.fullTanksService.delete(_, _) >> {
+            throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_VEHICLE_NOT_MATCH, errorParameter: 2)
+        }
 
         when:
         def response = mockMvc.perform(MRB.delete("/vehicles/2/fullTanks/$fullTank.id"))

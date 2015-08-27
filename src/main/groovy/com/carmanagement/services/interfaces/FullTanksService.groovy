@@ -12,4 +12,6 @@ interface FullTanksService {
     Page<FullTankDTO> getFullTanks(Pageable pageable, Long vehicleId) throws TechnicalException
 
     FullTankDTO save(FullTankDTO fullTankDTO, Long vehicleId) throws TechnicalException
+
+    void delete(Long vehicleId, Long fullTankId) throws TechnicalException
 }

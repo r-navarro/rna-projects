@@ -19,6 +19,7 @@ angular.module('demo-hockey').controller('VehicleBoardController',
 				$scope.fullTankTotalElements = list.totalElements;
 				$scope.fullTankItemsPerPage = list.size;
 			});
+			$scope.get();
 		};
 
 		$scope.deleteFullTank = function(fullTank){
