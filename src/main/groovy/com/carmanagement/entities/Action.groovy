@@ -18,7 +18,7 @@ class Action {
     @Column
     Float cost
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(nullable = false)
     Vehicle vehicle
 

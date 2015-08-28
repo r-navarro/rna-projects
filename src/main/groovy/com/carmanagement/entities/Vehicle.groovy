@@ -21,10 +21,10 @@ class Vehicle {
     @Column
     Integer kilometers
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     List<Action> actions
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(nullable = false)
     User user
 

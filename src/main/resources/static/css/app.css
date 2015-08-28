@@ -1,36 +1,4 @@
 /* app css stylesheet */
-header nav {
-  background: -moz-linear-gradient(top, #ffffff 0%, #C8C8C8 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#C8C8C8)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #ffffff 0%,#C8C8C8 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #ffffff 0%,#C8C8C8 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #ffffff 0%,#C8C8C8 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #ffffff 0%,#C8C8C8 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#C8C8C8',GradientType=0 ); /* IE6-9 */
-
-}
-
-header nav a:hover {
-  background: none repeat scroll 0% 0% #555;
-  text-decoration: none;
-  font-weight: normal;
-  color: #FFF;
-  text-shadow: none;
-  border-radius: 5px;
-  line-height: 30px;
-}
-
-header nav a {
-  padding: 0px 10px;
-  margin: 0px;
-  line-height: 30px;
-  color: #626262;
-  text-shadow: 0px 1px #FFF;
-  text-decoration: none;
-  font-size: 20px;
-  font-weight: normal;
-}
-
 .ng-invalid {
   border-color: red;
   border-width: 2px;
@@ -46,4 +14,82 @@ header nav a {
     border-color: red;
     border-width: 2px;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 0, 0, 0.6);
+}
+
+.navbar .title {
+    float: left;
+    display: block;
+    padding: 8px 25px 12px;
+    margin-left: -20px;
+    font-size: 20px;
+    font-weight: 200;
+    color: #FFF;
+}
+
+.navbar {
+  background: rgb(30,87,153); /* Old browsers */
+  background: -moz-linear-gradient(top,  rgb(30,87,153) 0%, rgb(32,124,202) 37%, rgb(41,137,216) 50%, rgb(125,185,232) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(30,87,153)), color-stop(37%,rgb(32,124,202)), color-stop(50%,rgb(41,137,216)), color-stop(100%,rgb(125,185,232))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgb(30,87,153) 0%,rgb(32,124,202) 37%,rgb(41,137,216) 50%,rgb(125,185,232) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgb(30,87,153) 0%,rgb(32,124,202) 37%,rgb(41,137,216) 50%,rgb(125,185,232) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgb(30,87,153) 0%,rgb(32,124,202) 37%,rgb(41,137,216) 50%,rgb(125,185,232) 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  rgb(30,87,153) 0%,rgb(32,124,202) 37%,rgb(41,137,216) 50%,rgb(125,185,232) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=0 ); /* IE6-9 */
+}
+
+.navbar .btn-group {
+  padding: 5px 5px 5px;
+}
+
+.nav .nav-header {
+  color: #999;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+body {
+  padding-top: 60px;
+}
+
+footer {
+
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  height: 20px;
+  z-index: -9999;
+
+  background: rgb(30,87,153); /* Old browsers */
+  background: -moz-linear-gradient(top,  rgb(30,87,153) 0%, rgb(32,124,202) 37%, rgb(41,137,216) 50%, rgb(125,185,232) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(30,87,153)), color-stop(37%,rgb(32,124,202)), color-stop(50%,rgb(41,137,216)), color-stop(100%,rgb(125,185,232))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgb(30,87,153) 0%,rgb(32,124,202) 37%,rgb(41,137,216) 50%,rgb(125,185,232) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgb(30,87,153) 0%,rgb(32,124,202) 37%,rgb(41,137,216) 50%,rgb(125,185,232) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgb(30,87,153) 0%,rgb(32,124,202) 37%,rgb(41,137,216) 50%,rgb(125,185,232) 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  rgb(30,87,153) 0%,rgb(32,124,202) 37%,rgb(41,137,216) 50%,rgb(125,185,232) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=0 ); /* IE6-9 */
+}
+
+article .well {
+  margin-top: 10px;
+}
+
+.well li {
+  padding: 2px 2px 0px 0px;
+}
+
+.odd {
+    background: #e3f3ff;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.even {
+    background: #fff;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.odd a:hover, .even a:hover {
+    color: blue;
+    font-weight: bold;
 }

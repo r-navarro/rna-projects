@@ -30,6 +30,7 @@ class VehiclesServiceImpl implements VehiclesService {
     VehicleDTO save(VehicleDTO vehicleDTO, User user) {
         def vehicle = vehicleDTO.toVehicle()
         vehicle.user = user
+        user.vehicles << vehicle
         vehicle = vehicleRepository.save(vehicle)
 
         return new VehicleDTO(vehicle)

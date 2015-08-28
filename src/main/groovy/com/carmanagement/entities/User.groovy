@@ -27,7 +27,7 @@ class User {
     @Column
     boolean passwordExpired
 
-    @OneToMany
-    List<Vehicle> vehicles
+    @OneToMany(cascade = CascadeType.REMOVE)
+    List<Vehicle> vehicles = []
 
 }

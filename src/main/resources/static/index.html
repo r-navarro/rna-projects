@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app="demo-hockey">
+<html lang="en" ng-app="carManagement">
 <head>
     <meta charset="utf-8">
     <title>Car management</title>
@@ -18,38 +18,60 @@
     <script src="lib/d3/d3.min.js"></script>
     <script src="lib/angularjs-nvd3-directives/angularjs-nvd3-directives.js"></script>
     <script src="lib/nv.d3/nv.d3.js"></script>
+    <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
 
 </head>
 <body>
+<header class="container" ng-controller="LoginController">
+    <nav class="navbar navbar-fixed-top">
+        <a href="#list" class="title">Car management</a>
 
-<header class="row">
-    <div class="col-md-8 col-md-offset-2" ng-controller="LoginController">
-        <!-- 		<a href="#/home"><img src="img/logo.png" /></a> -->
-        <a href="#/home">Header</a>
-        <button class="btn btn-default" ng-click="logout()">Log out</button>
-        <nav class="navbar navbar-default navbar-static-top test">
-            <a href="#/create">create</a>
-            <a href="#/list">list</a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                vehicle</i><span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="#/create">Create</a></li>
+                <li><a href="#/list">list</a></li>
+            </ul>
+        </div>
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                <i class="glyphicon glyphicon-user"></i><span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="#/logOut">Logout</a></li>
+            </ul>
+        </div>
         </nav>
-    </div>
 </header>
-<section ng-view class="row">
+
+
+<section class="container-fluid">
+    <div class="row" ng-view></div>
 </section>
+
 
 <footer> footer</footer>
 
 </body>
-<script src="js/app.js"></script>
-<script src="js/controllers/VehicleController.js"></script>
-<script src="js/controllers/VehicleBoardController.js"></script>
-<script src="js/controllers/FullTankController.js"></script>
-<script src="js/controllers/HomeController.js"></script>
-<script src="js/controllers/LoginController.js"></script>
+<script src="app.js"></script>
+<script src="components/vehicle/VehicleController.js"></script>
+<script src="components/vehicle/VehicleBoardController.js"></script>
+<script src="components/vehicle/VehicleService.js"></script>
 
-<script src="js/services/DaoService.js"></script>
-<script src="js/services/VehicleService.js"></script>
-<script src="js/services/FullTankService.js"></script>
-<script src="js/services/AuthenticationService.js"></script>
-<script src="js/services/Base64.js"></script>
-<script src="js/services/ChartService.js"></script>
+
+<script src="components/fullTank/FullTankController.js"></script>
+<script src="components/fullTank/FullTankService.js"></script>
+
+
+<script src="components/login/HomeController.js"></script>
+<script src="components/login/LoginController.js"></script>
+<script src="components/login/AuthenticationService.js"></script>
+<script src="components/login/Base64.js"></script>
+
+<script src="shared/DaoService.js"></script>
+<script src="shared/ChartService.js"></script>
 </html>
