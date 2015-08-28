@@ -1,0 +1,12 @@
+<article class="col-md-8 col-md-offset-2" ng-init="init()">
+    <form name="fullTankForm" class="form-horizontal">
+        <ng-include src="'components/fullTank/_form.html'"></ng-include>
+    </form>
+    <div class="form-group">
+        <div class="col-sm-5">
+            <button class="btn btn-default" ng-click="update(fullTank)" ng-disabled="fullTankForm.$invalid">
+                update
+            </button>
+        </div>
+    </div>
+</article>

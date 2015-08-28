@@ -1,0 +1,11 @@
+<article class="col-md-8 col-md-offset-2">
+    <form name="vehicleForm" class="form-horizontal">
+        <ng-include src="'components/vehicle/_form.html'"></ng-include>
+    </form>
+    <div class="form-group">
+        <div class="col-sm-5">
+            <button class="btn btn-default" ng-click="create(vehicle)" ng-disabled="vehicleForm.$invalid">Create
+            </button>
+        </div>
+    </div>
+</article>
