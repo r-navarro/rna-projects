@@ -1,5 +1,13 @@
-<article class="col-md-8 col-md-offset-2" ng-init="updateList(1)">
+<article class="col-md-3">
+    <div class="well">
+        <ul class="nav nav-list">
+            <li <i class="glyphicon glyphicon-cog"></i><span class="nav-header">Vehicle</span></li>
+            <li><a href="#/create">Create</a></li>
+        </ul>
+    </div>   
+</article>
 
+<article class="col-md-9" ng-init="updateList(1)">
     <table class="table table-striped table-condensed">
         <thead>
         <tr>
@@ -24,10 +32,6 @@
         <div class="col-md-10">
         <pagination total-items="totalElements" ng-model="currentPage" ng-change="pageChanged()"
                     items-per-page="itemsPerPage"></pagination>
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-default" ng-click="create(vehicle)" ng-disabled="vehicleForm.$invalid">Create
-            </button>
         </div>
     </div>
 </article>

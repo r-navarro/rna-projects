@@ -31,5 +31,13 @@ angular.module('carManagement.login', ['ngRoute'])
             AuthenticationService.clearCredentials();
             $location.path('/');
         };
+
+        $scope.getCurrentUser = function() {
+            if($rootScope.globals.currentUser) {
+                return $rootScope.globals.currentUser.username;
+            }
+
+            return '';
+        }
     }
 );

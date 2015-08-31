@@ -26,7 +26,7 @@
     <nav class="navbar navbar-fixed-top">
         <a href="#list" class="title">Car management</a>
 
-        <div class="btn-group">
+        <div class="btn-group" ng-show="getCurrentUser()">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
                 vehicle</i><span class="caret"></span>
@@ -39,10 +39,10 @@
         <div class="btn-group pull-right">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
-                <i class="glyphicon glyphicon-user"></i><span class="caret"></span>
+                <i class="glyphicon glyphicon-user"></i>{{getCurrentUser()}}<span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
-                <li><a href="#/logOut">Logout</a></li>
+                <li><a ng-click="logout()">Logout</a></li>
             </ul>
         </div>
         </nav>
