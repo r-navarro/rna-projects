@@ -1,5 +1,6 @@
 package com.carmanagement.services.impls
 
+import com.carmanagement.dto.UserDTO
 import com.carmanagement.entities.User
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.exceptions.ErrorCode
@@ -57,5 +58,35 @@ class UserServiceImpl implements UserService {
     @Override
     User findByName(String userName) {
         return userRepository.findByName(userName)
+    }
+
+    @Override
+    UserDTO create(UserDTO userDTO) {
+        if(isNameAvailable(userDTO.name)){
+            return userRepository.save(userDTO.toUser())
+        }
+        throw new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDTO.name)
+    }
+
+    @Override
+    UserDTO update(UserDTO userDTO) throws TechnicalException {
+        def user = userRepository.findOne(userDTO.id)
+        if(user){
+            if(isNameAvailable(userDTO.name)){
+                def userToSave = userDTO.toUser()
+                userToSave.vehicles = user.vehicles
+                return userRepository.save(userToSave)
+            }else {
+                throw new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDTO.name)
+            }
+        }
+        throw new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: userDTO.id)
+    }
+
+    private boolean isNameAvailable(String name){
+        if (this.findByName(name)) {
+            return false
+        }
+        return true
     }
 }
