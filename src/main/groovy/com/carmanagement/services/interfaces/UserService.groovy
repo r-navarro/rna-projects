@@ -15,4 +15,6 @@ interface UserService extends UserDetailsService {
     UserDTO create(UserDTO userDTO) throws TechnicalException
 
     UserDTO update(UserDTO userDTO) throws TechnicalException
+
+    void delete(UserDTO userDTO) throws TechnicalException
 }

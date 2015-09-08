@@ -28,9 +28,9 @@ abstract class AbstractControllerTest extends Specification {
     def setupMockMvc(def controller) {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).setHandlerExceptionResolvers(createExceptionResolver())
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver()).build()
-        User user = new User("user", "", AuthorityUtils.createAuthorityList("ROLE_USER"));
-        TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(user, null);
-        SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken);
+        User user = new User("user", "", AuthorityUtils.createAuthorityList("ROLE_USER"))
+        TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(user, null)
+        SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken)
 
     }
 

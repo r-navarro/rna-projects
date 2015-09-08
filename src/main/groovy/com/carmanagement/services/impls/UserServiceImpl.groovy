@@ -89,4 +89,13 @@ class UserServiceImpl implements UserService {
         }
         return true
     }
+
+    @Override
+    void delete(UserDTO userDTO) throws TechnicalException {
+        def user = userRepository.findOne(userDTO.id)
+        if(!user){
+            throw new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: userDTO.id)
+        }
+        userRepository.delete(user)
+    }
 }

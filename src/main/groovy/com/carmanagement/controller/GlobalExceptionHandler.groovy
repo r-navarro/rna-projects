@@ -1,6 +1,7 @@
 package com.carmanagement.controller
 
 import com.carmanagement.controller.pojo.ErrorResponse
+import com.carmanagement.exceptions.SecurityException
 import com.carmanagement.exceptions.TechnicalException
 import groovy.util.logging.Slf4j
 import org.springframework.http.HttpStatus
@@ -19,6 +20,15 @@ class GlobalExceptionHandler {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorResponse handleTechnicalException(TechnicalException e, HttpServletRequest request) {
+        log.info(e.getMessage())
+        def requestUrl = request.getPathInfo() ?: request.getServletPath()
+        return new ErrorResponse(errorMessage: e.getMessage(), request: requestUrl, method: request.getMethod())
+    }
+
+    @ExceptionHandler(SecurityException)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponse handleSecurityException(SecurityException e, HttpServletRequest request) {
         log.info(e.getMessage())
         def requestUrl = request.getPathInfo() ?: request.getServletPath()
         return new ErrorResponse(errorMessage: e.getMessage(), request: requestUrl, method: request.getMethod())
