@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -42,14 +44,35 @@ class UserController {
 
     @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
     def ResponseEntity<UserDTO> get(@PathVariable Long id) {
-        def user = userRepository.findOne(id)
-        if(!user) throw new TechnicalException(errorCode:ErrorCode.USER_NOT_FOUND, errorParameter: id)
-        def auth = SecurityContextHolder.getContext().authentication
-        if(auth.name == user.name) {
-            return new ResponseEntity(new UserDTO(user), HttpStatus.OK)
-        } else if (auth.authorities.find {it.getAuthority() == 'ROLE_ADMIN'}) {
+        if(checkUserRight(id)) {
+            def user = userService.findById(id)
             return new ResponseEntity(new UserDTO(user), HttpStatus.OK)
         }
         throw new SecurityException()
+    }
+
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT)
+    def ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+        if(checkUserRight(id)) {
+            return new ResponseEntity(userService.update(userDTO), HttpStatus.CREATED)
+        }
+        throw new SecurityException()
+    }
+
+    private boolean checkUserRight(Long userId) {
+        def user = userService.findById(userId)
+        if(!user) {
+            throw new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: userId)
+        }
+        def authentication = SecurityContextHolder.getContext().authentication
+        if(user.name == authentication.name) {
+            return true
+        }
+        return isAdmin(authentication)
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        def auth = ((UserDetails) authentication.principal).authorities.find {it.authority == 'ROLE_ADMIN'}
+        return auth != null
     }
 }

@@ -61,6 +61,11 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
+    User findById(Long id) {
+        return userRepository.findOne(id)
+    }
+
+    @Override
     UserDTO create(UserDTO userDTO) {
         if(isNameAvailable(userDTO.name)){
             return userRepository.save(userDTO.toUser())

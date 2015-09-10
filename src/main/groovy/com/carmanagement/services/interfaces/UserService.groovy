@@ -12,6 +12,8 @@ interface UserService extends UserDetailsService {
 
     User findByName(String userName)
 
+    User findById(Long id)
+
     UserDTO create(UserDTO userDTO) throws TechnicalException
 
     UserDTO update(UserDTO userDTO) throws TechnicalException

@@ -34,6 +34,15 @@ abstract class AbstractControllerTest extends Specification {
 
     }
 
+    def setupMockMvcAdminUser(def controller) {
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).setHandlerExceptionResolvers(createExceptionResolver())
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver()).build()
+        User user = new User("user", "", AuthorityUtils.createAuthorityList("ROLE_ADMIN"))
+        TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(user, null)
+        SecurityContextHolder.getContext().setAuthentication(testingAuthenticationToken)
+
+    }
+
     private static ExceptionHandlerExceptionResolver createExceptionResolver() {
         ExceptionHandlerExceptionResolver exceptionResolver = new ExceptionHandlerExceptionResolver() {
             protected ServletInvocableHandlerMethod getExceptionHandlerMethod(HandlerMethod handlerMethod, Exception exception) {
