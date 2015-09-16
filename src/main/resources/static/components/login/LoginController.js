@@ -6,38 +6,52 @@ angular.module('carManagement.login', ['ngRoute'])
         controller : 'HomeController'
     }).when('/login', {
         templateUrl : 'components/login/login.html',
-        controller : 'LoginController'
+        controller : 'LoginController',
+        resolve : {
+            'checkLoging' : function(AuthenticationService){
+                AuthenticationService.authenticate();
+            }
+        }
     });
 }])
 
 .controller('LoginController',
-    function($scope, $rootScope, $location, AuthenticationService) {
+    function($scope, $rootScope, $location, $http, AuthenticationService) {
+       
 
-        $scope.login = function () {
-            $scope.dataLoading = true;
-            AuthenticationService.setCredentials($scope.username, $scope.password);
-            AuthenticationService.login($scope.username, $scope.password, function(response) {
-                if(response.status == 200) {
-                    $location.path('/list');
-                } else {
-                    AuthenticationService.clearCredentials();
-                    $scope.error = "Error : " + response.data.message;
-                    $scope.dataLoading = false;
-                }
-            });
-        };
+        $scope.credentials = {};
 
-        $scope.logout = function(){
-            AuthenticationService.clearCredentials();
-            $location.path('/');
-        };
+        $scope.login = function() {
+          AuthenticationService.authenticate($scope.credentials, function() {
+            if ($rootScope.authenticated) {
+              $location.path("/list");
+            } else {
+              $location.path("/login");
+              $scope.error = 'wrong login or password';
+            }
+          });
+        }
+
+
+        $scope.logout = function() {
+          AuthenticationService.logout();
+          $location.path("/login");
+        }
 
         $scope.getCurrentUser = function() {
-            if($rootScope.globals.currentUser) {
-                return $rootScope.globals.currentUser.username;
+            if($rootScope.authenticated) {
+                return $rootScope.username;
             }
 
             return '';
+        }
+
+        $scope.goHomePage = function() {
+            if($rootScope.authenticated) {
+                $location.path("/list");
+            }else {
+                $location.path("/login");
+            }
         }
     }
 );

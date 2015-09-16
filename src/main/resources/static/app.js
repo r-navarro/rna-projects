@@ -3,26 +3,11 @@ angular.module('carManagement', [ 'ngRoute', 'ngAnimate','ngResource', 'ui.boots
 	'carManagement.vehicle',
 	'carManagement.fullTank',
 	'carManagement.login' ])
-.config(
-	[ '$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
+.config([ '$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
 		$routeProvider.otherwise({
 			redirectTo : '/login'
 		});
-		
-	} ])
+		$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
+	} 
+]);
 
-.run(['$rootScope', '$location', '$cookieStore', '$http',
-    function ($rootScope, $location, $cookieStore, $http) {
-        // keep user logged in after page refresh
-        $rootScope.globals = $cookieStore.get('globals') || {};
-        if ($rootScope.globals.currentUser) {
-            $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authData; // jshint ignore:line
-        }
-
-        $rootScope.$on('$locationChangeStart', function (event, next, current) {
-            // redirect to login page if not logged in
-            if ($location.path() !== '/login' && !$rootScope.globals.currentUser) {
-                $location.path('/login');
-            }
-    });
-}]);

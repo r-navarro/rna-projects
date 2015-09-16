@@ -118,4 +118,27 @@ class UserControllerTest extends AbstractControllerTest {
         then:
         response.andExpect(MRM.status().isUnauthorized())
     }
+
+    def "Test delete"() {
+        setup:
+        setupMockMvcAdminUser(userController)
+        userController.userService.findById(_) >> user
+
+        when:
+        def response = mockMvc.perform(MRB.delete("$baseUrl/$user.id"))
+
+        then:
+        response.andExpect(MRM.status().isNoContent())
+    }
+
+    def "Test delete not admin"() {
+        setup:
+        userController.userService.findById(_) >> user
+
+        when:
+        def response = mockMvc.perform(MRB.delete("$baseUrl/$user.id"))
+
+        then:
+        response.andExpect(MRM.status().isNoContent())
+    }
 }

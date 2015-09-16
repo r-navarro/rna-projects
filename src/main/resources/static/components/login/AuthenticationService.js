@@ -3,37 +3,35 @@ angular.module('carManagement')
     function($resource, DaoService, Base64, $http, $cookieStore, $rootScope) {
     	var service = {};
 
-         service.login = function (username, password, callback) {
-            user = {
-                username:username,
-                password:password
-            }
-         	DaoService.getData("/login", 'POST', user).then(
-         		function(response){callback(response);},
-         		function(response){callback(response);}
-         	);
-         };
+        service.authenticate = function(credentials, callback) {
 
-         service.setCredentials = function (username, password) {
-			 var authData = Base64.encode(username + ':' + password);
+            var headers = credentials ? {authorization : "Basic "
+                + btoa(credentials.username + ":" + credentials.password)
+            } : {};
 
-			 $rootScope.globals = {
-				 currentUser: {
-					 username: username,
-					 authData: authData
-				 }
-			 };
+            $http.get('login', {headers : headers}).success(function(data) {
+              if (data.name) {
+                $rootScope.authenticated = true;
+                $rootScope.username = data.name;
+              } else {
+                $rootScope.authenticated = false;
+              }
+              callback && callback();
+            }).error(function() {
+              $rootScope.authenticated = false;
+              callback && callback();
+            });
 
-			 $http.defaults.headers.common['Authorization'] = 'Basic ' + authData;
-			 $cookieStore.put('globals', $rootScope.globals);
-		 };
+        };
 
-		 service.clearCredentials = function () {
-			 $rootScope.globals = {};
-			 $cookieStore.remove('globals');
-			 $http.defaults.headers.common.Authorization = 'Basic ';
-		 };
+        service.logout = function() {
+			$http.post('logout', {}).success(function() {
+				$rootScope.authenticated = false;
+			}).error(function(data) {
+				$rootScope.authenticated = false;
+			});
+        }
 
-		 return service;
+		return service;
 	}
 ]);

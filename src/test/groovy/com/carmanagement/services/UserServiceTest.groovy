@@ -92,7 +92,7 @@ class UserServiceTest extends Specification {
         userService.userRepository.findOne(_) >> user
 
         when:
-        userService.delete(userDto)
+        userService.delete(userDto.id)
 
         then:
         1 * userService.userRepository.delete(_)
@@ -103,7 +103,7 @@ class UserServiceTest extends Specification {
         userService.userRepository.findOne(_) >> null
 
         when:
-        userService.delete(userDto)
+        userService.delete(userDto.id)
 
         then:
         def ex = thrown TechnicalException
