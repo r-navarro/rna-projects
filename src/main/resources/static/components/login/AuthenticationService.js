@@ -24,12 +24,14 @@ angular.module('carManagement')
 
         };
 
-        service.logout = function() {
-			$http.post('logout', {}).success(function() {
-				$rootScope.authenticated = false;
-			}).error(function(data) {
-				$rootScope.authenticated = false;
-			});
+        service.logout = function(callback) {
+    			$http.post('logout', {}).success(function() {
+    				$rootScope.authenticated = false;
+            callback && callback();
+    			}).error(function(data) {
+    				$rootScope.authenticated = false;
+            callback && callback();
+    			});
         }
 
 		return service;

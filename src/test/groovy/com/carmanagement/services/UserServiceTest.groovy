@@ -7,7 +7,6 @@ import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.UserRepository
 import com.carmanagement.services.impls.UserServiceImpl
-import com.carmanagement.services.interfaces.UserService
 import spock.lang.Specification
 
 class UserServiceTest extends Specification {
@@ -16,7 +15,7 @@ class UserServiceTest extends Specification {
 
     def user = new User(id: 1, name: "user1")
 
-    def userDto = new UserDTO(id: 1, name: "user1")
+    def userDto = new UserDTO(id: 1, name: "userDTO1")
 
     def userDtoWithIdNull = new UserDTO(name: "newUser1")
 
@@ -50,15 +49,16 @@ class UserServiceTest extends Specification {
 
     def "test update user nominal case"() {
         setup:
-        userService.userRepository = Mock(UserRepository)
         userService.userRepository.findOne(_) >> user
         userService.userRepository.findByName(_) >> null
+        userService.userRepository.save(_) >> user
 
         when:
         def result = userService.update(userDto)
 
         then:
-        1 * userService.userRepository.save(_)
+        result.class == UserDTO
+        result.name == user.name
     }
 
     def "test update user change name already taken case"() {
@@ -71,7 +71,7 @@ class UserServiceTest extends Specification {
 
         then:
         def ex = thrown TechnicalException
-        ex.message == new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: user.name).message
+        ex.message == new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDto.name).message
     }
 
     def "test update user not found case"() {

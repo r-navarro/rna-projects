@@ -34,8 +34,9 @@ angular.module('carManagement.login', ['ngRoute'])
 
 
         $scope.logout = function() {
-          AuthenticationService.logout();
-          $location.path("/login");
+          AuthenticationService.logout(function(){
+            $location.path("/login");
+          }); 
         }
 
         $scope.getCurrentUser = function() {
@@ -53,5 +54,7 @@ angular.module('carManagement.login', ['ngRoute'])
                 $location.path("/login");
             }
         }
+
+        
     }
 );

@@ -1,7 +1,6 @@
 package com.carmanagement.controller
 
 import com.carmanagement.dto.UserDTO
-import com.carmanagement.entities.User
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.SecurityException
 import com.carmanagement.exceptions.TechnicalException
@@ -44,12 +43,25 @@ class UserController {
         throw new SecurityException()
     }
 
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    def ResponseEntity<UserDTO> getCurrent() {
+        def authentication = SecurityContextHolder.getContext().authentication
+        def userDto = new UserDTO(userService.findByName(authentication.name))
+        return new ResponseEntity<UserDTO>(userDto, HttpStatus.OK)
+    }
+
     @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT)
     def ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserDTO userDTO) {
         if (checkUserRight(id)) {
             return new ResponseEntity(userService.update(userDTO), HttpStatus.CREATED)
         }
         throw new SecurityException()
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    @Secured("ROLE_ADMIN")
+    def ResponseEntity<UserDTO> create(@RequestBody UserDTO userDTO) {
+        return new ResponseEntity(userService.create(userDTO), HttpStatus.CREATED)
     }
 
     @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
@@ -60,7 +72,7 @@ class UserController {
     }
 
 
-    @RequestMapping(value = "/users/", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/all", method = RequestMethod.GET)
     @Secured("ROLE_ADMIN")
     def all() {
 

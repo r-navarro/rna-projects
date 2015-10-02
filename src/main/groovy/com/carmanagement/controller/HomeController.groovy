@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 class HomeController {
 
     @RequestMapping("/home")
-    @Secured("hasRole('ROLE_ADMIN')")
+    @Secured("ROLE_ADMIN")
     public String home() {
         return "index"
     }

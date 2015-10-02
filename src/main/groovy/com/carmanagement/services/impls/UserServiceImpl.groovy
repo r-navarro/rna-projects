@@ -80,7 +80,7 @@ class UserServiceImpl implements UserService {
             if(isNameAvailable(userDTO.name)){
                 def userToSave = userDTO.toUser()
                 userToSave.vehicles = user.vehicles
-                return userRepository.save(userToSave)
+                return new UserDTO(userRepository.save(userToSave))
             }else {
                 throw new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDTO.name)
             }

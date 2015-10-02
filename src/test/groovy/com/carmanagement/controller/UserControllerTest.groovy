@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers as MRM
 
 class UserControllerTest extends AbstractControllerTest {
 
-    UserController userController
+    UserController userController = new UserController()
 
     String baseUrl = '/users'
 
@@ -24,13 +24,26 @@ class UserControllerTest extends AbstractControllerTest {
     def userDTO = new UserDTO(id:1, name: "user")
 
     def setup() {
-        userController = new UserController()
         userController.userService = Stub(UserService)
         userController.userRepository = Stub(UserRepository)
         setupMockMvc(userController)
     }
 
     def "test get action"(){
+        setup:
+        userController.userService.findByName(_) >> user
+
+        when:
+        def response = mockMvc.perform(MRB.get("$baseUrl"))
+
+        then:
+        response.andExpect(MRM.status().isOk())
+        response.andExpect(MRM.content().contentType("${MediaType.APPLICATION_JSON};charset=UTF-8"))
+        response.andExpect(MRM.jsonPath("id").value(1))
+    }
+
+
+    def "test get by id action"() {
         setup:
         userController.userService.findById(_) >> user
 
@@ -121,7 +134,6 @@ class UserControllerTest extends AbstractControllerTest {
 
     def "Test delete"() {
         setup:
-        setupMockMvcAdminUser(userController)
         userController.userService.findById(_) >> user
 
         when:
@@ -131,14 +143,32 @@ class UserControllerTest extends AbstractControllerTest {
         response.andExpect(MRM.status().isNoContent())
     }
 
-    def "Test delete not admin"() {
+
+    def "Test create"() {
         setup:
-        userController.userService.findById(_) >> user
+        userController.userService.create(_) >> userDTO
+        def json = new JsonBuilder(userDTO).toPrettyString()
 
         when:
-        def response = mockMvc.perform(MRB.delete("$baseUrl/$user.id"))
+        def response = mockMvc.perform(MRB.post("$baseUrl").contentType(MediaType.APPLICATION_JSON).content(json))
 
         then:
-        response.andExpect(MRM.status().isNoContent())
+        response.andExpect(MRM.status().isCreated())
+        response.andExpect(MRM.jsonPath("id").value(1))
+    }
+
+    def "Test create user not available"() {
+        setup:
+        userController.userService.create(_) >> {
+            throw new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDTO.name)
+        }
+        def json = new JsonBuilder(userDTO).toPrettyString()
+
+        when:
+        def response = mockMvc.perform(MRB.post("$baseUrl").contentType(MediaType.APPLICATION_JSON).content(json))
+
+        then:
+        response.andExpect(MRM.status().isNotFound())
+        response.andExpect(MRM.jsonPath("errorMessage").value(new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDTO.name).message))
     }
 }
