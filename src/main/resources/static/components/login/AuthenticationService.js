@@ -9,7 +9,7 @@ angular.module('carManagement')
                 + btoa(credentials.username + ":" + credentials.password)
             } : {};
 
-            $http.get('login', {headers : headers}).success(function(data) {
+            $http.get('users/login', {headers : headers}).success(function(data) {
               if (data.name) {
                 service.isAdmin();
                 $rootScope.authenticated = true;
@@ -37,9 +37,11 @@ angular.module('carManagement')
 
         service.isAdmin = function() {
           $rootScope.isAdmin = false;
-          $http.get('isAdmin').success(function(data) {
+          $http.get('users/isAdmin').success(function(data) {
             if(data == 'true'){
               $rootScope.isAdmin = true;
+            } else {
+              $rootScope.isAdmin = false;
             }
           }).error(function(data) {
             console.log(data);

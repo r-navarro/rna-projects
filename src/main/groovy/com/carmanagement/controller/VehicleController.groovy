@@ -8,6 +8,7 @@ import com.carmanagement.services.interfaces.VehiclesService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
@@ -66,6 +67,8 @@ class VehicleController {
     @RequestMapping(method = RequestMethod.GET)
     def Page<VehicleDTO> getVehicles(@PageableDefault(size = VehicleController.PAGE_SIZE, page = 0) Pageable pageable) {
         def auth = SecurityContextHolder.getContext().authentication
-        return vehiclesService.getVehicles(pageable, auth.name)
+        def pager = vehiclesService.getVehicles(pageable, auth.name)
+        def vehicleDTOs = pager.content.collect { new VehicleDTO(it) }
+        return new PageImpl<VehicleDTO>(vehicleDTOs, pageable, pager.totalElements)
     }
 }
