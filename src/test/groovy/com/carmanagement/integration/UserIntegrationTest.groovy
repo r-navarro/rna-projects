@@ -1,37 +1,112 @@
 package com.carmanagement.integration
 
-import com.carmanagement.UiApplication
-import com.carmanagement.controller.pojo.ErrorResponse
 import com.carmanagement.dto.UserDTO
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.SpringApplicationContextLoader
+import com.carmanagement.repositories.UserRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.TestRestTemplate
-import org.springframework.boot.test.WebIntegrationTest
-import org.springframework.http.HttpStatus
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
+import org.springframework.http.*
 import org.springframework.web.client.RestTemplate
-import spock.lang.Specification
+import spock.lang.Ignore
+import spock.lang.Shared
 
+class UserIntegrationTest extends IntegrationBaseTest {
 
-@ContextConfiguration(loader = SpringApplicationContextLoader, classes = UiApplication)
-@WebIntegrationTest
-@ActiveProfiles("test")
-class UserIntegrationTest extends Specification {
-
-    @Value('${local.server.port}')
-    int port
-
-    RestTemplate template = new TestRestTemplate();
-
+    @Shared
     def userDTO = new UserDTO(name: "test")
 
+    String getBasePath() { "users/" }
 
-    def "test create"() {
+    @Shared
+    def token
+
+    @Shared
+    def ROLE_TO_USER = [
+            NO_ROLE: [name: null, password: null],
+            USER   : [name: 'toto', password: 'toto'],
+            ADMIN  : [name: 'admin', password: 'admin']]
+
+    @Autowired
+    UserRepository userRepository
+
+
+    def "test authentication of endpoint"() {
+        given:
+        RestTemplate restTemplate = new TestRestTemplate(user.name, user.password)
+        RequestEntity request = RequestEntity.get(serviceURI(endpoint)).build()
+
         when:
-        def a = template.postForEntity("http://localhost:$port/users", userDTO, ErrorResponse)
+        ResponseEntity response = restTemplate.exchange(request, Object)
+        token = response.headers.get("Set-Cookie").get(1).split("=")[1].split(";")[0]
 
         then:
-        a.statusCode == HttpStatus.FORBIDDEN
+        response.statusCode == status
+
+        where:
+        endpoint | user                 | status
+        "/login" | ROLE_TO_USER.NO_ROLE | HttpStatus.UNAUTHORIZED
+        "/login" | ROLE_TO_USER.USER    | HttpStatus.OK
+        "/login" | ROLE_TO_USER.ADMIN   | HttpStatus.OK
+        ""       | ROLE_TO_USER.NO_ROLE | HttpStatus.UNAUTHORIZED
+        ""       | ROLE_TO_USER.USER    | HttpStatus.OK
+        ""       | ROLE_TO_USER.ADMIN   | HttpStatus.OK
+        "/all"   | ROLE_TO_USER.NO_ROLE | HttpStatus.UNAUTHORIZED
+        "/all"   | ROLE_TO_USER.USER    | HttpStatus.FORBIDDEN
+        "/all"   | ROLE_TO_USER.ADMIN   | HttpStatus.OK
+    }
+
+    def "test get all user"() {
+        when:
+        def responseAdmin = templateAdmin.getForEntity("http://localhost:$port/users/all", List)
+        def responseUser = templateUser.getForEntity("http://localhost:$port/users/all", Map)
+        def responseNoUser = templateNoUser.getForEntity("http://localhost:$port/users/all", Map)
+
+        then:
+        responseAdmin.statusCode == HttpStatus.OK
+        responseAdmin.body.size() == 2
+        responseUser.statusCode == HttpStatus.FORBIDDEN
+        responseNoUser.statusCode == HttpStatus.UNAUTHORIZED
+    }
+
+    @Ignore
+    def "test create user"() {
+        setup:
+        RequestEntity<UserDTO> request = RequestEntity.post(serviceURI()).body(userDTO)
+
+        when:
+        ResponseEntity<UserDTO> responseAdmin = templateAdmin.exchange(request, UserDTO)
+
+        then:
+        responseAdmin.statusCode == HttpStatus.CREATED
+        responseAdmin.body.name == "test"
+    }
+
+    def "test get user"() {
+        setup:
+        RequestEntity<UserDTO> request = RequestEntity.get(serviceURI()).build()
+
+        when:
+        def responseAdmin = templateAdmin.exchange(request, UserDTO)
+
+        then:
+        responseAdmin.statusCode == HttpStatus.OK
+        responseAdmin.body.name == "admin"
+    }
+
+    @Ignore
+    def "test update user"() {
+        setup:
+        def user = userRepository.findByName("toto")
+        user.password = "password"
+        user.accountLocked = true
+        def header = new HttpHeaders()
+        header.add("X-XSRF-TOKEN", token)
+//        RequestEntity<UserDTO> request = RequestEntity.put(serviceURI()).body(new UserDTO(user))
+        RequestEntity<UserDTO> request = new RequestEntity(new UserDTO(user), header, HttpMethod.PUT, serviceURI())
+
+        when:
+        ResponseEntity response = templateAdmin.exchange(request, UserDTO)
+
+        then:
+        response.statusCode == HttpStatus.CREATED
     }
 }

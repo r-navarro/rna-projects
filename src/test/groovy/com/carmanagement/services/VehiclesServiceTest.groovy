@@ -1,99 +1,101 @@
 package com.carmanagement.services
 
-import com.carmanagement.dto.VehicleDTO
+import com.carmanagement.config.PersistenceTestConfig
 import com.carmanagement.entities.User
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
-import com.carmanagement.repositories.UserRepository
-import com.carmanagement.repositories.VehicleRepository
-import com.carmanagement.services.impls.VehiclesServiceImpl
 import com.carmanagement.services.interfaces.UserService
-import org.springframework.data.domain.PageImpl
+import com.carmanagement.services.interfaces.VehiclesService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
+import org.springframework.test.annotation.Rollback
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 
+@ContextConfiguration(classes = PersistenceTestConfig.class)
+@ActiveProfiles("test")
+@Transactional
 class VehiclesServiceTest extends Specification {
 
-    VehiclesServiceImpl vehiclesService
+    @Autowired
+    VehiclesService vehiclesService
 
-    Vehicle vehicle = new Vehicle(id: 1, kilometers: 1, type: "test", price: 1, registerNumber: "test")
+    @Autowired
+    UserService userService
 
-    VehicleDTO vehicleDTO = new VehicleDTO(id: 1, kilometers: 1, type: "testDTO", price: 1, registerNumber: "testDTO")
+    Vehicle vehicle = new Vehicle(kilometers: 1, type: "test", price: 1, registerNumber: "test")
+
+    def user = new User(name: "user")
 
     def setup() {
-        vehiclesService = new VehiclesServiceImpl()
-        vehiclesService.vehicleRepository = Stub(VehicleRepository)
-        vehiclesService.userService = Stub(UserService)
-        vehiclesService.userRepository = Stub(UserRepository)
+        assert vehiclesService.findAll().size() == 0
+        user = userService.save(user)
+        vehicle = vehiclesService.save(vehicle, user)
+    }
+
+    def cleanup() {
+        userService.delete(user.id)
     }
 
     def "Test get"() {
-        setup:
-        vehiclesService.vehicleRepository.findOne(_) >> vehicle
-        vehiclesService.userService.checkUserVehicle(_, _) >> true
-
         when:
-        def result = vehiclesService.get(1, "user")
+        def result = vehiclesService.get(vehicle.id, "user")
 
         then:
         result
     }
 
+    @Rollback
     def "Test get with user not matching"() {
-        setup:
-        vehiclesService.vehicleRepository.findOne(_) >> vehicle
-        vehiclesService.userService.checkUserVehicle(_, _) >> false
-
         when:
-        def result = vehiclesService.get(1, "user")
+        def userTest = userService.save(new User(name: "test"))
+        def result = vehiclesService.get(vehicle.id, userTest.name)
 
         then:
         !result
     }
 
     def "Test get with vehicle not found"() {
-        setup:
-        vehiclesService.vehicleRepository.findOne(_) >> null
-
         when:
-        def result = vehiclesService.get(1, "user")
+        def result = vehiclesService.get(1, "Nobody")
 
         then:
         !result
     }
 
+    @Rollback
     def "Test save"() {
         setup:
-        vehiclesService.vehicleRepository.save(_) >> vehicle
+        def vehicleToCreate = new Vehicle(registerNumber: "test save")
 
         when:
-        def result = vehiclesService.save(vehicleDTO, new User())
+        def result = vehiclesService.save(vehicleToCreate, user)
+        def userVehicleCount = userService.findById(user.id).vehicles.size()
 
         then:
-        result.registerNumber == "test"
+        result.id
+        userVehicleCount == 2
     }
 
+    @Rollback
     def "test get vehicles"(){
         setup:
-        def vehicles = []
         3.times{
-            vehicles << new Vehicle(id:it)
+            vehiclesService.save(new Vehicle(registerNumber: it), user)
         }
-        vehiclesService.vehicleRepository.findAllByUserName(_, _) >> new PageImpl<Vehicle>(vehicles)
 
         when:
-        def result = vehiclesService.getVehicles(new PageRequest(1, 1), "test")
+        def result = vehiclesService.getVehicles(new PageRequest(0, 10), user.name)
 
         then:
-        result.content.size() == vehicles.size()
-        result.content.collect{it.id}.join("") == "012"
+        result.content.size() == 4
+        result.content.collect { it.registerNumber }.join("") contains "012"
     }
 
     def "test get 0 vehicles"(){
-        setup:
-        vehiclesService.vehicleRepository.findAllByUserName(_, _) >> new PageImpl<Vehicle>([])
-
         when:
         def result = vehiclesService.getVehicles(new PageRequest(1, 1), "test")
 
@@ -101,43 +103,38 @@ class VehiclesServiceTest extends Specification {
         result.content.size() == 0
     }
 
+    @Rollback
     def "test delete"() {
-        given:
-        vehiclesService.vehicleRepository = Mock(VehicleRepository)
-        vehiclesService.vehicleRepository.findOne(_) >> vehicle
-
         when:
-        vehiclesService.delete(1)
+        vehiclesService.delete(vehicle.id)
 
         then:
-        1 * vehiclesService.vehicleRepository.delete(vehicle)
+        !vehiclesService.findAll()
+        !userService.findById(user.id).vehicles
     }
 
     def "test delete with vehicle not found"() {
-        given:
-        vehiclesService.vehicleRepository.findOne(_) >> null
-
         when:
-        vehiclesService.delete(1)
+        vehiclesService.delete(-1)
 
         then:
         def ex = thrown TechnicalException
-        ex.getMessage() == new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: 1).message
+        ex.getMessage() == new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: -1).message
     }
 
+    @Rollback
     def "test find all"() {
-        given:
-        def vehicles = []
+        setup:
         3.times{
-            vehicles << new Vehicle(id:it)
+            vehiclesService.save(new Vehicle(registerNumber: it), user)
         }
-        vehiclesService.vehicleRepository.findAll() >> vehicles
+
 
         when:
         def result = vehiclesService.findAll()
 
         then:
-        result.size() == vehicles.size()
-        result.collect{it.id}.join("") == "012"
+        result.size() == 4
+        result.collect { it.registerNumber }.join("") contains "012"
     }
 }

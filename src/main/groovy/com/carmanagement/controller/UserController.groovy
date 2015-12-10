@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
@@ -19,8 +20,9 @@ import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
 @RestController
-@Secured("ROLE_USER")
 @Slf4j
+@PreAuthorize("hasRole('ROLE_USER')")
+@RequestMapping(value = "/users")
 class UserController {
 
     @Autowired
@@ -34,7 +36,15 @@ class UserController {
         return user
     }
 
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/isAdmin", method = RequestMethod.GET)
+    public ResponseEntity<Boolean> isCurrentUserAdmin(Principal user) {
+        def authentication = SecurityContextHolder.getContext().authentication
+
+        def auth = ((UserDetails) authentication.principal).authorities.find { it.authority == 'ROLE_ADMIN' }
+        return new ResponseEntity<Boolean>(auth ? Boolean.TRUE : Boolean.FALSE, HttpStatus.OK)
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     def ResponseEntity<UserDTO> get(@PathVariable Long id) {
         if (checkUserRight(id)) {
             def user = userService.findById(id)
@@ -43,44 +53,45 @@ class UserController {
         throw new SecurityException()
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     def ResponseEntity<UserDTO> getCurrent() {
         def authentication = SecurityContextHolder.getContext().authentication
         def userDto = new UserDTO(userService.findByName(authentication.name))
         return new ResponseEntity<UserDTO>(userDto, HttpStatus.OK)
     }
 
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     def ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserDTO userDTO) {
         if (checkUserRight(id)) {
-            return new ResponseEntity(userService.update(userDTO), HttpStatus.CREATED)
+            def user = userDTO.toUser()
+            userDTO = new UserDTO(userService.save(user))
+            return new ResponseEntity(userDTO, HttpStatus.CREATED)
         }
         throw new SecurityException()
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.POST)
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(method = RequestMethod.POST)
     def ResponseEntity<UserDTO> create(@RequestBody UserDTO userDTO) {
-        return new ResponseEntity(userService.create(userDTO), HttpStatus.CREATED)
+        return new ResponseEntity(userService.save(userDTO.toUser()), HttpStatus.CREATED)
     }
 
-    @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
     def void delete(@PathVariable Long id) {
         userService.delete(id)
     }
 
-
-    @RequestMapping(value = "/users/all", method = RequestMethod.GET)
     @Secured("ROLE_ADMIN")
-    def all() {
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    def ResponseEntity<List<UserDTO>> all() {
 
-        def result = [SecurityContextHolder.getContext().authentication.name]
+        def result = []
         userRepository.findAll().each {
             result << new UserDTO(it)
         }
-        return result
+        return new ResponseEntity(result, HttpStatus.OK)
     }
 
     private boolean checkUserRight(Long userId) {

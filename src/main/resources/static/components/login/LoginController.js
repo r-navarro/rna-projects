@@ -47,6 +47,10 @@ angular.module('carManagement.login', ['ngRoute'])
             return '';
         }
 
+        $scope.isCurrentUserAdmin = function() {
+            return $rootScope.isAdmin;
+        }
+
         $scope.goHomePage = function() {
             if($rootScope.authenticated) {
                 $location.path("/list");

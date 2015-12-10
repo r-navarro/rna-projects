@@ -42,6 +42,7 @@
                 <i class="glyphicon glyphicon-user"></i>{{getCurrentUser()}}<span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
+                <li><a ng-show="isCurrentUserAdmin()" href="#user/create">create</a></li>
                 <li><a href="#/user/update">edit</a></li>
                 <li><a ng-click="logout()">Logout</a></li>
             </ul>

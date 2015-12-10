@@ -27,7 +27,11 @@ class User {
     @Column
     boolean passwordExpired
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     List<Vehicle> vehicles = []
+
+    String toString() {
+        return name
+    }
 
 }

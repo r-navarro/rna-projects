@@ -9,6 +9,7 @@ import com.carmanagement.services.interfaces.FullTanksService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
@@ -35,12 +36,12 @@ class FullTankController {
 
     @RequestMapping(value = "{vehicleId}/fullTanks/{fullTankId}", method = RequestMethod.GET)
     def FullTankDTO get(@PathVariable("vehicleId") Long vehicleId, @PathVariable("fullTankId") Long fullTankId) {
-        def fullTank = fullTanksService.get(vehicleId, fullTankId)
+        def fullTank = fullTanksService.getByVehicleIdAndId(vehicleId, fullTankId)
 
         if (!fullTank) {
             throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTankId)
         }
-        return fullTank
+        return new FullTankDTO(fullTank)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks", method = RequestMethod.GET)
@@ -48,14 +49,17 @@ class FullTankController {
             @PathVariable("vehicleId") Long vehicleId,
             @PageableDefault(size = FullTankController.PAGE_SIZE, page = 0) Pageable pageable) {
 
-        return fullTanksService.getFullTanks(pageable, vehicleId)
+        def fullTanksPage = fullTanksService.getFullTanks(pageable, vehicleId)
+        def fullTanksDTO = fullTanksPage.content.collect { new FullTankDTO(it) }
+
+        return new PageImpl(fullTanksDTO, pageable, fullTanksPage.totalElements)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks", method = RequestMethod.POST)
     def ResponseEntity<FullTankDTO> create(
             @PathVariable("vehicleId") Long vehicleId, @RequestBody FullTankDTO fullTank) {
-        def fullTankDTO = fullTanksService.save(fullTank, vehicleId)
-        return new ResponseEntity<FullTankDTO>(fullTankDTO, HttpStatus.CREATED)
+        def fullTankSaved = fullTanksService.save(fullTank.toFullTank(), vehicleId)
+        return new ResponseEntity<FullTankDTO>(new FullTankDTO(fullTankSaved), HttpStatus.CREATED)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/{fullTankId}", method = RequestMethod.PUT)
@@ -63,8 +67,8 @@ class FullTankController {
             @PathVariable("vehicleId") Long vehicleId,
             @PathVariable("fullTankId") Long fullTankId, @RequestBody FullTankDTO fullTank) {
         fullTank.id = fullTankId
-        def fullTankDTO = fullTanksService.save(fullTank, vehicleId)
-        return new ResponseEntity<FullTankDTO>(fullTankDTO, HttpStatus.CREATED)
+        def fullTankSaved = fullTanksService.save(fullTank.toFullTank(), vehicleId)
+        return new ResponseEntity<FullTankDTO>(new FullTankDTO(fullTankSaved), HttpStatus.CREATED)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/{id}", method = RequestMethod.DELETE)

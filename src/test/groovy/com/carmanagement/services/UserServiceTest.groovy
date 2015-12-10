@@ -1,119 +1,104 @@
 package com.carmanagement.services
 
-import com.carmanagement.dto.UserDTO
+import com.carmanagement.config.PersistenceTestConfig
 import com.carmanagement.entities.User
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
-import com.carmanagement.repositories.UserRepository
-import com.carmanagement.services.impls.UserServiceImpl
+import com.carmanagement.services.interfaces.UserService
+import com.carmanagement.services.interfaces.VehiclesService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.Rollback
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 
+@ContextConfiguration(classes = PersistenceTestConfig.class)
+@ActiveProfiles("test")
+@Transactional
 class UserServiceTest extends Specification {
 
-    def userService = new UserServiceImpl()
+    public static final String USER_TEST_NAME = "test"
 
-    def user = new User(id: 1, name: "user1")
+    @Autowired
+    UserService userService
 
-    def userDto = new UserDTO(id: 1, name: "userDTO1")
+    @Autowired
+    VehiclesService vehiclesService
 
-    def userDtoWithIdNull = new UserDTO(name: "newUser1")
+    User user
 
     def setup() {
-        userService.userRepository = Stub(UserRepository)
+        userService.findAll().each { userService.delete(it.id) }
+        user = userService.save(new User(name: "user"))
+    }
+
+    def cleanup() {
+        userService.delete(user.id)
     }
 
     def "test create case"() {
-        setup:
-        userService.userRepository = Mock(UserRepository)
-        userService.userRepository.findByName(_) >> null
 
-        when:
-        userService.create(userDtoWithIdNull)
-
-        then:
-        1 * userService.userRepository.save(_)
+        expect:
+        user.id
     }
 
     def "test create user name already taken case"() {
         setup:
-        userService.userRepository.findByName(_) >> user
+        def userToCreate = new User(name: user.name)
 
         when:
-        userService.create(userDtoWithIdNull)
+        userService.save(userToCreate)
 
         then:
         def ex = thrown TechnicalException
-        ex.message == new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDtoWithIdNull.name).message
+        ex.message == new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: user.name).message
     }
 
+    @Rollback
     def "test update user nominal case"() {
         setup:
-        userService.userRepository.findOne(_) >> user
-        userService.userRepository.findByName(_) >> null
-        userService.userRepository.save(_) >> user
+        user.accountExpired = true
+        user.enabled = false
+        user.name = USER_TEST_NAME
 
         when:
-        def result = userService.update(userDto)
+        def result = userService.save(user)
 
         then:
-        result.class == UserDTO
-        result.name == user.name
+        !result.enabled
+        result.name == USER_TEST_NAME
     }
 
+    @Rollback
     def "test update user change name already taken case"() {
         setup:
-        userService.userRepository.findOne(_) >> user
-        userService.userRepository.findByName(_) >> user
+        userService.save(new User(name: USER_TEST_NAME))
+        user.name = USER_TEST_NAME
 
         when:
-        userService.update(userDto)
+        userService.save(user)
 
         then:
         def ex = thrown TechnicalException
-        ex.message == new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDto.name).message
+        ex.message == new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: USER_TEST_NAME).message
     }
 
-    def "test update user not found case"() {
-        setup:
-        userService.userRepository.findOne(_) >> null
-
-        when:
-        userService.update(userDto)
-
-        then:
-        def ex = thrown TechnicalException
-        ex.message == new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: user.id).message
-    }
-
-    def "test delete user nominal case"() {
-        setup:
-        userService.userRepository = Mock(UserRepository)
-        userService.userRepository.findOne(_) >> user
-
-        when:
-        userService.delete(userDto.id)
-
-        then:
-        1 * userService.userRepository.delete(_)
-    }
 
     def "test delete user not found"() {
-        setup:
-        userService.userRepository.findOne(_) >> null
-
         when:
-        userService.delete(userDto.id)
+        userService.delete(-1)
 
         then:
         def ex = thrown TechnicalException
-        ex.message == new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: user.id).message
+        ex.message == new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: -1).message
     }
 
+    @Rollback
     def "check user vehicle nominal case"() {
         setup:
-        def vehicle = new Vehicle(user: user)
-        userService.userRepository.findByName(_) >> user
+        def vehicle = vehiclesService.save(new Vehicle(registerNumber: 1), user)
 
         when:
         def result = userService.checkUserVehicle(user.name, vehicle)
@@ -122,10 +107,11 @@ class UserServiceTest extends Specification {
         result
     }
 
+    @Rollback
     def "check user vehicle, user name not match"() {
         setup:
-        def vehicle = new Vehicle(user: user)
-        userService.userRepository.findByName(_) >> new User(name: "toto")
+        def userTest = userService.save(new User(name: USER_TEST_NAME))
+        def vehicle = vehiclesService.save(new Vehicle(registerNumber: 1), userTest)
 
         when:
         def result = userService.checkUserVehicle(user.name, vehicle)
@@ -134,16 +120,25 @@ class UserServiceTest extends Specification {
         !result
     }
 
+
+    @Rollback
     def "check user vehicle user not found"() {
         setup:
-        def vehicle = new Vehicle(user: user)
-        userService.userRepository.findByName(_) >> null
+        def vehicle = vehiclesService.save(new Vehicle(registerNumber: 1), user)
 
         when:
-        def result = userService.checkUserVehicle(user.name, vehicle)
+        def result = userService.checkUserVehicle(USER_TEST_NAME, vehicle)
 
         then:
         def ex = thrown TechnicalException
-        ex.message == new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: user.name).message
+        ex.message == new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: USER_TEST_NAME).message
+    }
+
+    def "find by name test"() {
+        when:
+        def result = userService.findByName(user.name)
+
+        then:
+        result.name == user.name
     }
 }

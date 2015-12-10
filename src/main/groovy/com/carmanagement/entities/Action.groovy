@@ -23,6 +23,6 @@ class Action {
     Vehicle vehicle
 
     boolean asBoolean() {
-        return date && cost && distance && vehicle
+        return date && cost && distance
     }
 }

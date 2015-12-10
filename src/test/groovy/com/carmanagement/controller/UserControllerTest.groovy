@@ -96,7 +96,7 @@ class UserControllerTest extends AbstractControllerTest {
     def "update test"() {
         setup:
         userController.userService.findById(_) >> user
-        userController.userService.update(_) >> userDTO
+        userController.userService.save(_) >> user
         def json = new JsonBuilder(userDTO).toPrettyString()
 
         when:
@@ -146,7 +146,7 @@ class UserControllerTest extends AbstractControllerTest {
 
     def "Test create"() {
         setup:
-        userController.userService.create(_) >> userDTO
+        userController.userService.save(_) >> user
         def json = new JsonBuilder(userDTO).toPrettyString()
 
         when:
@@ -159,7 +159,7 @@ class UserControllerTest extends AbstractControllerTest {
 
     def "Test create user not available"() {
         setup:
-        userController.userService.create(_) >> {
+        userController.userService.save(_) >> {
             throw new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDTO.name)
         }
         def json = new JsonBuilder(userDTO).toPrettyString()

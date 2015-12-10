@@ -1,7 +1,7 @@
 package com.carmanagement.config
 
 import com.carmanagement.entities.User
-import com.carmanagement.repositories.UserRepository
+import com.carmanagement.services.interfaces.UserService
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.ComponentScan
@@ -14,16 +14,16 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 class ApplicationConfig implements InitializingBean {
 
     @Autowired
-    UserRepository userRepository
+    UserService userService
 
     @Override
     void afterPropertiesSet() throws Exception {
-        if (!userRepository.findByName("admin")) {
-            userRepository.save(new User(name: "admin", password: "admin"))
+        if (!userService.findByName("admin")) {
+            userService.save(new User(name: "admin", password: "admin"))
         }
 
-        if (!userRepository.findByName("toto")) {
-            userRepository.save(new User(name: "toto", password: "toto"))
+        if (!userService.findByName("toto")) {
+            userService.save(new User(name: "toto", password: "toto"))
         }
     }
 }

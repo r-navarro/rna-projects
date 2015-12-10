@@ -35,7 +35,8 @@ class VehicleController {
         if (vehicle) {
             def auth = SecurityContextHolder.getContext().authentication
             def user = userService.findByName(auth.name)
-            return new ResponseEntity(vehiclesService.save(vehicle, user), HttpStatus.CREATED)
+            def vehicleSaved = vehiclesService.save(vehicle.toVehicle(), user)
+            return new ResponseEntity(new VehicleDTO(vehicleSaved), HttpStatus.CREATED)
         }
         throw new TechnicalException(errorCode: ErrorCode.VEHICLE_WRONG_FORMAT)
     }
@@ -59,7 +60,7 @@ class VehicleController {
         if (!vehicle) {
             throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: id)
         }
-        return vehicle
+        return new VehicleDTO(vehicle)
     }
 
     @RequestMapping(method = RequestMethod.GET)

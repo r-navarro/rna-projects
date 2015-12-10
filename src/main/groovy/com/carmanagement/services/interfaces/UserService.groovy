@@ -1,6 +1,5 @@
 package com.carmanagement.services.interfaces
 
-import com.carmanagement.dto.UserDTO
 import com.carmanagement.entities.User
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.exceptions.TechnicalException
@@ -14,9 +13,9 @@ interface UserService extends UserDetailsService {
 
     User findById(Long id)
 
-    UserDTO create(UserDTO userDTO) throws TechnicalException
-
-    UserDTO update(UserDTO userDTO) throws TechnicalException
+    User save(User user) throws TechnicalException
 
     void delete(Long id) throws TechnicalException
+
+    List<User> findAll()
 }

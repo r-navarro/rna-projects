@@ -35,7 +35,7 @@ class VehicleControllerTest extends AbstractControllerTest {
 
     def "Test get action"() {
         setup:
-        vehicleController.vehiclesService.get(_, _) >> vehicleDTO
+        vehicleController.vehiclesService.get(_, _) >> vehicle
 
         when:
         def response = mockMvc.perform(MRB.get("/vehicles/1"))
@@ -76,7 +76,7 @@ class VehicleControllerTest extends AbstractControllerTest {
     def "Test save"() {
         setup:
         vehicleController.userService.findByName(_) >> user
-        vehicleController.vehiclesService.save(_, _) >> vehicleDTO
+        vehicleController.vehiclesService.save(_, _) >> vehicle
         def json = new JsonBuilder(vehicleDTO).toPrettyString()
 
         when:

@@ -20,9 +20,13 @@ class VehicleRepositoryTest extends Specification {
     @Autowired
     UserRepository userRepository
 
+    @Autowired
+    FullTankRepository fullTankRepository
+
     def cleanup() {
         vehicleRepository.deleteAll()
         userRepository.deleteAll()
+        fullTankRepository.deleteAll()
     }
 
     def "test repository is not null"() {
@@ -100,4 +104,5 @@ class VehicleRepositoryTest extends Specification {
         result.content.collect { it.registerNumber }.sort().join(",") == "0,10,2,4,6,8"
 
     }
+
 }

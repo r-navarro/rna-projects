@@ -1,6 +1,5 @@
 package com.carmanagement.services.impls
 
-import com.carmanagement.dto.UserDTO
 import com.carmanagement.entities.User
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.exceptions.ErrorCode
@@ -8,12 +7,14 @@ import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.UserRepository
 import com.carmanagement.services.interfaces.UserService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User as SpringUser
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserServiceImpl implements UserService {
@@ -66,41 +67,28 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    UserDTO create(UserDTO userDTO) {
-        if(isNameAvailable(userDTO.name)){
-            return userRepository.save(userDTO.toUser())
+    @Transactional
+    User save(User user) {
+        try {
+            user = userRepository.saveAndFlush(user)
+            return user
+        } catch (DataIntegrityViolationException e) {
+            throw new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: user.name)
         }
-        throw new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDTO.name)
     }
 
     @Override
-    UserDTO update(UserDTO userDTO) throws TechnicalException {
-        def user = userRepository.findOne(userDTO.id)
-        if(user){
-            if(isNameAvailable(userDTO.name)){
-                def userToSave = userDTO.toUser()
-                userToSave.vehicles = user.vehicles
-                return new UserDTO(userRepository.save(userToSave))
-            }else {
-                throw new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: userDTO.name)
-            }
-        }
-        throw new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: userDTO.id)
-    }
-
-    private boolean isNameAvailable(String name){
-        if (this.findByName(name)) {
-            return false
-        }
-        return true
-    }
-
-    @Override
+    @Transactional
     void delete(Long id) throws TechnicalException {
         def user = userRepository.findOne(id)
-        if(!user){
+        if (!user) {
             throw new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: id)
         }
         userRepository.delete(user)
+    }
+
+    @Override
+    List<User> findAll() {
+        return userRepository.findAll()
     }
 }

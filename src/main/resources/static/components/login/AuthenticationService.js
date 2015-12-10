@@ -11,6 +11,7 @@ angular.module('carManagement')
 
             $http.get('login', {headers : headers}).success(function(data) {
               if (data.name) {
+                service.isAdmin();
                 $rootScope.authenticated = true;
                 $rootScope.username = data.name;
               } else {
@@ -32,6 +33,17 @@ angular.module('carManagement')
     				$rootScope.authenticated = false;
             callback && callback();
     			});
+        }
+
+        service.isAdmin = function() {
+          $rootScope.isAdmin = false;
+          $http.get('isAdmin').success(function(data) {
+            if(data == 'true'){
+              $rootScope.isAdmin = true;
+            }
+          }).error(function(data) {
+            console.log(data);
+          });;
         }
 
 		return service;

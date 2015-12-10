@@ -19,7 +19,7 @@ import spock.lang.Specification
 
 import java.lang.reflect.Method
 
-@ContextConfiguration(classes = PersistenceTestConfig.class)
+@ContextConfiguration(classes = PersistenceTestConfig)
 @ActiveProfiles("test")
 abstract class AbstractControllerTest extends Specification {
 

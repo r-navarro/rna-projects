@@ -39,7 +39,7 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test get action"() {
         setup:
-        fullTankController.fullTanksService.get(1, 1) >> fullTankDTO
+        fullTankController.fullTanksService.getByVehicleIdAndId(1, 1) >> fullTank
 
         when:
         def response = mockMvc.perform(MRB.get("$baseUrl/1"))
@@ -78,7 +78,7 @@ class FullTankControllerTest extends AbstractControllerTest {
         fullTankController.vehicleRepository.findOne(1) >> vehicle
         def fullTanks = []
         5.times {
-            fullTanks << new FullTankDTO(id: it, cost: 1, distance: 1, date: new Date(), quantity: 1)
+            fullTanks << new FullTank(id: it, cost: 1, distance: 1, date: new Date(), quantity: 1)
         }
         fullTankController.fullTanksService.getFullTanks(_, _) >> new PageImpl(fullTanks)
 
@@ -103,7 +103,7 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test save"() {
         setup:
-        fullTankController.fullTanksService.save(_, _) >> fullTankDTO
+        fullTankController.fullTanksService.save(_, _) >> fullTank
         def json = new JsonBuilder(fullTankDTO).toPrettyString()
 
         when:
@@ -140,7 +140,7 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test update"() {
         setup:
-        fullTankController.fullTanksService.save(_, _) >> fullTankDTO
+        fullTankController.fullTanksService.save(_, _) >> fullTank
         def json = new JsonBuilder(fullTankDTO).toPrettyString()
 
         when:
