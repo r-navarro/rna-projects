@@ -1,0 +1,10 @@
+.gradle/
+.idea/
+build/
+demo.iml
+gradle/
+gradlew
+gradlew.bat
+rna-projects.iml
+target/
+
