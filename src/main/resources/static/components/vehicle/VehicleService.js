@@ -20,6 +20,12 @@ angular.module('carManagement.vehicle')
 			});
 		}
 
+		update = function(vehicle) {
+			return DaoService.getData("/vehicles", 'PUT', vehicle).then(function(response){
+				return response.data;
+			});
+		}
+
 		get = function(idVehicle){
 		    return DaoService.getData("/vehicles/"+idVehicle, 'GET').then(function(response){
 		        return response.data;
@@ -36,18 +42,9 @@ angular.module('carManagement.vehicle')
 			list : list,
 			save : save,
 			get  : get,
-			remove : remove
+			remove : remove,
+			update : update
 		}
 		
-	// urlService = '/vehicle';
-	// return $resource(urlService, {vehicleId : '@id'},
-	// {
-	// 'update' : {method : 'PUT'},
-	// 'list' : {url:urlService + '/list', method : 'GET', isArray:true},
-	// 'create' : {url:urlService + '/save', method:'POST'},
-	// 'delete' : {url:urlService + '/delete', method:'DELETE'},
-	// 'get' : {url:urlService + '/get/:vehicleId', method:'GET'}
-	// }
-	//			);
-		}
-	]);
+	}
+]);

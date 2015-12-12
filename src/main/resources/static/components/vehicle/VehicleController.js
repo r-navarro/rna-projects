@@ -7,7 +7,10 @@ angular.module('carManagement.vehicle', ['ngRoute'])
 	}).when('/list', {
 		templateUrl : 'components/vehicle/list.html',
 		controller : 'VehicleController'
-	}).when('/show/:vehicleId', {
+	}).when('/update/:vehicleId', {
+        templateUrl : 'components/vehicle/update.html',
+        controller : 'VehicleController'
+    }).when('/show/:vehicleId', {
         templateUrl : 'components/vehicle/show.html',
         controller : 'VehicleBoardController'
     });
@@ -23,6 +26,7 @@ angular.module('carManagement.vehicle', ['ngRoute'])
 			$scope.currentPage = 1;
 			$scope.totalElements = 0;
 			$scope.itemsPerPage = 0;
+			$scope.vehicleId = $routeParams.vehicleId;
 
 
 			$scope.updateList = function(page){
@@ -38,6 +42,12 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                 $scope.updateList($scope.currentPage);
              };
 
+            $scope.getVehicle = function() {
+                VehicleService.get($scope.vehicleId).then(function(vehicle){
+                	$scope.vehicle = vehicle;
+            	});
+            };
+
 			$scope.create = function(vehicle){
 				VehicleService.save(vehicle).then(function(){
 					$location.path('/list');
@@ -50,5 +60,10 @@ angular.module('carManagement.vehicle', ['ngRoute'])
 				});	
 			}
 
+			$scope.update = function(vehicle){
+				VehicleService.update(vehicle).then(function(data){
+					$location.path('/list');
+				});	
+			}
 		}
 );

@@ -10,6 +10,8 @@ interface VehiclesService {
 
     Vehicle save(Vehicle vehicle, User user)
 
+    Vehicle update(Vehicle vehicle)
+
     Page<Vehicle> getVehicles(Pageable pageable, String name)
 
     Vehicle get(Long id, String name)

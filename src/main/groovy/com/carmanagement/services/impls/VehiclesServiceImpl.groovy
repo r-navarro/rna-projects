@@ -28,7 +28,19 @@ class VehiclesServiceImpl implements VehiclesService {
     @Transactional
     Vehicle save(Vehicle vehicle, User user) {
         vehicle.user = user
-        vehicle = vehicleRepository.save(vehicle)
+        vehicle = vehicleRepository.saveAndFlush(vehicle)
+
+        return vehicle
+    }
+
+    @Transactional
+    Vehicle update(Vehicle vehicle) {
+        def vehicleToUpdate = vehicleRepository.getOne(vehicle.id)
+        vehicleToUpdate.kilometers = vehicle.kilometers
+        vehicleToUpdate.price = vehicle.price
+        vehicleToUpdate.registerNumber = vehicle.registerNumber
+        vehicleToUpdate.type = vehicle.type
+        vehicle = vehicleRepository.saveAndFlush(vehicleToUpdate)
 
         return vehicle
     }

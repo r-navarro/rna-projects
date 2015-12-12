@@ -1,0 +1,20 @@
+<article class="col-md-3" ng-init="getVehicle()">
+    <div class="well">
+        <ul class="nav nav-list">
+            <li>
+                <i class="glyphicon glyphicon-cog"></i><span class="nav-header">Vehicle</span></li>
+            <li><a href="#/list">Retour</a></li>
+        </ul>
+    </div>
+</article>
+<article class="col-md-9">
+    <form name="vehicleForm" class="form-horizontal">
+        <ng-include src="'components/vehicle/_form.html'"></ng-include>
+    </form>
+    <div class="form-group">
+        <div class="col-sm-5">
+            <button class="btn btn-default" ng-click="update(vehicle)" ng-disabled="vehicleForm.$invalid">Update
+            </button>
+        </div>
+    </div>
+</article>

@@ -60,7 +60,7 @@ class FullTanksServiceImpl implements FullTanksService {
 
     private FullTank addFullTank(Vehicle vehicle, FullTank fullTank){
         fullTank.vehicle = vehicle
-        vehicle.kilometers += fullTank.quantity
+        vehicle.kilometers += fullTank.distance
         vehicle.actions << fullTank
 
         return fullTankRepository.save(fullTank)

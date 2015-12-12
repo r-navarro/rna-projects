@@ -42,6 +42,15 @@ class VehicleController {
         throw new TechnicalException(errorCode: ErrorCode.VEHICLE_WRONG_FORMAT)
     }
 
+    @RequestMapping(method = RequestMethod.PUT)
+    def ResponseEntity<VehicleDTO> update(@RequestBody VehicleDTO vehicle) {
+        if (vehicle) {
+            def vehicleSaved = vehiclesService.update(vehicle.toVehicle())
+            return new ResponseEntity(new VehicleDTO(vehicleSaved), HttpStatus.CREATED)
+        }
+        throw new TechnicalException(errorCode: ErrorCode.VEHICLE_WRONG_FORMAT)
+    }
+
     @RequestMapping(value = '/{id}', method = RequestMethod.DELETE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     def void delete(@PathVariable Long id) {

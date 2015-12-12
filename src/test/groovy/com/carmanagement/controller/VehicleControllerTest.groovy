@@ -61,7 +61,7 @@ class VehicleControllerTest extends AbstractControllerTest {
         setup:
         def vehicles = []
         (0..5).each {
-            vehicles << new VehicleDTO(id: it, registerNumber: it)
+            vehicles << new Vehicle(id: it, registerNumber: it)
         }
         vehicleController.vehiclesService.getVehicles(_, _) >> new PageImpl(vehicles)
 
