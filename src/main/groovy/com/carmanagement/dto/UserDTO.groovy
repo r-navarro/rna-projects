@@ -16,7 +16,6 @@ class UserDTO {
     UserDTO(User user) {
         this.id = user.id
         this.name = user.name
-        this.password = user.password
     }
 
     User toUser() {

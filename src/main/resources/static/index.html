@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width,
       initial-scale=1"/>
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="lib/fontawesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="css/charts.css">
     <link rel="stylesheet" href="css/nv.d3.css">
@@ -27,17 +28,6 @@
 <header class="container" ng-controller="LoginController">
     <nav class="navbar navbar-fixed-top">
         <a ng-click="goHomePage()" class="title">Car management</a>
-
-        <div class="btn-group" ng-show="getCurrentUser()">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
-                vehicle</i><span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a href="#/create">Create</a></li>
-                <li><a href="#/list">list</a></li>
-            </ul>
-        </div>
         <div class="btn-group pull-right">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">

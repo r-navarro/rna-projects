@@ -49,9 +49,7 @@ angular.module('carManagement.vehicle', ['ngRoute'])
             };
 
 			$scope.create = function(vehicle){
-				VehicleService.save(vehicle).then(function(){
-					$location.path('/list');
-				});				
+				VehicleService.save(vehicle, callback, errorCallback);				
 			}
 
 			$scope.deleteVehicle = function(id){
@@ -61,9 +59,15 @@ angular.module('carManagement.vehicle', ['ngRoute'])
 			}
 
 			$scope.update = function(vehicle){
-				VehicleService.update(vehicle).then(function(data){
+				VehicleService.update(vehicle, callback, errorCallback)	
+			}
+
+			callback = function(){
 					$location.path('/list');
-				});	
+				};
+
+			errorCallback = function(message){
+				$scope.error = message;
 			}
 		}
 );

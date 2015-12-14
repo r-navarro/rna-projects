@@ -14,15 +14,19 @@ angular.module('carManagement.vehicle')
 			}
 		}
 		
-		save = function(vehicle) {
+		save = function(vehicle, callback, errorCallback) {
 			return DaoService.getData("/vehicles", 'POST', vehicle).then(function(response){
-				return response.data;
+				callback();
+			}, function(error) {
+				errorCallback(error.data.errorMessage);
 			});
 		}
 
-		update = function(vehicle) {
+		update = function(vehicle, callback, errorCallback) {
 			return DaoService.getData("/vehicles", 'PUT', vehicle).then(function(response){
-				return response.data;
+				callback();
+			}, function(error) {
+				errorCallback(error.data.errorMessage);
 			});
 		}
 
