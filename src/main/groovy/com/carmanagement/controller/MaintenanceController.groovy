@@ -31,7 +31,7 @@ class MaintenanceController {
         return new ResponseEntity(new MaintenanceDTO(maintenance), HttpStatus.OK)
     }
 
-    @RequestMapping(value = "/maintenances/", method = RequestMethod.POST)
+    @RequestMapping(value = "/maintenances", method = RequestMethod.POST)
     def ResponseEntity<MaintenanceDTO> save(
             @PathVariable("vehicleId") Long vehicleId, @RequestBody MaintenanceDTO maintenanceDTO) {
         if (maintenanceDTO) {
@@ -54,10 +54,7 @@ class MaintenanceController {
     @RequestMapping(value = "/maintenances/{maintenanceId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     def void delete(@PathVariable("vehicleId") Long vehicleId, @PathVariable("maintenanceId") Long maintenanceId) {
-        if (maintenanceDTO) {
             maintenancesService.delete(vehicleId, maintenanceId)
-
-        }
     }
 
     @RequestMapping(value = "/maintenances", method = RequestMethod.GET)

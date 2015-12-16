@@ -2,6 +2,7 @@
 angular.module('carManagement', [ 'ngRoute', 'ngAnimate','ngResource', 'ui.bootstrap', 'ngCookies', 'nvd3ChartDirectives',
 	'carManagement.vehicle',
 	'carManagement.fullTank',
+	'carManagement.maintenance',
 	'carManagement.login',
 	'carManagement.user' ])
 .config([ '$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {

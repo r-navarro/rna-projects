@@ -1,0 +1,20 @@
+<article class="col-md-3">
+    <div class="well">
+        <ul class="nav nav-list">
+            <li> <i class="glyphicon glyphicon-tint"></i><span class="nav-header">Full tank</span></li>
+            <li><a href="#/show/{{vehicleId}}">retour</a></li>
+        </ul>
+    </div> 
+</article>
+<article class="col-md-9" ng-init="init()">
+    <form name="maintenanceForm" class="form-horizontal">
+        <ng-include src="'components/maintenance/_form.html'"></ng-include>
+    </form>
+    <div class="form-group">
+        <div class="col-sm-5">
+            <button class="btn btn-default" ng-click="update(maintenance)" ng-disabled="maintenanceForm.$invalid">
+                update
+            </button>
+        </div>
+    </div>
+</article>

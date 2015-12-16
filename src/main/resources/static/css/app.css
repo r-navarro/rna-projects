@@ -69,8 +69,9 @@ footer {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=0 ); /* IE6-9 */
 }
 
-article .well {
+nav .well {
   margin-top: 10px;
+  width: 250px;
 }
 
 .well li {
@@ -78,18 +79,22 @@ article .well {
 }
 
 .odd {
-    background: #e3f3ff;
-    padding-left: 3px;
-    padding-right: 3px;
+  background: #e3f3ff;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .even {
-    background: #fff;
-    padding-left: 3px;
-    padding-right: 3px;
+  background: #fff;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .odd a:hover, .even a:hover {
-    color: blue;
-    font-weight: bold;
+  color: blue;
+  font-weight: bold;
+}
+
+#nav.affix {
+  top: 60px;
 }

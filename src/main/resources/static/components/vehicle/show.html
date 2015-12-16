@@ -1,21 +1,33 @@
-<article class="col-md-3">
-    <div class="well">
-        <ul class="nav nav-list">
-            <li><i class="fa fa-car"></i><span class="nav-header">Vehicle</span></li>
-            <li><a href="#/create">Create</a></li>
-            <li><a href="#/update/{{vehicle.id}}">Update</a></li>
-            <li><a href="#/list">list</a></li>
-        </ul>
+<script type="text/javascript">
+$('#nav').affix({
+});
+</script>
+<nav class="col-md-3 col-xs-3">
+    <div data-spy="affix" data-offset-top="20" id="nav">
+      <div class="well">
+          <ul class="nav nav-list">
+              <li><i class="fa fa-car"></i><span class="nav-header">Vehicle</span></li>
+              <li><a href="#/create">Create</a></li>
+              <li><a href="#/update/{{vehicle.id}}">Update</a></li>
+              <li><a href="#/list">list</a></li>
+          </ul>
+      </div>
+      <div class="well">
+          <ul class="nav nav-list">
+              <li><i class="glyphicon glyphicon-tint"></i><span class="nav-header">Full tank</span></li>
+              <li><a href="#/{{vehicleId}}/ft/create">Create</a></li>
+          </ul>
+      </div>
+      <div class="well">
+          <ul class="nav nav-list">
+              <li><i class="fa fa-wrench"></i><span class="nav-header">Maintenance</span></li>
+              <li><a href="#/{{vehicleId}}/maintenance/create">Create</a></li>
+          </ul>
+      </div>  
     </div>
-    <div class="well">
-        <ul class="nav nav-list">
-            <li><i class="glyphicon glyphicon-tint"></i><span class="nav-header">Full tank</span></li>
-            <li><a href="#/{{vehicleId}}/ft/create">Create</a></li>
-        </ul>
-    </div>
-   
-</article>
-<article class="col-md-9" ng-init="get()">
+</nav>
+
+<article class="col-md-9 col-xs-9" ng-init="get()">
 
     <h2>Register number : {{ vehicle.registerNumber}}</h2>
 
@@ -51,7 +63,7 @@
                 items-per-page="fullTankItemsPerPage"></pagination>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 col-xs-6">
             <nvd3-line-chart
                     data="costData"
                     width="425"
@@ -63,7 +75,7 @@
                     tooltips="true"/>
             <svg></svg>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 col-xs-6">
             <nvd3-line-chart
                     data="distanceData"
                     width="425"
@@ -76,4 +88,5 @@
             <svg></svg>
         </div>
     </div>
+    <ng-include src="'components/vehicle/_maintenance.html'"></ng-include>
 </article>
