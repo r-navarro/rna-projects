@@ -98,3 +98,30 @@ nav .well {
 #nav.affix {
   top: 60px;
 }
+
+.mobileShow { 
+  display: none;
+}
+
+/* Smartphone Portrait and Landscape */
+
+@media only screen
+and (min-device-width : 320px)
+and (max-device-width : 480px){ 
+  .mobileShow { 
+    display: inline;
+  }
+
+  .mobileHide { 
+    display: none;
+  }
+}
+
+
+.hideMenu {
+    display: none;
+  }
+
+.mobileShow .well {
+  width: 150px;
+}

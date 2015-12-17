@@ -12,4 +12,15 @@ class HomeController {
     public String home() {
         return "index"
     }
+
+    @RequestMapping("/isAlive")
+    public String isAlive() {
+        def builder = new StringBuilder()
+        builder.with {
+            append System.currentTimeMillis()
+            append " / "
+            append System.getProperty("os.name")
+        }
+        return builder.toString()
+    }
 }
