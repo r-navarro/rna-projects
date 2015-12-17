@@ -117,11 +117,49 @@ and (max-device-width : 480px){
   }
 }
 
-
-.hideMenu {
-    display: none;
-  }
-
 .mobileShow .well {
   width: 150px;
+}
+
+/* Side Menu */
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    margin-left: -250px;
+    overflow-y: auto;
+    -webkit-transition: all 0.4s ease 0s;
+    -moz-transition: all 0.4s ease 0s;
+    -ms-transition: all 0.4s ease 0s;
+    -o-transition: all 0.4s ease 0s;
+    transition: all 0.4s ease 0s;
+}
+
+#menu-toggle {
+    z-index: 1;
+    position: fixed;
+    top: 50;
+    left: 0;
+    margin-top: -20px;
+}
+
+#sidebar-wrapper.active {
+    left: 250px;
+    width: 250px;
+    -webkit-transition: all 0.4s ease 0s;
+    -moz-transition: all 0.4s ease 0s;
+    -ms-transition: all 0.4s ease 0s;
+    -o-transition: all 0.4s ease 0s;
+    transition: all 0.4s ease 0s;
+}
+
+#menu-close {
+    margin: -25px -25px 0 0;
+}
+
+.toggle {
+    margin: 5px 5px 0 0;
 }

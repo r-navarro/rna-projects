@@ -1,21 +1,24 @@
-<div class="container mobileShow">
-  <a id="menu-toggle" class="btn btn-dark btn-lg"><i class="fa fa-bars"></i></a>
-    <nav id="sidebar-wrapper" class="well hideMenu">
-      <ul class="nav nav-list">
-        <li><i class="fa fa-car"></i><span class="nav-header">Vehicle</span></li>
-        <li><a href="#/create">Create</a></li>
-        <li><a href="#/update/{{vehicle.id}}">Update</a></li>
-        <li><a href="#/list">list</a></li>
-      </ul>
-      <ul class="nav nav-list">
-        <li><i class="glyphicon glyphicon-tint"></i><span class="nav-header">Full tank</span></li>
-        <li><a href="#/{{vehicleId}}/ft/create">Create</a></li>
-      </ul>
-      <ul class="nav nav-list">
-        <li><i class="fa fa-wrench"></i><span class="nav-header">Maintenance</span></li>
-        <li><a href="#/{{vehicleId}}/maintenance/create">Create</a></li>
-      </ul>
-    </nav>
+<div class="mobileShow">
+
+    <a id="menu-toggle" class="btn btn-dark btn-lg toggle"><i class="fa fa-bars"></i></a>
+
+  <nav id="sidebar-wrapper" class="well">
+    <a id="menu-close"  class="btn btn-light btn-lg pull-right"><i class="fa fa-times"></i></a>
+    <ul class="nav nav-list">
+      <li><i class="fa fa-car"></i><span class="nav-header">Vehicle</span></li>
+      <li><a href="#/create">Create</a></li>
+      <li><a href="#/update/{{vehicle.id}}">Update</a></li>
+      <li><a href="#/list">list</a></li>
+    </ul>
+    <ul class="nav nav-list">
+      <li><i class="glyphicon glyphicon-tint"></i><span class="nav-header">Full tank</span></li>
+      <li><a href="#/{{vehicleId}}/ft/create">Create</a></li>
+    </ul>
+    <ul class="nav nav-list">
+      <li><i class="fa fa-wrench"></i><span class="nav-header">Maintenance</span></li>
+      <li><a href="#/{{vehicleId}}/maintenance/create">Create</a></li>
+    </ul> 
+  </nav>
 </div>
 
 <div class="mobileHide">
@@ -114,9 +117,16 @@
 $('#nav').affix({
 });
 
-// Opens closes the sidebar menu
+// Closes the sidebar menu
+$("#menu-close").click(function(e) {
+    e.preventDefault();
+    $("#sidebar-wrapper").toggleClass("active");
+});
+
+// Opens the sidebar menu
 $("#menu-toggle").click(function(e) {
     e.preventDefault();
-    $("#sidebar-wrapper").toggleClass("hideMenu");
+    $("#sidebar-wrapper").toggleClass("active");
 });
+
 </script>
