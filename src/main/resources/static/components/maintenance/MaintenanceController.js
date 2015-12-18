@@ -36,6 +36,7 @@ angular.module('carManagement.maintenance', ['ngRoute'])
                     MaintenanceService.get($scope.vehicleId, $scope.mtId).then(function(mt){
                         $scope.maintenance = mt;
                         $scope.maintenance.date = new Date(mt.date);
+                        $scope.maintenance.predictedDate = new Date(mt.predictedDate);
                     });
                 } else {
                     $scope.maintenance.date = new Date();
@@ -49,6 +50,15 @@ angular.module('carManagement.maintenance', ['ngRoute'])
                 $event.stopPropagation();
 
                 $scope.opened = true;
+                $scope.openedPredicted = false;
+            };
+
+            $scope.openPredicted = function($event) {
+                $event.preventDefault();
+                $event.stopPropagation();
+
+                $scope.openedPredicted = true;
+                $scope.opened = false;
             };
 
             $scope.format = "dd/MM/yyyy";

@@ -4,7 +4,7 @@ angular.module('carManagement.maintenance')
 				
 		list = function(vehicleId, page) {
 			if(page){
-				return DaoService.getData("/vehicles/"+vehicleId+"/maintenances/?page="+(page-1)+"&sort=date&name.dir=desc", 'GET').then(function(response){
+				return DaoService.getData("/vehicles/"+vehicleId+"/maintenances/?page="+(page-1)+"&sort=predictedDate&name.dir=desc", 'GET').then(function(response){
 					return response.data;
 				});
 			}else{
