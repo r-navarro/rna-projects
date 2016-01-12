@@ -7,4 +7,5 @@ gradlew
 gradlew.bat
 rna-projects.iml
 target/
-
+src/main/resources/static/dest/
+src/main/resources/static/node_modules/
