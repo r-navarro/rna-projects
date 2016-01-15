@@ -6,8 +6,8 @@ import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.UserRepository
 import com.carmanagement.services.interfaces.UserService
+import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User as SpringUser
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Slf4j
 class UserServiceImpl implements UserService {
 
     @Autowired
@@ -26,6 +27,7 @@ class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByName(username)
         if (!user) {
+            log.info("User ${username} not found")
             throw new UsernameNotFoundException("User ${username} not found")
         }
         def userDetail = new SpringUser(username, user.password, getGrantedAuthorities(username))
@@ -72,7 +74,7 @@ class UserServiceImpl implements UserService {
         try {
             user = userRepository.saveAndFlush(user)
             return user
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException) {
             throw new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: user.name)
         }
     }
