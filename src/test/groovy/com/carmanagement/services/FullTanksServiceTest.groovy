@@ -9,6 +9,7 @@ import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.services.interfaces.FullTanksService
 import com.carmanagement.services.interfaces.UserService
 import com.carmanagement.services.interfaces.VehiclesService
+import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.annotation.Rollback
@@ -160,5 +161,51 @@ class FullTanksServiceTest extends Specification {
         then:
         def ex = thrown TechnicalException
         ex.getMessage() == new TechnicalException(errorCode: ErrorCode.FULL_TANK_VEHICLE_NOT_MATCH, errorParameter: vehicle.id + 1).message
+    }
+
+    @Rollback
+    @Transactional
+    def "Test cost stats"() {
+        setup:
+        def date1 = new Date()
+        def date2 = new Date()
+        use(TimeCategory) {
+            date2 = date1 + 1.month
+        }
+        FullTank.metaClass.asBoolean = { -> return true }
+        fullTanksService.save(new FullTank(cost: 2, date: date2, distance: 0), vehicle.id)
+        fullTanksService.save(new FullTank(cost: 1, date: date1, distance: 0), vehicle.id)
+
+        when:
+        def stats = fullTanksService.getCostStats(vehicle.id)
+
+        then:
+        assert stats
+        assert stats[0].value == "$fullTank.cost"
+        assert stats[1].value == "${1f}"
+        assert stats[2].value == "${2f}"
+    }
+
+    @Rollback
+    @Transactional
+    def "Test distance stats"() {
+        setup:
+        def date1 = new Date()
+        def date2 = new Date()
+        use(TimeCategory) {
+            date2 = date1 + 1.month
+        }
+        //FullTank.metaClass.asBoolean = { -> return true }
+        fullTanksService.save(new FullTank(distance: 125.62, date: date2), vehicle.id)
+        fullTanksService.save(new FullTank(distance: 564.23, date: date1), vehicle.id)
+
+        when:
+        def stats = fullTanksService.getDistanceStats(vehicle.id)
+
+        then:
+        assert stats
+        assert stats[0].value == "${fullTank.distance}"
+        assert stats[1].value == "${564.23f}"
+        assert stats[2].value == "${125.62f}"
     }
 }

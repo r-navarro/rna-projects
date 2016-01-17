@@ -30,8 +30,6 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def setup() {
         fullTankController = new FullTankController()
-        fullTankController.fullTankRepository = Mock(FullTankRepository)
-        fullTankController.vehicleRepository = Mock(VehicleRepository)
         fullTankController.fullTanksService = Stub(FullTanksService)
         setupMockMvc(fullTankController)
     }
@@ -75,7 +73,6 @@ class FullTankControllerTest extends AbstractControllerTest {
 
     def "Test list"() {
         setup:
-        fullTankController.vehicleRepository.findOne(1) >> vehicle
         def fullTanks = []
         5.times {
             fullTanks << new FullTank(id: it, cost: 1, distance: 1, date: new Date(), quantity: 1)
@@ -177,48 +174,6 @@ class FullTankControllerTest extends AbstractControllerTest {
         then:
         response.andExpect(MRM.status().isNotFound())
         response.andExpect(MRM.jsonPath("errorMessage").value(new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT).getMessage()))
-    }
-
-    def "Test cost stats"() {
-        setup:
-        fullTankController.vehicleRepository.findOne(1) >> vehicle
-        def date1 = new Date()
-        def date2 = new Date()
-        use(TimeCategory) {
-            date2 = date1 + 1.month
-        }
-        fullTankController.fullTankRepository.findAllByVehicleId(1) >> [new FullTank(cost: 2, date: date2), new FullTank(cost: 1, date: date1)]
-
-        when:
-        def response = mockMvc.perform(MRB.get("$baseUrl/costStats"))
-
-        then:
-        response.andExpect(MRM.status().isOk())
-        response.andExpect(MRM.jsonPath('$[0].[0]').value(date1.format('dd/MM/yyyy')))
-        response.andExpect(MRM.jsonPath('$[0].[1]').value(1.0d))
-        response.andExpect(MRM.jsonPath('$[1].[0]').value(date2.format('dd/MM/yyyy')))
-        response.andExpect(MRM.jsonPath('$[1].[1]').value(2.0d))
-    }
-
-    def "Test distance stats"() {
-        setup:
-        fullTankController.vehicleRepository.findOne(1) >> vehicle
-        def date1 = new Date()
-        def date2 = new Date()
-        use(TimeCategory) {
-            date2 = date1 + 1.month
-        }
-        fullTankController.fullTankRepository.findAllByVehicleId(1) >> [new FullTank(distance: 125.62, date: date2), new FullTank(distance: 564.23, date: date1)]
-
-        when:
-        def response = mockMvc.perform(MRB.get("$baseUrl/distanceStats"))
-
-        then:
-        response.andExpect(MRM.status().isOk())
-        response.andExpect(MRM.jsonPath('$[0].[0]').value(date1.format('dd/MM/yyyy')))
-        response.andExpect(MRM.jsonPath('$[0].[1]').value(564.23d))
-        response.andExpect(MRM.jsonPath('$[1].[0]').value(date2.format('dd/MM/yyyy')))
-        response.andExpect(MRM.jsonPath('$[1].[1]').value(125.62d))
     }
 
     def "Test delete"() {

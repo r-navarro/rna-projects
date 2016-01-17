@@ -1,5 +1,6 @@
 package com.carmanagement.services.impls
 
+import com.carmanagement.dto.StatValue
 import com.carmanagement.entities.FullTank
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.exceptions.ErrorCode
@@ -92,5 +93,37 @@ class FullTanksServiceImpl implements FullTanksService {
         }
         fullTank.vehicle.kilometers -= fullTank.distance
         fullTankRepository.delete(fullTank)
+    }
+
+    @Override
+    List<StatValue> getCostStats(Long vehicleId) {
+        if (!vehicleRepository.findOne(vehicleId)) {
+            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
+        }
+
+        def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
+        def stats = []
+        fullTanks = fullTanks.sort { it.date }.collect { [it.cost, it.date] }
+        fullTanks.each {
+            stats << new StatValue(date:it[1].format('dd/MM/yyyy'), value:it[0])
+        }
+
+        return stats
+    }
+
+    @Override
+    List<StatValue> getDistanceStats(Long vehicleId) {
+        if (!vehicleRepository.findOne(vehicleId)) {
+            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
+        }
+
+        def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
+        def stats = []
+        fullTanks = fullTanks.sort { it.date }.collect { [it.distance, it.date] }
+        fullTanks.each {
+            stats << new StatValue(date:it[1].format('dd/MM/yyyy'), value:it[0])
+        }
+
+        return stats
     }
 }

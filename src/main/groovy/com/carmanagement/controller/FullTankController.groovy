@@ -26,12 +26,6 @@ class FullTankController {
     static final int PAGE_SIZE = 5
 
     @Autowired
-    FullTankRepository fullTankRepository
-
-    @Autowired
-    VehicleRepository vehicleRepository
-
-    @Autowired
     FullTanksService fullTanksService
 
     @RequestMapping(value = "{vehicleId}/fullTanks/{fullTankId}", method = RequestMethod.GET)
@@ -45,7 +39,7 @@ class FullTankController {
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks", method = RequestMethod.GET)
-    def Page<FullTankDTO> findFullTankByVehiclePaginate(
+    public Page<FullTankDTO> findFullTankByVehiclePaginate(
             @PathVariable("vehicleId") Long vehicleId,
             @PageableDefault(size = FullTankController.PAGE_SIZE, page = 0) Pageable pageable) {
 
@@ -79,33 +73,11 @@ class FullTankController {
 
     @RequestMapping(value = "{vehicleId}/fullTanks/costStats", method = RequestMethod.GET)
     def List getCostStats(@PathVariable("vehicleId") Long vehicleId) {
-        if (!vehicleRepository.findOne(vehicleId)) {
-            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
-        }
-
-        def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
-        def stats = []
-        fullTanks = fullTanks.sort { it.date }.collect { [it.cost, it.date] }
-        fullTanks.each {
-            stats << [it[1].format('dd/MM/yyyy'), it[0]]
-        }
-
-        return stats
+        return fullTanksService.getCostStats(vehicleId)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/distanceStats", method = RequestMethod.GET)
     def List getDistanceStats(@PathVariable("vehicleId") Long vehicleId) {
-        if (!vehicleRepository.findOne(vehicleId)) {
-            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
-        }
-
-        def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
-        def stats = []
-        fullTanks = fullTanks.sort { it.date }.collect { [it.distance, it.date] }
-        fullTanks.each {
-            stats << [it[1].format('dd/MM/yyyy'), it[0]]
-        }
-
-        return stats
+        return fullTanksService.getDistanceStats(vehicleId)
     }
 }

@@ -35,7 +35,7 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                     $scope.fullTankTotalElements = list.totalElements;
                     $scope.fullTankItemsPerPage = list.size;
                 });
-                $scope.get();
+                //$scope.get();
             };
 
             $scope.deleteFullTank = function(fullTank) {
@@ -53,19 +53,11 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                     $scope.vehicle = vehicle;
                 });
 
-                var formatDate = d3.time.format("%d/%m/%Y").parse;
-
                 FullTankService.costStats($scope.vehicleId).then(function(data) {
-                    data.forEach(function(d) {
-                        d[0] = formatDate(d[0]);
-                    });
                     $scope.costData = ChartService.drawLineChart("Cost", data);
                 });
 
                 FullTankService.distanceStats($scope.vehicleId).then(function(data) {
-                    data.forEach(function(d) {
-                        d[0] = formatDate(d[0]);
-                    });
                     $scope.distanceData = ChartService.drawLineChart("Distance", data);
                 });
             };
@@ -76,7 +68,6 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                 };
             };
 
-
             $scope.updateMaintenances = function(page) {
                 MaintenanceService.list($scope.vehicleId, page).then(function(list) {
                     $scope.maintenances = list.content;
@@ -84,7 +75,7 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                     $scope.maintenancesTotalElements = list.totalElements;
                     $scope.maintenancesItemsPerPage = list.size;
                 });
-                $scope.get();
+                //$scope.get();
             };
 
             $scope.deleteMaintenance = function(maintenance) {

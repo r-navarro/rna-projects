@@ -1,5 +1,6 @@
 package com.carmanagement.services.interfaces
 
+import com.carmanagement.dto.StatValue
 import com.carmanagement.entities.FullTank
 import com.carmanagement.exceptions.TechnicalException
 import org.springframework.data.domain.Page
@@ -14,4 +15,8 @@ interface FullTanksService {
     FullTank save(FullTank fullTank, Long vehicleId) throws TechnicalException
 
     void delete(Long vehicleId, Long fullTankId) throws TechnicalException
+
+    List<StatValue> getCostStats(Long vehicleId)
+
+    List<StatValue> getDistanceStats(Long vehicleId)
 }
