@@ -10,4 +10,6 @@ interface FullTankRepository extends PagingAndSortingRepository<FullTank, Long> 
     Page<FullTank> findByVehicleId(Long vehicleId, Pageable pageable)
 
     List<FullTank> findAllByVehicleId(Long vehicleId)
+
+    List<FullTank> findAllByVehicleIdOrderByDateAsc(Long vehicleId)
 }

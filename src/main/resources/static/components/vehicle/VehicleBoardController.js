@@ -35,7 +35,6 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                     $scope.fullTankTotalElements = list.totalElements;
                     $scope.fullTankItemsPerPage = list.size;
                 });
-                //$scope.get();
             };
 
             $scope.deleteFullTank = function(fullTank) {
@@ -60,6 +59,10 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                 FullTankService.distanceStats($scope.vehicleId).then(function(data) {
                     $scope.distanceData = ChartService.drawLineChart("Distance", data);
                 });
+
+                FullTankService.averageStats($scope.vehicleId).then(function(data) {
+                    $scope.averageStats = data;
+                });
             };
 
             $scope.xAxisTickFormat_Date_Format = function() {
@@ -75,7 +78,6 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                     $scope.maintenancesTotalElements = list.totalElements;
                     $scope.maintenancesItemsPerPage = list.size;
                 });
-                //$scope.get();
             };
 
             $scope.deleteMaintenance = function(maintenance) {

@@ -1,8 +1,10 @@
 package com.carmanagement.services.interfaces
 
-import com.carmanagement.dto.StatValue
+import com.carmanagement.dto.StatAverageDTO
+import com.carmanagement.dto.StatDTO
 import com.carmanagement.entities.FullTank
 import com.carmanagement.exceptions.TechnicalException
+import com.carmanagement.repositories.FullTankRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -16,7 +18,9 @@ interface FullTanksService {
 
     void delete(Long vehicleId, Long fullTankId) throws TechnicalException
 
-    List<StatValue> getCostStats(Long vehicleId)
+    List<StatDTO> getCostStats(Long vehicleId)
 
-    List<StatValue> getDistanceStats(Long vehicleId)
+    List<StatDTO> getDistanceStats(Long vehicleId)
+
+    List<StatAverageDTO> getAverageStats(Long vehicleId)
 }

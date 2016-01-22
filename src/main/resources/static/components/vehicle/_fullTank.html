@@ -52,3 +52,12 @@
         <svg></svg>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-6 col-xs-6">
+        <ul>
+            <li ng-repeat="stat in $parent.averageStats">
+                {{stat.label}}&nbsp;&#58;&nbsp;{{stat.value.toFixed(2)}}
+            </li>
+        </ul>
+    </div>
+</div>

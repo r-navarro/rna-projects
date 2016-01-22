@@ -4,6 +4,7 @@ import com.carmanagement.config.PersistenceTestConfig
 import com.carmanagement.entities.FullTank
 import com.carmanagement.entities.User
 import com.carmanagement.entities.Vehicle
+import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -76,5 +77,24 @@ class FullTankRepositoryTest extends Specification {
 
         then:
         fullTanks.size() == 5
+    }
+
+    def "find all order by vehicle test"() {
+        setup:
+        def user = userRepository.save(new User(name: "test"))
+        def vehicle = vehicleRepository.save(new Vehicle(registerNumber: 1, user: user))
+        def date = new Date()
+        def now = new Date()
+        5.times {
+            fullTankRepository.save(new FullTank(vehicle: vehicle, cost: it, date: date))
+            use(TimeCategory){date = date - 10.days}
+        }
+
+        when:
+        def fullTanks = fullTankRepository.findAllByVehicleIdOrderByDateAsc(vehicle.id)
+
+        then:
+        fullTanks.size() == 5
+        fullTanks.last().date == now
     }
 }

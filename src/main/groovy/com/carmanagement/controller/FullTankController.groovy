@@ -80,4 +80,9 @@ class FullTankController {
     def List getDistanceStats(@PathVariable("vehicleId") Long vehicleId) {
         return fullTanksService.getDistanceStats(vehicleId)
     }
+
+    @RequestMapping(value = "{vehicleId}/fullTanks/averageStats", method = RequestMethod.GET)
+    def List getAverageStats(@PathVariable("vehicleId") Long vehicleId) {
+        return fullTanksService.getAverageStats(vehicleId)
+    }
 }

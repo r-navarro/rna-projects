@@ -1,6 +1,7 @@
 package com.carmanagement.services.impls
 
-import com.carmanagement.dto.StatValue
+import com.carmanagement.dto.StatAverageDTO
+import com.carmanagement.dto.StatDTO
 import com.carmanagement.entities.FullTank
 import com.carmanagement.entities.Vehicle
 import com.carmanagement.exceptions.ErrorCode
@@ -8,10 +9,13 @@ import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.repositories.FullTankRepository
 import com.carmanagement.repositories.VehicleRepository
 import com.carmanagement.services.interfaces.FullTanksService
+import groovy.time.TimeCategory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+
+import java.math.RoundingMode
 
 @Service
 class FullTanksServiceImpl implements FullTanksService {
@@ -49,9 +53,9 @@ class FullTanksServiceImpl implements FullTanksService {
             if (!vehicle) {
                 throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
             }
-            if(fullTank.id){
+            if (fullTank.id) {
                 fullTank = updateFullTank(fullTank)
-            }else {
+            } else {
                 fullTank = addFullTank(vehicle, fullTank)
             }
             return fullTank
@@ -59,7 +63,7 @@ class FullTanksServiceImpl implements FullTanksService {
         throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT)
     }
 
-    private FullTank addFullTank(Vehicle vehicle, FullTank fullTank){
+    private FullTank addFullTank(Vehicle vehicle, FullTank fullTank) {
         fullTank.vehicle = vehicle
         vehicle.kilometers += fullTank.distance
         vehicle.actions << fullTank
@@ -96,34 +100,78 @@ class FullTanksServiceImpl implements FullTanksService {
     }
 
     @Override
-    List<StatValue> getCostStats(Long vehicleId) {
-        if (!vehicleRepository.findOne(vehicleId)) {
-            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
-        }
+    List<StatDTO> getCostStats(Long vehicleId) {
+        checkVehicle(vehicleId)
 
         def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
         def stats = []
         fullTanks = fullTanks.sort { it.date }.collect { [it.cost, it.date] }
         fullTanks.each {
-            stats << new StatValue(date:it[1].format('dd/MM/yyyy'), value:it[0])
+            stats << new StatDTO(date: it[1].format('dd/MM/yyyy'), value: it[0])
         }
 
         return stats
     }
 
     @Override
-    List<StatValue> getDistanceStats(Long vehicleId) {
-        if (!vehicleRepository.findOne(vehicleId)) {
-            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
-        }
+    List<StatDTO> getDistanceStats(Long vehicleId) {
+        checkVehicle(vehicleId)
 
         def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
         def stats = []
         fullTanks = fullTanks.sort { it.date }.collect { [it.distance, it.date] }
         fullTanks.each {
-            stats << new StatValue(date:it[1].format('dd/MM/yyyy'), value:it[0])
+            stats << new StatDTO(date: it[1].format('dd/MM/yyyy'), value: it[0])
         }
 
         return stats
     }
+
+    List<StatAverageDTO> getAverageStats(Long vehicleId) {
+        checkVehicle(vehicleId)
+        def fullTanks = fullTankRepository.findAllByVehicleIdOrderByDateAsc(vehicleId)
+
+        BigDecimal cost = 0
+        BigDecimal dist = 0
+        BigDecimal numberOfDay = 0
+        BigDecimal quantity = 0
+
+        Date previousDate
+        use(TimeCategory) {
+            fullTanks.each {
+                cost += it.cost
+                dist += it.distance
+                quantity += it.quantity
+                if (previousDate) {
+                    def difference = it.date - previousDate
+                    numberOfDay += difference.days
+                }
+                previousDate = it.date
+            }
+        }
+
+        cost /= fullTanks.size()
+        dist /= fullTanks.size()
+        numberOfDay /= (fullTanks.size() -1) ?: 1
+        quantity /= fullTanks.size()
+
+        cost.setScale(2, RoundingMode.UP)
+        dist.setScale(2, RoundingMode.UP)
+        numberOfDay.setScale(2, RoundingMode.UP)
+        quantity.setScale(2, RoundingMode.UP)
+
+        def avgCost = new StatAverageDTO(label: "Cost avg", value: cost)
+        def avgDist = new StatAverageDTO(label: "Dist avg", value: dist)
+        def avgDay = new StatAverageDTO(label: "Day avg", value: numberOfDay)
+        def avgQuantity = new StatAverageDTO(label: "Quantity avg", value: quantity)
+
+        return [avgCost, avgDist, avgDay, avgQuantity]
+    }
+
+    private void checkVehicle(Long vehicleId) {
+        if (!vehicleRepository.findOne(vehicleId)) {
+            throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
+        }
+    }
+
 }

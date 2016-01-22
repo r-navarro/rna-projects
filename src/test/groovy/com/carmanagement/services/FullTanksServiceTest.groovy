@@ -36,7 +36,7 @@ class FullTanksServiceTest extends Specification {
 
     Vehicle vehicle = new Vehicle(registerNumber: "test", kilometers: 1000, actions: [])
 
-    FullTank fullTank = new FullTank(distance: 1, quantity: 1, cost: 1, date: new Date())
+    FullTank fullTank = new FullTank(distance: 10, quantity: 10, cost: 10, date: new Date())
 
     def setup() {
         user = userService.save(user)
@@ -70,7 +70,7 @@ class FullTanksServiceTest extends Specification {
     def "test get fullTank with wrong vehicle id"() {
 
         when:
-        def result = fullTanksService.getByVehicleIdAndId(vehicle.id + 1, fullTank.id)
+        fullTanksService.getByVehicleIdAndId(vehicle.id + 1, fullTank.id)
 
         then:
         def ex = thrown TechnicalException
@@ -95,7 +95,7 @@ class FullTanksServiceTest extends Specification {
 
     def "get fullTanks paginate with vehicle not found"() {
         when:
-        def result = fullTanksService.getFullTanks(new PageRequest(0, 10), vehicle.id + 1)
+        fullTanksService.getFullTanks(new PageRequest(0, 10), vehicle.id + 1)
 
         then:
         def ex = thrown TechnicalException
@@ -111,7 +111,7 @@ class FullTanksServiceTest extends Specification {
 
         then:
         result
-        result.vehicle.kilometers == 1001
+        result.vehicle.kilometers == 1010
 
     }
 
@@ -172,18 +172,22 @@ class FullTanksServiceTest extends Specification {
         use(TimeCategory) {
             date2 = date1 + 1.month
         }
-        FullTank.metaClass.asBoolean = { -> return true }
-        fullTanksService.save(new FullTank(cost: 2, date: date2, distance: 0), vehicle.id)
-        fullTanksService.save(new FullTank(cost: 1, date: date1, distance: 0), vehicle.id)
+        def fullTankModify = new FullTank(cost: 2, date: date2, distance: 0)
+        fullTankModify.metaClass.asBoolean = { -> return true }
+        fullTanksService.save(fullTankModify, vehicle.id)
+
+        fullTankModify = new FullTank(cost: 1, date: date1, distance: 0)
+        fullTankModify.metaClass.asBoolean = { -> return true }
+        fullTanksService.save(fullTankModify, vehicle.id)
 
         when:
         def stats = fullTanksService.getCostStats(vehicle.id)
 
         then:
         assert stats
-        assert stats[0].value == "$fullTank.cost"
-        assert stats[1].value == "${1f}"
-        assert stats[2].value == "${2f}"
+        assert stats[0].value == "$fullTank.cost".toString()
+        assert stats[1].value == "${1f}".toString()
+        assert stats[2].value == "${2f}".toString()
     }
 
     @Rollback
@@ -195,17 +199,47 @@ class FullTanksServiceTest extends Specification {
         use(TimeCategory) {
             date2 = date1 + 1.month
         }
-        //FullTank.metaClass.asBoolean = { -> return true }
-        fullTanksService.save(new FullTank(distance: 125.62, date: date2), vehicle.id)
-        fullTanksService.save(new FullTank(distance: 564.23, date: date1), vehicle.id)
+
+        def fullTankModify = new FullTank(distance: 125.62, date: date2)
+        fullTankModify.metaClass.asBoolean = { -> return true }
+        fullTanksService.save(fullTankModify, vehicle.id)
+
+        fullTankModify = new FullTank(distance: 564.23, date: date1)
+        fullTankModify.metaClass.asBoolean = { -> return true }
+        fullTanksService.save(fullTankModify, vehicle.id)
+
 
         when:
         def stats = fullTanksService.getDistanceStats(vehicle.id)
 
         then:
         assert stats
-        assert stats[0].value == "${fullTank.distance}"
-        assert stats[1].value == "${564.23f}"
-        assert stats[2].value == "${125.62f}"
+        assert stats[0].value == "${fullTank.distance}".toString()
+        assert stats[1].value == "${564.23f}".toString()
+        assert stats[2].value == "${125.62f}".toString()
+    }
+
+    @Rollback
+    @Transactional
+    def "Test average stats"() {
+        setup:
+        use(TimeCategory) {
+            def now = new Date()
+            10.times {
+                now += 10.days
+                def fullTankModify = new FullTank(distance: 10, quantity: 10, cost: 10, date: now)
+                fullTanksService.save(fullTankModify, vehicle.id)
+            }
+        }
+
+        when:
+        def stats = fullTanksService.getAverageStats(vehicle.id)
+
+        then:
+        assert stats
+        assert stats[0].value == 10
+        assert stats[1].value == 10
+        assert stats[2].value > 9.8
+        assert stats[3].value == 10
     }
 }

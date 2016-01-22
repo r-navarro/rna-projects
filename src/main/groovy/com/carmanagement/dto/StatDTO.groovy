@@ -1,6 +1,6 @@
 package com.carmanagement.dto
 
-class StatValue {
+class StatDTO {
     String value
     String date
 }

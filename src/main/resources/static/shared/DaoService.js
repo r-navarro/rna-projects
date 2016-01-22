@@ -1,6 +1,6 @@
 angular.module('carManagement')
-    .factory('DaoService', ['$http',
-        function($http) {
+    .factory('DaoService', ['$http', '$location',
+        function($http, $location) {
 
             function getData(urlAction, method, data) {
                 var req = {
@@ -24,6 +24,9 @@ angular.module('carManagement')
 
             function failure(response) {
                 $http.post("/stats/ko", response);
+                if (responce.status == 401) {
+                    $location.path("/login");
+                }
             }
 
             return {

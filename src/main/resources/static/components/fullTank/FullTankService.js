@@ -50,6 +50,12 @@ angular.module('carManagement.fullTank')
                 });
             };
 
+            averageStats = function(vehicleId) {
+                return DaoService.getData("vehicles/" + vehicleId + "/fullTanks/averageStats", 'GET').then(function(response) {
+                    return response.data;
+                });
+            };
+
             return {
                 list: list,
                 save: save,
@@ -57,7 +63,8 @@ angular.module('carManagement.fullTank')
                 remove: remove,
                 get: get,
                 costStats: costStats,
-                distanceStats: distanceStats
+                distanceStats: distanceStats,
+                averageStats: averageStats
             };
 
         }
