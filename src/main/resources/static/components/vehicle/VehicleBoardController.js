@@ -90,5 +90,15 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                 $scope.updateMaintenances($scope.maintenancesCurrentPage);
             };
 
+            $scope.getDateStyle = function(maintenance) {
+                today = new Date();
+                if (maintenance.predictedDate < today) {
+                    if (maintenance.date <= today) {
+                        return "text-danger bg-danger";
+                    }
+                }
+                return "";
+            };
+
         }
     ]);

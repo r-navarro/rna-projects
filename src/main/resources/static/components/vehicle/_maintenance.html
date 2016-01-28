@@ -13,7 +13,7 @@
         <td><a href="#/{{vehicleId}}/maintenance/update/{{maintenance.id}}">{{maintenance.date | date:'dd/MM/yyyy'}}</a></td>
         <td>{{maintenance.distance}}</td>
         <td>{{maintenance.cost}}</td>
-        <td>{{maintenance.predictedDate | date:'dd/MM/yyyy'}}</td>
+        <td ng-class="$parent.getDateStyle(maintenance)">{{ maintenance.predictedDate | date:'dd/MM/yyyy'}}</td>
         <td>
             <button type="button" class="btn btn-danger btn-xs" ng-click="$parent.deleteMaintenance(maintenance)">
                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
