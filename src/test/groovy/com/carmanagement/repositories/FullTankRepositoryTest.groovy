@@ -95,6 +95,6 @@ class FullTankRepositoryTest extends Specification {
 
         then:
         fullTanks.size() == 5
-        fullTanks.last().date == now
+        fullTanks.last().date.time == now.time
     }
 }
