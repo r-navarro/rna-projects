@@ -83,8 +83,8 @@ class FullTankRepositoryTest extends Specification {
         setup:
         def user = userRepository.save(new User(name: "test"))
         def vehicle = vehicleRepository.save(new Vehicle(registerNumber: 1, user: user))
-        def date = new Date()
         def now = new Date()
+        def date = now.clone()
         5.times {
             fullTankRepository.save(new FullTank(vehicle: vehicle, cost: it, date: date))
             use(TimeCategory){date = date - 10.days}
