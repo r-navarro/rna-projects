@@ -64,9 +64,7 @@ class FullTanksServiceImpl implements FullTanksService {
     }
 
     private FullTank addFullTank(Vehicle vehicle, FullTank fullTank) {
-        fullTank.vehicle = vehicle
-        vehicle.kilometers += fullTank.distance
-        vehicle.actions << fullTank
+        vehicle << fullTank
 
         return fullTankRepository.save(fullTank)
     }
@@ -75,12 +73,8 @@ class FullTanksServiceImpl implements FullTanksService {
         def oldFullTank = fullTankRepository.findOne(fullTank.id)
         if (oldFullTank) {
             def vehicle = oldFullTank.vehicle
-            vehicle.kilometers -= oldFullTank.distance
-            vehicle.kilometers += fullTank.distance
-            vehicle.actions.remove(oldFullTank)
-            vehicle.actions << fullTank
-            fullTank.vehicle = vehicle
-
+            vehicle >> oldFullTank
+            vehicle << fullTank
             return fullTankRepository.save(fullTank)
         }
         throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTank.id)
@@ -95,7 +89,7 @@ class FullTanksServiceImpl implements FullTanksService {
         if (fullTank.vehicle.id != vehicleId) {
             throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_VEHICLE_NOT_MATCH, errorParameter: vehicleId)
         }
-        fullTank.vehicle.kilometers -= fullTank.distance
+        fullTank.vehicle >> fullTank
         fullTankRepository.delete(fullTank)
     }
 
@@ -105,8 +99,8 @@ class FullTanksServiceImpl implements FullTanksService {
 
         def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
         def stats = []
-        fullTanks = fullTanks.sort { it.date }.collect { [it.cost, it.date] }
-        fullTanks.each {
+        def costAndDate = fullTanks.sort { it.date }.collect { [it.cost, it.date] }
+        costAndDate.each {
             stats << new StatDTO(date: it[1].format('dd/MM/yyyy'), value: it[0])
         }
 
@@ -119,8 +113,8 @@ class FullTanksServiceImpl implements FullTanksService {
 
         def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
         def stats = []
-        fullTanks = fullTanks.sort { it.date }.collect { [it.distance, it.date] }
-        fullTanks.each {
+        def distanceAndDate = fullTanks.sort { it.date }.collect { [it.distance, it.date] }
+        distanceAndDate.each {
             stats << new StatDTO(date: it[1].format('dd/MM/yyyy'), value: it[0])
         }
 

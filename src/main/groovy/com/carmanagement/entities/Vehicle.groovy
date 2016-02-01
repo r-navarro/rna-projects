@@ -36,4 +36,23 @@ class Vehicle {
     def String toString() {
         return registerNumber
     }
+
+    def leftShift(action) {
+        if (action instanceof Action) {
+            actions << action
+            if (action instanceof FullTank) {
+                kilometers += action.distance
+            }
+            action.vehicle = this
+        }
+    }
+
+    def rightShift(action) {
+        if (action instanceof Action) {
+            def removed = actions.remove action
+            if (removed && action instanceof FullTank) {
+                kilometers -= action.distance
+            }
+        }
+    }
 }

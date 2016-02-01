@@ -51,7 +51,7 @@ class MaintenancesServiceImpl implements MaintenancesService {
             if (!vehicle) {
                 throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
             }
-            maintenance.vehicle = vehicle
+            vehicle << maintenance
             return vehicleRepository.save(maintenance)
         }
         throw new TechnicalException(errorCode: ErrorCode.MAINTENANCE_WRONG_FORMAT)
