@@ -20,6 +20,8 @@ angular.module('carManagement.vehicle', ['ngRoute'])
             $scope.fullTankCurrentPage = 1;
             $scope.fullTankTotalElements = 0;
             $scope.fullTankItemsPerPage = 0;
+            $scope.fullTankSortType = 'date';
+            $scope.fullTankSortReverse = false;
 
             $scope.vehicleId = $routeParams.vehicleId;
 
@@ -27,9 +29,11 @@ angular.module('carManagement.vehicle', ['ngRoute'])
             $scope.maintenancesCurrentPage = 1;
             $scope.maintenancesTotalElements = 0;
             $scope.maintenancesItemsPerPage = 0;
+            $scope.maintenancesSortType = 'predictedDate';
+            $scope.maintenancesSortReverse = false;
 
             $scope.updateFullTanks = function(page) {
-                FullTankService.list($scope.vehicleId, page).then(function(list) {
+                FullTankService.list($scope.vehicleId, page, $scope.fullTankSortType, $scope.fullTankSortReverse).then(function(list) {
                     $scope.fullTanks = list.content;
                     $scope.fullTankTotalPages = list.totalPages;
                     $scope.fullTankTotalElements = list.totalElements;
@@ -72,7 +76,7 @@ angular.module('carManagement.vehicle', ['ngRoute'])
             };
 
             $scope.updateMaintenances = function(page) {
-                MaintenanceService.list($scope.vehicleId, page).then(function(list) {
+                MaintenanceService.list($scope.vehicleId, page, $scope.maintenancesSortType, $scope.maintenancesSortReverse).then(function(list) {
                     $scope.maintenances = list.content;
                     $scope.maintenancesTotalPages = list.totalPages;
                     $scope.maintenancesTotalElements = list.totalElements;
@@ -98,6 +102,26 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                     }
                 }
                 return "";
+            };
+
+            $scope.sortMaintenance = function(header) {
+                if (header == $scope.maintenancesSortType) {
+                    $scope.maintenancesSortReverse = !$scope.maintenancesSortReverse;
+                } else {
+                    $scope.maintenancesSortType = header;
+                    $scope.maintenancesSortReverse = false;
+                }
+                $scope.updateMaintenances($scope.maintenancesCurrentPage);
+            };
+
+            $scope.sortFullTank = function(header) {
+                if (header == $scope.fullTankSortType) {
+                    $scope.fullTankSortReverse = !$scope.fullTankSortReverse;
+                } else {
+                    $scope.fullTankSortType = header;
+                    $scope.fullTankSortReverse = false;
+                }
+                $scope.updateFullTanks($scope.fullTankCurrentPage);
             };
 
         }

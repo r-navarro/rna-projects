@@ -9,7 +9,7 @@ class Maintenance extends Action {
     @Column(name = "predicted_date")
     Date predictedDate
 
-    @Column
+    @Column(length = 5000)
     String description
 
 

@@ -2,13 +2,15 @@ angular.module('carManagement.maintenance')
     .factory('MaintenanceService', ['$resource', 'DaoService',
         function($resource, DaoService) {
 
-            list = function(vehicleId, page) {
+            list = function(vehicleId, page, sort, dir) {
+
+                sortString = DaoService.getSortString(sort, dir, "predictedDate");
                 if (page) {
-                    return DaoService.getData("/vehicles/" + vehicleId + "/maintenances/?page=" + (page - 1) + "&sort=predictedDate&name.dir=desc", 'GET').then(function(response) {
+                    return DaoService.getData("/vehicles/" + vehicleId + "/maintenances/?page=" + (page - 1) + "&" + sortString, 'GET').then(function(response) {
                         return response.data;
                     });
                 } else {
-                    return DaoService.getData("/vehicles/" + vehicleId + "/maintenances/", 'GET').then(function(response) {
+                    return DaoService.getData("/vehicles/" + vehicleId + "/maintenances/?" + sortString, 'GET').then(function(response) {
                         return response.data;
                     });
                 }

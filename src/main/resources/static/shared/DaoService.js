@@ -29,8 +29,22 @@ angular.module('carManagement')
                 }
             }
 
+            function getSortString(name, dir, defaultName) {
+                if (!name) {
+                    name = defaultName;
+                }
+                sortString = "sort=" + name + ",";
+                if (dir) {
+                    sortString += "asc";
+                } else {
+                    sortString += "desc";
+                }
+                return sortString;
+            }
+
             return {
-                getData: getData
+                getData: getData,
+                getSortString: getSortString
             };
         }
     ]);

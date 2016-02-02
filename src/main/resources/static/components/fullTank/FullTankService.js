@@ -2,13 +2,14 @@ angular.module('carManagement.fullTank')
     .factory('FullTankService', ['$resource', 'DaoService',
         function($resource, DaoService) {
 
-            list = function(vehicleId, page) {
+            list = function(vehicleId, page, sort, dir) {
+                sortString = DaoService.getSortString(sort, dir, "date");
                 if (page) {
-                    return DaoService.getData("/vehicles/" + vehicleId + "/fullTanks/?page=" + (page - 1) + "&sort=date&name.dir=desc", 'GET').then(function(response) {
+                    return DaoService.getData("/vehicles/" + vehicleId + "/fullTanks/?page=" + (page - 1) + "&" + sortString, 'GET').then(function(response) {
                         return response.data;
                     });
                 } else {
-                    return DaoService.getData("/vehicles/" + vehicleId + "/fullTanks/", 'GET').then(function(response) {
+                    return DaoService.getData("/vehicles/" + vehicleId + "/fullTanks/?" + sortString, 'GET').then(function(response) {
                         return response.data;
                     });
                 }
