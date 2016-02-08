@@ -97,7 +97,7 @@ angular.module('carManagement.vehicle', ['ngRoute'])
             $scope.getDateStyle = function(maintenance) {
                 today = new Date();
                 if (maintenance.predictedDate < today) {
-                    if (maintenance.date <= today) {
+                    if (maintenance.date <= maintenance.predictedDate) {
                         return "text-danger bg-danger";
                     }
                 }
