@@ -38,8 +38,10 @@
     </tr>
     </tbody>
 </table>
-<pagination total-items="$parent.fullTankTotalElements" ng-model="$parent.fullTankCurrentPage" ng-change="$parent.fullTankPageChanged()"
-            items-per-page="$parent.fullTankItemsPerPage"></pagination>
+<pagination total-items="$parent.fullTankTotalElements" 
+            ng-model="$parent.fullTankCurrentPage" 
+            items-per-page="$parent.fullTankItemsPerPage"
+            ng-change="$parent.fulltankPageChanged()"></pagination>
 
 <div class="row">
     <div class="col-md-6 col-xs-6">

@@ -47,7 +47,7 @@ angular.module('carManagement.vehicle', ['ngRoute'])
                 });
             };
 
-            $scope.fullTankPageChanged = function() {
+            $scope.fulltankPageChanged = function() {
                 $scope.updateFullTanks($scope.fullTankCurrentPage);
             };
 
@@ -115,6 +115,7 @@ angular.module('carManagement.vehicle', ['ngRoute'])
             };
 
             $scope.sortFullTank = function(header) {
+                console.log("controller sort : " + $scope.fullTankCurrentPage);
                 if (header == $scope.fullTankSortType) {
                     $scope.fullTankSortReverse = !$scope.fullTankSortReverse;
                 } else {
