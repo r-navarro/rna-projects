@@ -1,58 +1,31 @@
 package com.carmanagement.entities
 
-import javax.persistence.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.DBRef
+import org.springframework.data.mongodb.core.mapping.Document
 
-@Entity
+@Document(collection = "vehicles")
 class Vehicle {
 
     @Id
-    @GeneratedValue
-    Long id
+    String id
 
-    @Column
+
     String registerNumber
 
-    @Column
+
     Float price
 
-    @Column
+
     String type
 
-    @Column
+
     Integer kilometers
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "vehicle")
-    List<Action> actions
-
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(nullable = false)
+    @DBRef
     User user
 
-    void setUser(User user) {
-        this.user = user
-        user.vehicles << this
-    }
-
-    def String toString() {
+    String toString() {
         return registerNumber
-    }
-
-    def leftShift(action) {
-        if (action instanceof Action) {
-            actions << action
-            if (action instanceof FullTank) {
-                kilometers += action.distance
-            }
-            action.vehicle = this
-        }
-    }
-
-    def rightShift(action) {
-        if (action instanceof Action) {
-            def removed = actions.remove action
-            if (removed && action instanceof FullTank) {
-                kilometers -= action.distance
-            }
-        }
     }
 }

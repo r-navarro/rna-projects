@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletRequest
 class GlobalExceptionHandler {
 
     @ExceptionHandler(TechnicalException)
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorResponse handleTechnicalException(TechnicalException e, HttpServletRequest request) {
+    ErrorResponse handleTechnicalException(TechnicalException e, HttpServletRequest request) {
         log.info(e.getMessage())
         def requestUrl = request.getPathInfo() ?: request.getServletPath()
         return new ErrorResponse(errorMessage: e.getMessage(), request: requestUrl, method: request.getMethod())
@@ -28,7 +28,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(SecurityException)
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     @ResponseBody
-    public ErrorResponse handleSecurityException(SecurityException e, HttpServletRequest request) {
+    ErrorResponse handleSecurityException(SecurityException e, HttpServletRequest request) {
         log.info(e.getMessage())
         def requestUrl = request.getPathInfo() ?: request.getServletPath()
         return new ErrorResponse(errorMessage: e.getMessage(), request: requestUrl, method: request.getMethod())

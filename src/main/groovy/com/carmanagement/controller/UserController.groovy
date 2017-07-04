@@ -32,12 +32,12 @@ class UserController {
     UserService userService
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public Principal login(Principal user) {
+    Principal login(Principal user) {
         return user
     }
 
     @RequestMapping(value = "/isAdmin", method = RequestMethod.GET)
-    public ResponseEntity<Boolean> isCurrentUserAdmin(Principal user) {
+    ResponseEntity<Boolean> isCurrentUserAdmin(Principal user) {
         def authentication = SecurityContextHolder.getContext().authentication
 
         def auth = ((UserDetails) authentication.principal).authorities.find { it.authority == 'ROLE_ADMIN' }
@@ -45,7 +45,7 @@ class UserController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    def ResponseEntity<UserDTO> get(@PathVariable Long id) {
+    ResponseEntity<UserDTO> get(@PathVariable String id) {
         if (checkUserRight(id)) {
             def user = userService.findById(id)
             return new ResponseEntity(new UserDTO(user), HttpStatus.OK)
@@ -53,15 +53,18 @@ class UserController {
         throw new SecurityException()
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "", method = RequestMethod.GET)
-    def ResponseEntity<UserDTO> getCurrent() {
-        def authentication = SecurityContextHolder.getContext().authentication
-        def userDto = new UserDTO(userService.findByName(authentication.name))
-        return new ResponseEntity<UserDTO>(userDto, HttpStatus.OK)
+    ResponseEntity<List<UserDTO>> getCurrent() {
+        def result = []
+        userRepository.findAll().each {
+            result << new UserDTO(it)
+        }
+        return new ResponseEntity(result, HttpStatus.OK)
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    def ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+    ResponseEntity<UserDTO> update(@PathVariable String id, @RequestBody UserDTO userDTO) {
         if (checkUserRight(id)) {
             def user = userDTO.toUser()
             userDTO = new UserDTO(userService.save(user))
@@ -72,29 +75,18 @@ class UserController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(method = RequestMethod.POST)
-    def ResponseEntity<UserDTO> create(@RequestBody UserDTO userDTO) {
+    ResponseEntity<UserDTO> create(@RequestBody UserDTO userDTO) {
         return new ResponseEntity(userService.save(userDTO.toUser()), HttpStatus.CREATED)
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    def void delete(@PathVariable Long id) {
+    void delete(@PathVariable String id) {
         userService.delete(id)
     }
 
-    @Secured("ROLE_ADMIN")
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    def ResponseEntity<List<UserDTO>> all() {
-
-        def result = []
-        userRepository.findAll().each {
-            result << new UserDTO(it)
-        }
-        return new ResponseEntity(result, HttpStatus.OK)
-    }
-
-    private boolean checkUserRight(Long userId) {
+    private boolean checkUserRight(String userId) {
         def user = userService.findById(userId)
         if (!user) {
             throw new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: userId)
@@ -106,7 +98,7 @@ class UserController {
         return isAdmin(authentication)
     }
 
-    private boolean isAdmin(Authentication authentication) {
+    private static boolean isAdmin(Authentication authentication) {
         def auth = ((UserDetails) authentication.principal).authorities.find { it.authority == 'ROLE_ADMIN' }
         return auth != null
     }

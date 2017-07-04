@@ -4,7 +4,7 @@ import com.carmanagement.entities.Maintenance
 
 class MaintenanceDTO {
 
-    Long id
+    String id
 
     Date date
 
@@ -32,7 +32,7 @@ class MaintenanceDTO {
         return new Maintenance(id: id, distance: distance, date: date, cost: cost, predictedDate: predictedDate, description: description)
     }
 
-    boolean asBoolean(){
+    boolean asBoolean() {
         return date && (cost != null)
     }
 }

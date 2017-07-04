@@ -4,23 +4,24 @@ import com.carmanagement.dto.StatAverageDTO
 import com.carmanagement.dto.StatDTO
 import com.carmanagement.entities.FullTank
 import com.carmanagement.exceptions.TechnicalException
-import com.carmanagement.repositories.FullTankRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface FullTanksService {
 
-    FullTank getByVehicleIdAndId(Long vehicleId, Long fullTankId) throws TechnicalException
+    FullTank getByVehicleIdAndId(String vehicleId, String fullTankId) throws TechnicalException
 
-    Page<FullTank> getFullTanks(Pageable pageable, Long vehicleId) throws TechnicalException
+    Page<FullTank> getFullTanks(Pageable pageable, String vehicleId) throws TechnicalException
 
-    FullTank save(FullTank fullTank, Long vehicleId) throws TechnicalException
+    FullTank save(FullTank fullTank, String vehicleId) throws TechnicalException
 
-    void delete(Long vehicleId, Long fullTankId) throws TechnicalException
+    FullTank update(FullTank fullTank, String vehicleId) throws TechnicalException
 
-    List<StatDTO> getCostStats(Long vehicleId)
+    void delete(String vehicleId, String fullTankId) throws TechnicalException
 
-    List<StatDTO> getDistanceStats(Long vehicleId)
+    List<StatDTO> getCostStats(String vehicleId)
 
-    List<StatAverageDTO> getAverageStats(Long vehicleId)
+    List<StatDTO> getDistanceStats(String vehicleId)
+
+    List<StatAverageDTO> getAverageStats(String vehicleId)
 }

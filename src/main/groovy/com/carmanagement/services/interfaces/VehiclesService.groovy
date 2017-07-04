@@ -14,9 +14,9 @@ interface VehiclesService {
 
     Page<Vehicle> getVehicles(Pageable pageable, String name)
 
-    Vehicle get(Long id, String name)
+    Vehicle get(String id, String name)
 
-    void delete(Long id) throws TechnicalException
+    void delete(String id) throws TechnicalException
 
     List<Vehicle> findAll()
 }

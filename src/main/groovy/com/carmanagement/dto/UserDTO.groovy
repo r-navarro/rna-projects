@@ -4,7 +4,7 @@ import com.carmanagement.entities.User
 
 class UserDTO {
 
-    Long id
+    String id
 
     String name
 

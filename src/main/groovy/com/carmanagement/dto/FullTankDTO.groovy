@@ -4,7 +4,7 @@ import com.carmanagement.entities.FullTank
 
 class FullTankDTO {
 
-    Long id
+    String id
 
     Date date
 
@@ -35,7 +35,7 @@ class FullTankDTO {
         return fullTank
     }
 
-    boolean asBoolean(){
+    boolean asBoolean() {
         return date && cost && distance && quantity
     }
 }

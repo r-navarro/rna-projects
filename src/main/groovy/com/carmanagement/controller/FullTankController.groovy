@@ -3,8 +3,6 @@ package com.carmanagement.controller
 import com.carmanagement.dto.FullTankDTO
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
-import com.carmanagement.repositories.FullTankRepository
-import com.carmanagement.repositories.VehicleRepository
 import com.carmanagement.services.interfaces.FullTanksService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,7 +27,7 @@ class FullTankController {
     FullTanksService fullTanksService
 
     @RequestMapping(value = "{vehicleId}/fullTanks/{fullTankId}", method = RequestMethod.GET)
-    def FullTankDTO get(@PathVariable("vehicleId") Long vehicleId, @PathVariable("fullTankId") Long fullTankId) {
+    FullTankDTO get(@PathVariable("vehicleId") String vehicleId, @PathVariable("fullTankId") String fullTankId) {
         def fullTank = fullTanksService.getByVehicleIdAndId(vehicleId, fullTankId)
 
         if (!fullTank) {
@@ -39,8 +37,8 @@ class FullTankController {
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks", method = RequestMethod.GET)
-    public Page<FullTankDTO> findFullTankByVehiclePaginate(
-            @PathVariable("vehicleId") Long vehicleId,
+    Page<FullTankDTO> findFullTankByVehiclePaginate(
+            @PathVariable("vehicleId") String vehicleId,
             @PageableDefault(size = FullTankController.PAGE_SIZE, page = 0) Pageable pageable) {
 
         def fullTanksPage = fullTanksService.getFullTanks(pageable, vehicleId)
@@ -50,39 +48,39 @@ class FullTankController {
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks", method = RequestMethod.POST)
-    def ResponseEntity<FullTankDTO> create(
-            @PathVariable("vehicleId") Long vehicleId, @RequestBody FullTankDTO fullTank) {
+    ResponseEntity<FullTankDTO> create(
+            @PathVariable("vehicleId") String vehicleId, @RequestBody FullTankDTO fullTank) {
         def fullTankSaved = fullTanksService.save(fullTank.toFullTank(), vehicleId)
         return new ResponseEntity<FullTankDTO>(new FullTankDTO(fullTankSaved), HttpStatus.CREATED)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/{fullTankId}", method = RequestMethod.PUT)
-    def ResponseEntity<FullTankDTO> update(
-            @PathVariable("vehicleId") Long vehicleId,
-            @PathVariable("fullTankId") Long fullTankId, @RequestBody FullTankDTO fullTank) {
+    ResponseEntity<FullTankDTO> update(
+            @PathVariable("vehicleId") String vehicleId,
+            @PathVariable("fullTankId") String fullTankId, @RequestBody FullTankDTO fullTank) {
         fullTank.id = fullTankId
-        def fullTankSaved = fullTanksService.save(fullTank.toFullTank(), vehicleId)
+        def fullTankSaved = fullTanksService.update(fullTank.toFullTank(), vehicleId)
         return new ResponseEntity<FullTankDTO>(new FullTankDTO(fullTankSaved), HttpStatus.CREATED)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    def void delete(@PathVariable("vehicleId") Long vehicleId, @PathVariable("id") Long fullTankId) {
+    void delete(@PathVariable("vehicleId") String vehicleId, @PathVariable("id") String fullTankId) {
         fullTanksService.delete(vehicleId, fullTankId)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/costStats", method = RequestMethod.GET)
-    def List getCostStats(@PathVariable("vehicleId") Long vehicleId) {
+    List getCostStats(@PathVariable("vehicleId") String vehicleId) {
         return fullTanksService.getCostStats(vehicleId)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/distanceStats", method = RequestMethod.GET)
-    def List getDistanceStats(@PathVariable("vehicleId") Long vehicleId) {
+    List getDistanceStats(@PathVariable("vehicleId") String vehicleId) {
         return fullTanksService.getDistanceStats(vehicleId)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/averageStats", method = RequestMethod.GET)
-    def List getAverageStats(@PathVariable("vehicleId") Long vehicleId) {
+    List getAverageStats(@PathVariable("vehicleId") String vehicleId) {
         return fullTanksService.getAverageStats(vehicleId)
     }
 }

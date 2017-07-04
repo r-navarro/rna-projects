@@ -1,25 +1,22 @@
 package com.carmanagement.entities
 
-import javax.persistence.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.DBRef
+import org.springframework.data.mongodb.core.mapping.Document
 
-@Entity
+@Document(collection = "actions")
 class Action {
 
     @Id
-    @GeneratedValue
-    Long id
+    String id
 
-    @Column(name = "date_action")
     Date date
 
-    @Column
     Float distance
 
-    @Column
     Float cost
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(nullable = false)
+    @DBRef
     Vehicle vehicle
 
     boolean asBoolean() {

@@ -7,13 +7,13 @@ import org.springframework.data.domain.Pageable
 
 interface MaintenancesService {
 
-    Maintenance getByVehicleIdAndId(Long vehicleId, Long maintenanceId) throws TechnicalException
+    Maintenance getByVehicleIdAndId(String vehicleId, String maintenanceId) throws TechnicalException
 
-    Page<Maintenance> getMaintenances(Pageable pageable, Long vehicleId) throws TechnicalException
+    Page<Maintenance> getMaintenances(Pageable pageable, String vehicleId) throws TechnicalException
 
-    Maintenance save(Maintenance maintenance, Long vehicleId) throws TechnicalException
+    Maintenance save(Maintenance maintenance, String vehicleId) throws TechnicalException
 
-    void delete(Long vehicleId, Long maintenanceId) throws TechnicalException
+    void delete(String vehicleId, String maintenanceId) throws TechnicalException
 
 
 }

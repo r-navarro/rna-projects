@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RestController
 class StatisticsController {
 
     @RequestMapping("/ko")
-    def String logKo(@RequestBody String report) {
+    String logKo(@RequestBody String report) {
         log.info "log ko ${report}"
 
         return '{ "message" : "log ko"}'
     }
 
     @RequestMapping("/ok")
-    def String logOK(@RequestBody String report) {
+    String logOK(@RequestBody String report) {
         //log.info "log ok ${report}"
 
         return '{ "message" : "log ok"}'

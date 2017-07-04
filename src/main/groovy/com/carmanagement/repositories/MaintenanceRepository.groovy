@@ -5,9 +5,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.PagingAndSortingRepository
 
-interface MaintenanceRepository extends PagingAndSortingRepository<Maintenance, Long> {
+interface MaintenanceRepository extends PagingAndSortingRepository<Maintenance, String> {
 
-    Page<Maintenance> findByVehicleId(Long vehicleId, Pageable pageable)
+    Page<Maintenance> findByVehicleId(String vehicleId, Pageable pageable)
 
-    List<Maintenance> findAllByVehicleId(Long vehicleId)
+    List<Maintenance> findAllByVehicleId(String vehicleId)
 }

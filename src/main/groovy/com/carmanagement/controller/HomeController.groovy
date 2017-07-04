@@ -9,12 +9,12 @@ class HomeController {
 
     @RequestMapping("/home")
     @Secured("ROLE_ADMIN")
-    public String home() {
+    String home() {
         return "index"
     }
 
     @RequestMapping("/isAlive")
-    public String isAlive() {
+    String isAlive() {
         def builder = new StringBuilder()
         builder.with {
             append System.currentTimeMillis()

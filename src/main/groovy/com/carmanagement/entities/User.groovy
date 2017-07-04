@@ -1,34 +1,34 @@
 package com.carmanagement.entities
 
-import javax.persistence.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
+import org.springframework.data.mongodb.core.mapping.Document
 
-@Entity
+@Document(collection = "users")
 class User {
 
     @Id
-    @GeneratedValue
-    Long id
+    String id
 
-    @Column(unique = true)
+    @Indexed(unique = true)
     String name
 
-    @Column
+
     String password
 
-    @Column
+
     boolean enabled = true
 
-    @Column
+
     boolean accountExpired
 
-    @Column
+
     boolean accountLocked
 
-    @Column
+
     boolean passwordExpired
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
-    List<Vehicle> vehicles = []
+    List<Role> roles = []
 
     String toString() {
         return name

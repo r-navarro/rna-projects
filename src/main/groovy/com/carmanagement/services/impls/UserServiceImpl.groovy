@@ -8,13 +8,13 @@ import com.carmanagement.repositories.UserRepository
 import com.carmanagement.services.interfaces.UserService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User as SpringUser
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Slf4j
@@ -24,7 +24,7 @@ class UserServiceImpl implements UserService {
     UserRepository userRepository
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByName(username)
         if (!user) {
             log.info("User ${username} not found")
@@ -35,7 +35,7 @@ class UserServiceImpl implements UserService {
         return userDetail
     }
 
-    private Collection<? extends GrantedAuthority> getGrantedAuthorities(String username) {
+    private static Collection<? extends GrantedAuthority> getGrantedAuthorities(String username) {
         Collection<? extends GrantedAuthority> authorities = []
 
         if (username == "admin") {
@@ -51,11 +51,7 @@ class UserServiceImpl implements UserService {
     boolean checkUserVehicle(String userName, Vehicle vehicle) {
         def user = userRepository.findByName(userName)
         if (!user) throw new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: userName)
-        if (vehicle?.user?.name == user?.name) {
-            return true
-        } else {
-            return false
-        }
+        return vehicle?.user?.name == user?.name
     }
 
     @Override
@@ -64,24 +60,23 @@ class UserServiceImpl implements UserService {
     }
 
     @Override
-    User findById(Long id) {
+    User findById(String id) {
         return userRepository.findOne(id)
     }
 
     @Override
-    @Transactional
     User save(User user) {
         try {
-            user = userRepository.saveAndFlush(user)
+            user = userRepository.save(user)
             return user
-        } catch (DataIntegrityViolationException) {
+        } catch (DataIntegrityViolationException e) {
+            log.warn('DataIntegrityViolationException ', e)
             throw new TechnicalException(errorCode: ErrorCode.USER_ALREADY_EXIST, errorParameter: user.name)
         }
     }
 
     @Override
-    @Transactional
-    void delete(Long id) throws TechnicalException {
+    void delete(String id) throws TechnicalException {
         def user = userRepository.findOne(id)
         if (!user) {
             throw new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: id)

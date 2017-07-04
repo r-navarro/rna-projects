@@ -27,7 +27,7 @@ class FullTanksServiceImpl implements FullTanksService {
     VehicleRepository vehicleRepository
 
     @Override
-    FullTank getByVehicleIdAndId(Long vehicleId, Long fullTankId) throws TechnicalException {
+    FullTank getByVehicleIdAndId(String vehicleId, String fullTankId) throws TechnicalException {
         def fullTank = fullTankRepository.findOne(fullTankId)
         if (fullTank) {
             if (fullTank.vehicle.id != vehicleId) {
@@ -39,7 +39,7 @@ class FullTanksServiceImpl implements FullTanksService {
     }
 
     @Override
-    Page<FullTank> getFullTanks(Pageable pageable, Long vehicleId) throws TechnicalException {
+    Page<FullTank> getFullTanks(Pageable pageable, String vehicleId) throws TechnicalException {
         if (!vehicleRepository.findOne(vehicleId)) {
             throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
         }
@@ -47,41 +47,37 @@ class FullTanksServiceImpl implements FullTanksService {
     }
 
     @Override
-    FullTank save(FullTank fullTank, Long vehicleId) throws TechnicalException {
+    FullTank save(FullTank fullTank, String vehicleId) throws TechnicalException {
         if (fullTank) {
             def vehicle = vehicleRepository.findOne(vehicleId)
             if (!vehicle) {
                 throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
             }
-            if (fullTank.id) {
-                fullTank = updateFullTank(fullTank)
-            } else {
-                fullTank = addFullTank(vehicle, fullTank)
-            }
-            return fullTank
+            return modifyAndSave(fullTank, vehicle)
         }
         throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT)
     }
 
-    private FullTank addFullTank(Vehicle vehicle, FullTank fullTank) {
-        vehicle << fullTank
-
-        return fullTankRepository.save(fullTank)
-    }
-
-    private FullTank updateFullTank(FullTank fullTank) throws TechnicalException {
-        def oldFullTank = fullTankRepository.findOne(fullTank.id)
-        if (oldFullTank) {
-            def vehicle = oldFullTank.vehicle
-            vehicle >> oldFullTank
-            vehicle << fullTank
-            return fullTankRepository.save(fullTank)
+    @Override
+    FullTank update(FullTank fullTank, String vehicleId) throws TechnicalException {
+        if (fullTank) {
+            def vehicle = vehicleRepository.findOne(vehicleId)
+            if (!vehicle) {
+                throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
+            }
+            def oldFullTank = fullTankRepository.findOne(fullTank.id)
+            if (!oldFullTank) {
+                throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTank.id)
+            }
+            vehicle.kilometers -= oldFullTank.distance
+            vehicleRepository.save(vehicle)
+            return modifyAndSave(fullTank, vehicle)
         }
-        throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTank.id)
+        throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_WRONG_FORMAT)
     }
 
     @Override
-    void delete(Long vehicleId, Long fullTankId) throws TechnicalException {
+    void delete(String vehicleId, String fullTankId) throws TechnicalException {
         def fullTank = fullTankRepository.findOne(fullTankId)
         if (!fullTank) {
             throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_NOT_FOUND, errorParameter: fullTankId)
@@ -89,12 +85,13 @@ class FullTanksServiceImpl implements FullTanksService {
         if (fullTank.vehicle.id != vehicleId) {
             throw new TechnicalException(errorCode: ErrorCode.FULL_TANK_VEHICLE_NOT_MATCH, errorParameter: vehicleId)
         }
-        fullTank.vehicle >> fullTank
+        fullTank.vehicle.kilometers -= fullTank.distance
+        vehicleRepository.save(fullTank.vehicle)
         fullTankRepository.delete(fullTank)
     }
 
     @Override
-    List<StatDTO> getCostStats(Long vehicleId) {
+    List<StatDTO> getCostStats(String vehicleId) {
         checkVehicle(vehicleId)
 
         def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
@@ -108,7 +105,7 @@ class FullTanksServiceImpl implements FullTanksService {
     }
 
     @Override
-    List<StatDTO> getDistanceStats(Long vehicleId) {
+    List<StatDTO> getDistanceStats(String vehicleId) {
         checkVehicle(vehicleId)
 
         def fullTanks = fullTankRepository.findAllByVehicleId(vehicleId)
@@ -121,7 +118,7 @@ class FullTanksServiceImpl implements FullTanksService {
         return stats
     }
 
-    List<StatAverageDTO> getAverageStats(Long vehicleId) {
+    List<StatAverageDTO> getAverageStats(String vehicleId) {
         checkVehicle(vehicleId)
         def fullTanks = fullTankRepository.findAllByVehicleIdOrderByDateAsc(vehicleId)
 
@@ -144,10 +141,10 @@ class FullTanksServiceImpl implements FullTanksService {
             }
         }
 
-        cost /= fullTanks.size()
-        dist /= fullTanks.size()
-        numberOfDay /= (fullTanks.size() -1) ?: 1
-        quantity /= fullTanks.size()
+        cost /= fullTanks.size() ?: 1
+        dist /= fullTanks.size() ?: 1
+        numberOfDay /= (fullTanks.size() - 1) ?: 1
+        quantity /= fullTanks.size() ?: 1
 
         cost.setScale(2, RoundingMode.UP)
         dist.setScale(2, RoundingMode.UP)
@@ -162,10 +159,15 @@ class FullTanksServiceImpl implements FullTanksService {
         return [avgCost, avgDist, avgDay, avgQuantity]
     }
 
-    private void checkVehicle(Long vehicleId) {
+    private void checkVehicle(String vehicleId) {
         if (!vehicleRepository.findOne(vehicleId)) {
             throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
         }
     }
 
+    private FullTank modifyAndSave(FullTank fullTank, Vehicle vehicle) {
+        vehicle.kilometers += fullTank.distance
+        fullTank.vehicle = vehicleRepository.save(vehicle)
+        return fullTankRepository.save(fullTank)
+    }
 }

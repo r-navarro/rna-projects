@@ -32,7 +32,7 @@ class VehicleController {
     private UserService userService
 
     @RequestMapping(method = RequestMethod.POST)
-    def ResponseEntity<VehicleDTO> save(@RequestBody VehicleDTO vehicle) {
+    ResponseEntity<VehicleDTO> save(@RequestBody VehicleDTO vehicle) {
         if (vehicle) {
             def auth = SecurityContextHolder.getContext().authentication
             def user = userService.findByName(auth.name)
@@ -43,7 +43,7 @@ class VehicleController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    def ResponseEntity<VehicleDTO> update(@RequestBody VehicleDTO vehicle) {
+    ResponseEntity<VehicleDTO> update(@RequestBody VehicleDTO vehicle) {
         if (vehicle) {
             def vehicleSaved = vehiclesService.update(vehicle.toVehicle())
             return new ResponseEntity(new VehicleDTO(vehicleSaved), HttpStatus.CREATED)
@@ -53,18 +53,22 @@ class VehicleController {
 
     @RequestMapping(value = '/{id}', method = RequestMethod.DELETE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    def void delete(@PathVariable Long id) {
+    void delete(@PathVariable String id) {
         vehiclesService.delete(id)
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @Secured("ROLE_ADMIN")
-    def List<VehicleDTO> findAll() {
-        return vehiclesService.findAll()
+    List<VehicleDTO> findAll() {
+        def vehicleDTOList = []
+        vehiclesService.findAll().each {
+            vehicleDTOList << new VehicleDTO(it)
+        }
+        return vehicleDTOList
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    def VehicleDTO get(@PathVariable Long id) {
+    VehicleDTO get(@PathVariable String id) {
         def auth = SecurityContextHolder.getContext().authentication
         def vehicle = vehiclesService.get(id, auth.name)
         if (!vehicle) {
@@ -74,7 +78,7 @@ class VehicleController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    def Page<VehicleDTO> getVehicles(@PageableDefault(size = VehicleController.PAGE_SIZE, page = 0) Pageable pageable) {
+    Page<VehicleDTO> getVehicles(@PageableDefault(size = VehicleController.PAGE_SIZE, page = 0) Pageable pageable) {
         def auth = SecurityContextHolder.getContext().authentication
         def pager = vehiclesService.getVehicles(pageable, auth.name)
         def vehicleDTOs = pager.content.collect { new VehicleDTO(it) }

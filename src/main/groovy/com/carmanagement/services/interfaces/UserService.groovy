@@ -11,11 +11,11 @@ interface UserService extends UserDetailsService {
 
     User findByName(String userName)
 
-    User findById(Long id)
+    User findById(String id)
 
     User save(User user) throws TechnicalException
 
-    void delete(Long id) throws TechnicalException
+    void delete(String id) throws TechnicalException
 
     List<User> findAll()
 }

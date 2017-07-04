@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Slf4j
@@ -25,28 +24,26 @@ class VehiclesServiceImpl implements VehiclesService {
     UserService userService
 
     @Override
-    @Transactional
     Vehicle save(Vehicle vehicle, User user) {
         vehicle.user = user
-        vehicle = vehicleRepository.saveAndFlush(vehicle)
+        vehicle = vehicleRepository.save(vehicle)
 
         return vehicle
     }
 
-    @Transactional
     Vehicle update(Vehicle vehicle) {
-        def vehicleToUpdate = vehicleRepository.getOne(vehicle.id)
+        def vehicleToUpdate = vehicleRepository.findOne(vehicle.id)
         vehicleToUpdate.kilometers = vehicle.kilometers
         vehicleToUpdate.price = vehicle.price
         vehicleToUpdate.registerNumber = vehicle.registerNumber
         vehicleToUpdate.type = vehicle.type
-        vehicle = vehicleRepository.saveAndFlush(vehicleToUpdate)
+        vehicle = vehicleRepository.save(vehicleToUpdate)
 
         return vehicle
     }
 
     @Override
-    Vehicle get(Long id, String name) {
+    Vehicle get(String id, String name) {
         def vehicle = vehicleRepository.findOne(id)
 
         if (vehicle) {
@@ -58,17 +55,20 @@ class VehiclesServiceImpl implements VehiclesService {
 
     @Override
     Page<Vehicle> getVehicles(Pageable pageable, String name) {
-        return vehicleRepository.findAllByUserName(name, pageable)
+        def user = userService.findByName(name)
+        if (user) {
+            return vehicleRepository.findAllByUserId(user.id, pageable)
+        }
+
+        throw new TechnicalException(errorCode: ErrorCode.USER_NOT_FOUND, errorParameter: name)
     }
 
     @Override
-    @Transactional
-    void delete(Long id) throws TechnicalException {
+    void delete(String id) throws TechnicalException {
         def vehicle = vehicleRepository.findOne(id)
         if (!vehicle) {
             throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: id)
         }
-        vehicle.user.vehicles.remove(vehicle)
         vehicleRepository.delete(id)
     }
 
@@ -76,4 +76,5 @@ class VehiclesServiceImpl implements VehiclesService {
     List<Vehicle> findAll() {
         return vehicleRepository.findAll()
     }
+
 }

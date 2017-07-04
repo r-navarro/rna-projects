@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-
 
 @Service
 class MaintenancesServiceImpl implements MaintenancesService {
@@ -24,7 +22,7 @@ class MaintenancesServiceImpl implements MaintenancesService {
     VehicleRepository vehicleRepository
 
     @Override
-    Maintenance getByVehicleIdAndId(Long vehicleId, Long maintenanceId) throws TechnicalException {
+    Maintenance getByVehicleIdAndId(String vehicleId, String maintenanceId) throws TechnicalException {
         def maintenance = getMaintenance(maintenanceId)
         if (maintenance) {
             if (maintenance.vehicle.id != vehicleId) {
@@ -36,7 +34,7 @@ class MaintenancesServiceImpl implements MaintenancesService {
     }
 
     @Override
-    Page<Maintenance> getMaintenances(Pageable pageable, Long vehicleId) throws TechnicalException {
+    Page<Maintenance> getMaintenances(Pageable pageable, String vehicleId) throws TechnicalException {
         if (!getVehicle(vehicleId)) {
             throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
         }
@@ -44,24 +42,20 @@ class MaintenancesServiceImpl implements MaintenancesService {
     }
 
     @Override
-    @Transactional
-    Maintenance save(Maintenance maintenance, Long vehicleId) throws TechnicalException {
+    Maintenance save(Maintenance maintenance, String vehicleId) throws TechnicalException {
         if (maintenance) {
             def vehicle = getVehicle(vehicleId)
             if (!vehicle) {
                 throw new TechnicalException(errorCode: ErrorCode.VEHICLE_NOT_FOUND, errorParameter: vehicleId)
             }
-            if (maintenance.id) {
-                vehicle >> maintenanceRepository.findOne(maintenance.id)
-            }
-            vehicle << maintenance
+            maintenance.vehicle = vehicle
             return maintenanceRepository.save(maintenance)
         }
         throw new TechnicalException(errorCode: ErrorCode.MAINTENANCE_WRONG_FORMAT)
     }
 
     @Override
-    void delete(Long vehicleId, Long maintenanceId) throws TechnicalException {
+    void delete(String vehicleId, String maintenanceId) throws TechnicalException {
         def maintenance = getMaintenance(maintenanceId)
         if (!maintenance) {
             throw new TechnicalException(errorCode: ErrorCode.MAINTENANCE_NOT_FOUND, errorParameter: maintenanceId)
@@ -72,14 +66,14 @@ class MaintenancesServiceImpl implements MaintenancesService {
         maintenanceRepository.delete(maintenanceId)
     }
 
-    private Vehicle getVehicle(Long id) {
+    private Vehicle getVehicle(String id) {
         if (!id) {
             return null
         }
         return vehicleRepository.findOne(id)
     }
 
-    private Maintenance getMaintenance(Long id) {
+    private Maintenance getMaintenance(String id) {
         if (!id) {
             return null
         }

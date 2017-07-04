@@ -5,7 +5,7 @@ import com.carmanagement.entities.Vehicle
 
 class VehicleDTO {
 
-    Long id
+    String id
 
     String registerNumber
 
