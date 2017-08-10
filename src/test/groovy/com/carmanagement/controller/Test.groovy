@@ -65,7 +65,7 @@ class Test extends Specification {
                     .with(RPP.httpBasic('toto', 'toto'))
                     .with(RPP.csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content('{"registerNumber":"test", "price":"1", "type":"test", "kilometers":"1"}'))
+                    .content('{"registrationNumber":"test", "price":"1", "type":"test", "kilometers":"1"}'))
         then:
             response.andExpect(MockMvcResultMatchers.status().isCreated())
     }

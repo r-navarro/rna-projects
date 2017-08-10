@@ -10,7 +10,7 @@ class VehicleControllerTest extends AbstractControllerTest {
 
     def baseUrl = '/vehicles'
 
-    def vehicleDTO = new VehicleDTO(registerNumber: 'Integration test vehicle', price: 1, kilometers: 1, type: "test")
+    def vehicleDTO = new VehicleDTO(registrationNumber: 'Integration test vehicle', price: 1, kilometers: 1, type: "test")
 
     def "test get all vehicle"() {
         when:

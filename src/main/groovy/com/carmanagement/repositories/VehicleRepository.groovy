@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface VehicleRepository extends MongoRepository<Vehicle, String> {
 
-    Vehicle findByRegisterNumber(String registerNumber)
+    Vehicle findByRegistrationNumber(String registrationNumber)
 
     Page<Vehicle> findAllByUserId(String userId, Pageable pageable)
 

@@ -7,7 +7,7 @@ class VehicleDTO {
 
     String id
 
-    String registerNumber
+    String registrationNumber
 
     Float price
 
@@ -20,7 +20,7 @@ class VehicleDTO {
 
     VehicleDTO(Vehicle vehicle) {
         this.id = vehicle.id
-        this.registerNumber = vehicle.registerNumber
+        this.registrationNumber = vehicle.registrationNumber
         this.price = vehicle.price
         this.type = vehicle.type
         this.kilometers = vehicle.kilometers
@@ -29,7 +29,7 @@ class VehicleDTO {
     Vehicle toVehicle() {
         def vehicle = new Vehicle()
         vehicle.id = this.id
-        vehicle.registerNumber = this.registerNumber
+        vehicle.registrationNumber = this.registrationNumber
         vehicle.price = this.price
         vehicle.type = this.type
         vehicle.kilometers = this.kilometers
@@ -38,6 +38,6 @@ class VehicleDTO {
     }
 
     boolean asBoolean() {
-        return registerNumber && price && type && kilometers
+        return registrationNumber && price && type && kilometers
     }
 }

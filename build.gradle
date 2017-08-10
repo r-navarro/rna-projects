@@ -1,20 +1,29 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.4.RELEASE")
+        classpath 'org.springframework:springloaded:1.2.6.RELEASE'
     }
 }
 
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 
 jar {
     baseName = 'gs-spring-boot'
     version = '0.1.0'
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/main/")
+    }
 }
 
 repositories {
@@ -37,6 +46,8 @@ dependencies {
     compile 'org.springframework.data:spring-data-mongodb:1.10.4.RELEASE'
 
     compile 'commons-dbcp:commons-dbcp:1.4'
+
+    compile 'io.jsonwebtoken:jjwt:0.7.0'
 
 
     testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'

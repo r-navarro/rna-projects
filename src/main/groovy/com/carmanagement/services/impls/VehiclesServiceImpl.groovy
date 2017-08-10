@@ -35,7 +35,7 @@ class VehiclesServiceImpl implements VehiclesService {
         def vehicleToUpdate = vehicleRepository.findOne(vehicle.id)
         vehicleToUpdate.kilometers = vehicle.kilometers
         vehicleToUpdate.price = vehicle.price
-        vehicleToUpdate.registerNumber = vehicle.registerNumber
+        vehicleToUpdate.registrationNumber = vehicle.registrationNumber
         vehicleToUpdate.type = vehicle.type
         vehicle = vehicleRepository.save(vehicleToUpdate)
 

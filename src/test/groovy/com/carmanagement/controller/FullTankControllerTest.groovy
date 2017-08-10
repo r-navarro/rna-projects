@@ -18,7 +18,7 @@ class FullTankControllerTest extends AbstractControllerTest {
     @Autowired
     FullTankRepository fullTankRepository
 
-    Vehicle vehicle = new Vehicle(registerNumber: 'Integration test vehicle')
+    Vehicle vehicle = new Vehicle(registrationNumber: 'Integration test vehicle')
 
     FullTank fullTank = new FullTank(vehicle: vehicle, cost: 1, distance: 1, date: new Date(), quantity: 1)
 

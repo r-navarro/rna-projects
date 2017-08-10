@@ -11,7 +11,7 @@ class Vehicle {
     String id
 
 
-    String registerNumber
+    String registrationNumber
 
 
     Float price
@@ -26,6 +26,6 @@ class Vehicle {
     User user
 
     String toString() {
-        return registerNumber
+        return registrationNumber
     }
 }

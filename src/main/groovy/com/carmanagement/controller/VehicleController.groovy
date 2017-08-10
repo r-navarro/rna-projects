@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*
 @Slf4j
 class VehicleController {
 
-    static final int PAGE_SIZE = 2
+    static final int PAGE_SIZE = 10
 
     @Autowired
     private VehiclesService vehiclesService
