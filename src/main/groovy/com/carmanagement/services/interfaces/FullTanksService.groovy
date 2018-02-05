@@ -1,5 +1,6 @@
 package com.carmanagement.services.interfaces
 
+import com.carmanagement.dto.FullTankData
 import com.carmanagement.dto.StatAverageDTO
 import com.carmanagement.dto.StatDTO
 import com.carmanagement.entities.FullTank
@@ -24,4 +25,6 @@ interface FullTanksService {
     List<StatDTO> getDistanceStats(String vehicleId)
 
     List<StatAverageDTO> getAverageStats(String vehicleId)
+
+    List<FullTankData> getData(String vehicleId)
 }

@@ -12,4 +12,6 @@ interface FullTankRepository extends PagingAndSortingRepository<FullTank, String
     List<FullTank> findAllByVehicleId(String vehicleId)
 
     List<FullTank> findAllByVehicleIdOrderByDateAsc(String vehicleId)
+
+    List<FullTank> findAllByVehicleIdOrderByDateDesc(String vehicleId)
 }

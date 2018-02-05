@@ -1,5 +1,6 @@
 package com.carmanagement.services.impls
 
+import com.carmanagement.dto.FullTankData
 import com.carmanagement.dto.StatAverageDTO
 import com.carmanagement.dto.StatDTO
 import com.carmanagement.entities.FullTank
@@ -88,6 +89,17 @@ class FullTanksServiceImpl implements FullTanksService {
         fullTank.vehicle.kilometers -= fullTank.distance
         vehicleRepository.save(fullTank.vehicle)
         fullTankRepository.delete(fullTank)
+    }
+
+    @Override
+    List<FullTankData> getData(String vehicleId) {
+        checkVehicle(vehicleId)
+        return fullTankRepository.findAllByVehicleIdOrderByDateAsc(vehicleId)
+                .collect({
+            new FullTankData(date: it.date.format('dd/MM/yyyy'),
+                    cost: it.cost,
+                    distance: it.distance)
+        })
     }
 
     @Override

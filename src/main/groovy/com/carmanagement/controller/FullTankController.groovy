@@ -1,6 +1,7 @@
 package com.carmanagement.controller
 
 import com.carmanagement.dto.FullTankDTO
+import com.carmanagement.dto.FullTankData
 import com.carmanagement.exceptions.ErrorCode
 import com.carmanagement.exceptions.TechnicalException
 import com.carmanagement.services.interfaces.FullTanksService
@@ -69,6 +70,11 @@ class FullTankController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable("vehicleId") String vehicleId, @PathVariable("id") String fullTankId) {
         fullTanksService.delete(vehicleId, fullTankId)
+    }
+
+    @RequestMapping(value = "{vehicleId}/fullTanks/data", method = RequestMethod.GET)
+    ResponseEntity<List<FullTankData>> getData(@PathVariable("vehicleId") String vehicleId) {
+        return new ResponseEntity<List<FullTankData>>(fullTanksService.getData(vehicleId), HttpStatus.OK)
     }
 
     @RequestMapping(value = "{vehicleId}/fullTanks/costStats", method = RequestMethod.GET)

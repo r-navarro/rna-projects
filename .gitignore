@@ -3,6 +3,7 @@
 build/
 demo.iml
 gradle/
+out/
 gradlew
 gradlew.bat
 rna-projects.iml
