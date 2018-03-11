@@ -13,11 +13,14 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'application'
 
 jar {
     baseName = 'gs-spring-boot'
     version = '0.1.0'
 }
+
+mainClassName = 'com.carmanagement.UiApplication'
 
 idea {
     module {
